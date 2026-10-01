@@ -58,7 +58,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void showBookingsScreen() {
-        bottomNavigationView.setSelectedItemId(R.id.bottom_bookings);
+        if (bottomNavigationView.getSelectedItemId() == R.id.bottom_bookings) {
+            loadFragment(new BookingsFragment(), R.string.bottom_nav_booking_title, false);
+        } else {
+            bottomNavigationView.setSelectedItemId(R.id.bottom_bookings);
+        }
     }
 
     @Override
@@ -67,6 +71,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
 
         firebaseAuth = FirebaseAuth.getInstance();
+        if (firebaseAuth.getCurrentUser() == null) {
+            startActivity(new Intent(this, SigninActivity.class));
+            finish();
+            return;
+        }
         firebaseFirestore = FirebaseFirestore.getInstance();
 
         drawerLayout = findViewById(R.id.drawerLayout);
@@ -125,6 +134,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             return false;
         });
+
+        if (getIntent() != null && getIntent().getBooleanExtra("open_bookings", false)) {
+            showBookingsScreen();
+        }
     }
 
     @Override
@@ -134,6 +147,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (intent != null && intent.getBooleanExtra("open_my_activities", false)) {
             openMyActivitiesScreen();
+        } else if (intent != null && intent.getBooleanExtra("open_bookings", false)) {
+            showBookingsScreen();
         }
     }
 

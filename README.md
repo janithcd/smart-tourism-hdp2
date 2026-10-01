@@ -1,6 +1,8 @@
 # Smart Tourism
 
-Android Java/XML application for Handheld Device Programming II. The current app has Firebase email/password authentication, profiles and wishlists in Firestore, a local tour catalogue, Google Maps, language resources, and a local demo booking flow.
+Android Java/XML application for Handheld Device Programming II. The current app has Firebase email/password authentication, profiles and wishlists in Firestore, a local tour catalogue, Google Maps, language resources, and a local demo booking and payment simulation.
+
+See [the proposal gap analysis](docs/proposal-gap-analysis.md) for feature coverage and the remaining viva work.
 
 ## Run locally
 
@@ -12,9 +14,9 @@ Android Java/XML application for Handheld Device Programming II. The current app
 
 ## Viva demo path
 
-Sign up or sign in → Home or Explore → open a tour → choose people, pickup, mobile number and travel date → Book Now → My Activities → Confirm demo booking → Bookings. Search for a destination on Explore and use the wishlist, profile, map, and language menu as other examples.
+Sign up or sign in → Home or Explore → open a tour → choose people, pickup, mobile number, travel date and pickup time → Book Now → My Activities → Continue to demo payment → choose Card (simulation), Mobile wallet (simulation), or Cash on arrival → Confirm demo booking → Bookings. Search for a destination on Explore and use the wishlist, profile, map, and language menu as other examples.
 
-The booking confirmation writes a **local demo record** scoped to the signed-in user on that device. It does not collect payment, reserve a vehicle, contact a provider, or synchronize booking history to Firestore. The price shown comes from the static tour catalogue. Removing a booking removes only that local record.
+The booking confirmation writes a **local demo record** scoped to the signed-in user on that device, with the selected payment method and a simulated payment status. It does not collect card details, charge money, reserve a vehicle, contact a provider, or synchronize booking history to Firestore. The price shown comes from the static tour catalogue. Removing a booking removes only that local record. A local notification is shown after confirmation if the user allows notifications; this is not a push message from a provider.
 
 ## Next work
 

@@ -159,11 +159,27 @@
 
     <string name="booking_date_label">Travel date</string>
     <string name="booking_date_required">Select a travel date</string>
+    <string name="booking_time_label">Pickup time</string>
+    <string name="booking_time_required">Select a pickup time</string>
+    <string name="booking_future_required">Choose a future date and time</string>
+    <string name="booking_date_time_value">Travel: %1$s at %2$s</string>
+    <string name="payment_continue_action">Continue to demo payment</string>
+    <string name="payment_title">Payment simulation</string>
+    <string name="payment_explanation">Review your tour and choose a demo payment method.</string>
+    <string name="payment_method_title">Payment method</string>
+    <string name="payment_card_demo">Card (simulation)</string>
+    <string name="payment_wallet_demo">Mobile wallet (simulation)</string>
+    <string name="payment_cash_arrival">Cash on arrival</string>
+    <string name="payment_select_method">Choose a payment method</string>
+    <string name="payment_demo_notice">No card details are collected. No real payment or provider booking takes place.</string>
     <string name="booking_confirm_title">Confirm demo booking</string>
-    <string name="booking_confirm_message">Save %1$s for %2$s on this device? This is a demo booking; no payment will be taken or request sent to a provider.</string>
+    <string name="booking_confirm_message">Save %1$s for %2$s at %3$s on this device? This is a simulation; no real payment or provider request will be sent.</string>
     <string name="booking_confirm_action">Confirm demo booking</string>
     <string name="booking_saved_title">Booking saved</string>
-    <string name="booking_saved_message">Your demo booking is saved on this device. No payment was taken and no provider was contacted.</string>
+    <string name="booking_saved_message">Your demo booking is saved on this device. No real payment was taken and no provider was contacted.</string>
+    <string name="booking_notification_channel">Booking updates</string>
+    <string name="booking_notification_title">Demo booking saved</string>
+    <string name="booking_notification_message">%1$s was saved on this device.</string>
     <string name="booking_save_failed">Could not save your booking. Please try again.</string>
     <string name="booking_view_history">View bookings</string>
     <string name="bookings_title">My bookings</string>
@@ -171,6 +187,7 @@
     <string name="bookings_empty">No bookings yet. Explore a tour and save a demo booking.</string>
     <string name="booking_image_description">Tour photograph</string>
     <string name="booking_date_value">Travel date: %1$s</string>
+    <string name="booking_payment_value">%1$s · %2$s</string>
     <string name="booking_details_value">%1$s · %2$s · %3$s · %4$s</string>
     <string name="booking_reference">Reference: %1$s</string>
     <string name="booking_remove_title">Remove booking record?</string>
