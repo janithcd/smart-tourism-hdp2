@@ -41,6 +41,7 @@ public class TourPackageAdapter extends RecyclerView.Adapter<TourPackageAdapter.
 
     private final Set<String> wishlistIds = new HashSet<>();
     private boolean wishlistLoaded = false;
+    private boolean wishlistLoading = false;
 
     public TourPackageAdapter(List<TourPackage> packageList, OnPackageClickListener listener) {
         this.packageList = packageList;
@@ -66,7 +67,7 @@ public class TourPackageAdapter extends RecyclerView.Adapter<TourPackageAdapter.
         holder.txtPrice.setText(tourPackage.getPrice());
         holder.txtDescription.setText(tourPackage.getDescription());
 
-        if (!wishlistLoaded) {
+        if (!wishlistLoaded && !wishlistLoading) {
             loadWishlistIds();
         }
 
@@ -92,6 +93,7 @@ public class TourPackageAdapter extends RecyclerView.Adapter<TourPackageAdapter.
         }
 
         String uid = firebaseAuth.getCurrentUser().getUid();
+        wishlistLoading = true;
 
         firebaseFirestore.collection("users")
                 .document(uid)
@@ -103,10 +105,12 @@ public class TourPackageAdapter extends RecyclerView.Adapter<TourPackageAdapter.
                         wishlistIds.add(doc.getId());
                     }
                     wishlistLoaded = true;
+                    wishlistLoading = false;
                     notifyDataSetChanged();
                 })
                 .addOnFailureListener(e -> {
                     wishlistLoaded = true;
+                    wishlistLoading = false;
                 });
     }
 

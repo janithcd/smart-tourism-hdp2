@@ -214,10 +214,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             try {
                 String apiKey = getMapsApiKey();
                 if (TextUtils.isEmpty(apiKey)) {
-                    requireActivity().runOnUiThread(() -> {
-                        txtPackageInfo.setText("Maps API key missing");
-                        Toast.makeText(requireContext(), "Maps API key missing", Toast.LENGTH_LONG).show();
-                    });
+                    requireActivity().runOnUiThread(() -> fallbackDraw(routePoints, placeNames));
                     return;
                 }
 
