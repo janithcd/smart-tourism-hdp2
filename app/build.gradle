@@ -3,6 +3,13 @@ plugins {
     id 'com.google.gms.google-services'
 }
 
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withInputStream { stream -> localProperties.load(stream) }
+}
+def mapsApiKey = localProperties.getProperty('MAPS_API_KEY', System.getenv('MAPS_API_KEY') ?: '')
+
 android {
     namespace 'lk.janith.smart_tourism'
     compileSdk 36
@@ -13,6 +20,7 @@ android {
         targetSdk 36
         versionCode 1
         versionName "1.0"
+        manifestPlaceholders = [MAPS_API_KEY: mapsApiKey]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

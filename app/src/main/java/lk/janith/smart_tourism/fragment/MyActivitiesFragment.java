@@ -1,6 +1,5 @@
 package lk.janith.smart_tourism.fragment;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -13,8 +12,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import lk.janith.smart_tourism.R;
+import lk.janith.smart_tourism.activity.MainActivity;
+import lk.janith.smart_tourism.data.BookingStore;
 
 public class MyActivitiesFragment extends Fragment {
 
@@ -26,6 +28,7 @@ public class MyActivitiesFragment extends Fragment {
     private TextView txtPax;
     private TextView txtPickup;
     private TextView txtMobile;
+    private TextView txtTravelDate;
 
     private View emptyStateCard;
     private View activityCard;
@@ -49,6 +52,7 @@ public class MyActivitiesFragment extends Fragment {
         txtPax = view.findViewById(R.id.txtPax);
         txtPickup = view.findViewById(R.id.txtPickup);
         txtMobile = view.findViewById(R.id.txtMobile);
+        txtTravelDate = view.findViewById(R.id.txtTravelDate);
 
         emptyStateCard = view.findViewById(R.id.emptyStateCard);
         activityCard = view.findViewById(R.id.activityCard);
@@ -65,7 +69,32 @@ public class MyActivitiesFragment extends Fragment {
         });
 
         btnCheckout.setOnClickListener(v -> {
-            Toast.makeText(requireContext(), getString(R.string.checkout_coming_soon), Toast.LENGTH_SHORT).show();
+            SharedPreferences draft = BookingStore.draft(requireContext());
+            if (draft.getString("package_title", "").isEmpty()) {
+                loadDraftBooking();
+                return;
+            }
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.booking_confirm_title)
+                    .setMessage(getString(R.string.booking_confirm_message,
+                            draft.getString("package_title", ""),
+                            draft.getString("package_travel_date", "")))
+                    .setNegativeButton(R.string.cancel, null)
+                    .setPositiveButton(R.string.booking_confirm_action, (dialog, which) -> {
+                        BookingStore.Booking booking = BookingStore.confirmDraft(requireContext());
+                        if (booking == null) {
+                            Toast.makeText(requireContext(), R.string.booking_save_failed, Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                        loadDraftBooking();
+                        new MaterialAlertDialogBuilder(requireContext())
+                                .setTitle(R.string.booking_saved_title)
+                                .setMessage(R.string.booking_saved_message)
+                                .setPositiveButton(R.string.booking_view_history, (confirmation, button) ->
+                                        ((MainActivity) requireActivity()).showBookingsScreen())
+                                .show();
+                    })
+                    .show();
         });
     }
 
@@ -76,8 +105,7 @@ public class MyActivitiesFragment extends Fragment {
     }
 
     private void loadDraftBooking() {
-        SharedPreferences preferences = requireContext()
-                .getSharedPreferences("smart_tourism_booking_draft", Context.MODE_PRIVATE);
+        SharedPreferences preferences = BookingStore.draft(requireContext());
 
         String title = preferences.getString("package_title", "");
         String duration = preferences.getString("package_duration", "");
@@ -86,6 +114,7 @@ public class MyActivitiesFragment extends Fragment {
         String pax = preferences.getString("package_pax", "");
         String pickup = preferences.getString("package_pickup_location", "");
         String mobile = preferences.getString("package_mobile_number", "");
+        String date = preferences.getString("package_travel_date", "");
         int imageResId = preferences.getInt("package_image_res_id", R.drawable.location_on_24px);
 
         boolean hasBooking = title != null && !title.trim().isEmpty();
@@ -111,11 +140,11 @@ public class MyActivitiesFragment extends Fragment {
         txtPax.setText(pax);
         txtPickup.setText(pickup);
         txtMobile.setText(mobile);
+        txtTravelDate.setText(date);
     }
 
     private void clearDraftBooking() {
-        SharedPreferences preferences = requireContext()
-                .getSharedPreferences("smart_tourism_booking_draft", Context.MODE_PRIVATE);
+        SharedPreferences preferences = BookingStore.draft(requireContext());
 
         preferences.edit().clear().apply();
     }

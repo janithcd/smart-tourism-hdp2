@@ -2,6 +2,7 @@ package lk.janith.smart_tourism.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -16,9 +17,12 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import lk.janith.smart_tourism.R;
+import lk.janith.smart_tourism.data.BookingStore;
 
 public class TourPackageDetailsActivity extends AppCompatActivity {
 
@@ -41,10 +45,12 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
     private TextInputLayout paxLayout;
     private TextInputLayout pickupLayout;
     private TextInputLayout mobileLayout;
+    private TextInputLayout dateLayout;
 
     private AutoCompleteTextView autoPax;
     private AutoCompleteTextView autoPickupLocation;
     private TextInputEditText editMobileNumber;
+    private TextInputEditText editTravelDate;
 
     private String title;
     private String duration;
@@ -70,10 +76,12 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
         paxLayout = findViewById(R.id.paxLayout);
         pickupLayout = findViewById(R.id.pickupLayout);
         mobileLayout = findViewById(R.id.mobileLayout);
+        dateLayout = findViewById(R.id.dateLayout);
 
         autoPax = findViewById(R.id.autoPax);
         autoPickupLocation = findViewById(R.id.autoPickupLocation);
         editMobileNumber = findViewById(R.id.editMobileNumber);
+        editTravelDate = findViewById(R.id.editTravelDate);
 
         title = getIntent().getStringExtra(EXTRA_TITLE);
         duration = getIntent().getStringExtra(EXTRA_DURATION);
@@ -92,6 +100,7 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
 
         setupPaxDropdown();
         setupPickupDropdown(duration);
+        editTravelDate.setOnClickListener(v -> showDatePicker());
 
         btnBack.setOnClickListener(v -> finish());
 
@@ -99,10 +108,12 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
             paxLayout.setError(null);
             pickupLayout.setError(null);
             mobileLayout.setError(null);
+            dateLayout.setError(null);
 
             String paxValue = autoPax.getText() != null ? autoPax.getText().toString().trim() : "";
             String pickupValue = autoPickupLocation.getText() != null ? autoPickupLocation.getText().toString().trim() : "";
             String mobileValue = editMobileNumber.getText() != null ? editMobileNumber.getText().toString().trim() : "";
+            String dateValue = editTravelDate.getText() != null ? editTravelDate.getText().toString().trim() : "";
 
             boolean hasError = false;
 
@@ -124,9 +135,14 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
                 hasError = true;
             }
 
+            if (dateValue.isEmpty()) {
+                dateLayout.setError(getString(R.string.booking_date_required));
+                hasError = true;
+            }
+
             if (hasError) return;
 
-            saveBookingDraft(paxValue, pickupValue, mobileValue);
+            saveBookingDraft(paxValue, pickupValue, mobileValue, dateValue);
 
             Toast.makeText(
                     this,
@@ -191,8 +207,17 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
         return cleaned.matches("\\d{8,15}");
     }
 
-    private void saveBookingDraft(String paxValue, String pickupValue, String mobileValue) {
-        SharedPreferences preferences = getSharedPreferences("smart_tourism_booking_draft", MODE_PRIVATE);
+    private void showDatePicker() {
+        Calendar today = Calendar.getInstance();
+        DatePickerDialog picker = new DatePickerDialog(this, (view, year, month, day) ->
+                editTravelDate.setText(String.format(Locale.US, "%04d-%02d-%02d", year, month + 1, day)),
+                today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH));
+        picker.getDatePicker().setMinDate(today.getTimeInMillis());
+        picker.show();
+    }
+
+    private void saveBookingDraft(String paxValue, String pickupValue, String mobileValue, String dateValue) {
+        SharedPreferences preferences = BookingStore.draft(this);
 
         preferences.edit()
                 .putString("package_title", title)
@@ -203,6 +228,7 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
                 .putString("package_pax", paxValue)
                 .putString("package_pickup_location", pickupValue)
                 .putString("package_mobile_number", mobileValue)
+                .putString("package_travel_date", dateValue)
                 .apply();
     }
 

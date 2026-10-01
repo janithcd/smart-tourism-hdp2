@@ -221,6 +221,23 @@
                             android:text="+94770000000"
                             android:textColor="@color/md_theme_onSurfaceVariant"
                             android:textSize="14sp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="14dp"
+                            android:text="@string/booking_date_label"
+                            android:textColor="@color/md_theme_onSurface"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/txtTravelDate"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:textColor="@color/md_theme_onSurfaceVariant"
+                            android:textSize="14sp" />
                     </LinearLayout>
 
                     <com.google.android.material.button.MaterialButton
@@ -292,7 +309,7 @@
             android:id="@+id/btnCheckout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/proceed_to_checkout"
+            android:text="@string/booking_confirm_action"
             android:textAllCaps="false"
             android:textSize="16sp"
             app:cornerRadius="16dp" />

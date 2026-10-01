@@ -152,6 +152,31 @@
     <string name="tour_removed_success">Tour removed successfully</string>
     <string name="checkout_coming_soon">Checkout coming soon</string>
 
+    <string name="explore_title">Explore tours</string>
+    <string name="explore_subtitle">Search the Sri Lanka tour catalogue by place or duration.</string>
+    <string name="explore_search_hint">Destination or tour name</string>
+    <string name="explore_empty">No tours match your search.</string>
+
+    <string name="booking_date_label">Travel date</string>
+    <string name="booking_date_required">Select a travel date</string>
+    <string name="booking_confirm_title">Confirm demo booking</string>
+    <string name="booking_confirm_message">Save %1$s for %2$s on this device? This is a demo booking; no payment will be taken or request sent to a provider.</string>
+    <string name="booking_confirm_action">Confirm demo booking</string>
+    <string name="booking_saved_title">Booking saved</string>
+    <string name="booking_saved_message">Your demo booking is saved on this device. No payment was taken and no provider was contacted.</string>
+    <string name="booking_save_failed">Could not save your booking. Please try again.</string>
+    <string name="booking_view_history">View bookings</string>
+    <string name="bookings_title">My bookings</string>
+    <string name="bookings_subtitle">Demo bookings saved for your account on this device.</string>
+    <string name="bookings_empty">No bookings yet. Explore a tour and save a demo booking.</string>
+    <string name="booking_image_description">Tour photograph</string>
+    <string name="booking_date_value">Travel date: %1$s</string>
+    <string name="booking_details_value">%1$s · %2$s · %3$s · %4$s</string>
+    <string name="booking_reference">Reference: %1$s</string>
+    <string name="booking_remove_title">Remove booking record?</string>
+    <string name="booking_remove_message">This removes the local demo record from this device.</string>
+    <string name="booking_remove_action">Remove record</string>
+
     <string name="profile_full_name">Full Name</string>
     <string name="profile_email_placeholder">user@email.com</string>
     <string name="change_profile_pic">Change Profile Pic</string>

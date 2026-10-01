@@ -57,6 +57,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         loadDrawerHeaderUser();
     }
 
+    public void showBookingsScreen() {
+        bottomNavigationView.setSelectedItemId(R.id.bottom_bookings);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

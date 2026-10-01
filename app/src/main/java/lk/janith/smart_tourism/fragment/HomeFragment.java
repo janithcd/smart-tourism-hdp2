@@ -22,6 +22,7 @@ import lk.janith.smart_tourism.activity.TourPackageDetailsActivity;
 import lk.janith.smart_tourism.adapter.CategoryAdapter;
 import lk.janith.smart_tourism.adapter.HomeSliderAdapter;
 import lk.janith.smart_tourism.adapter.TourPackageAdapter;
+import lk.janith.smart_tourism.data.TourCatalog;
 import lk.janith.smart_tourism.model.Category;
 import lk.janith.smart_tourism.model.TourPackage;
 
@@ -112,38 +113,7 @@ public class HomeFragment extends Fragment {
         recyclerPackages.setNestedScrollingEnabled(false);
 
         packageList.clear();
-
-        packageList.add(new TourPackage(
-                "5 Days Highlights of Sri Lanka",
-                "5 Days",
-                "$390",
-                "Colombo • Sigiriya • Kandy • Ella • Galle",
-                R.drawable.sigiriya
-        ));
-
-        packageList.add(new TourPackage(
-                "7 Days Classic Sri Lanka",
-                "7 Days",
-                "$520",
-                "Negombo • Sigiriya • Kandy • Ella • Yala • Galle",
-                R.drawable.kandy
-        ));
-
-        packageList.add(new TourPackage(
-                "10 Days Heritage & Nature",
-                "10 Days",
-                "$780",
-                "Negombo • Anuradhapura • Sigiriya • Kandy • Ella • Yala • Mirissa",
-                R.drawable.anuradhapura
-        ));
-
-        packageList.add(new TourPackage(
-                "14 Days Complete Island Tour",
-                "14 Days",
-                "$1100",
-                "Negombo • Anuradhapura • Sigiriya • Polonnaruwa • Kandy • Ella • Arugam Bay • Yala • Galle",
-                R.drawable.train
-        ));
+        packageList.addAll(TourCatalog.getPackages());
 
         packageAdapter = new TourPackageAdapter(packageList, tourPackage -> {
             Intent intent = new Intent(requireContext(), TourPackageDetailsActivity.class);
