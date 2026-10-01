@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_my_activities"
+            android:icon="@drawable/hiking_24px"
+            android:title="@string/side_nav_activities_title" />
+
+        <item
+            android:id="@+id/nav_airport_shuttle"
+            android:icon="@drawable/airport_shuttle_24px"
+            android:title="@string/side_nav_airport_shuttle_title" />
+
+        <item
+            android:id="@+id/nav_near_places"
+            android:icon="@drawable/location_on_24px"
+            android:title="@string/side_nav_places_title" />
+
+        <item
+            android:id="@+id/nav_languages"
+            android:icon="@drawable/language_24px"
+            android:title="@string/side_nav_languages_title" />
+
+        <item
+            android:id="@+id/nav_wishlist"
+            android:icon="@drawable/favorite_24px"
+            android:title="@string/side_nav_wishlist_title" />
+
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/settings_24px"
+            android:title="@string/side_nav_settings_title" />
+
+        <item
+            android:id="@+id/nav_about"
+            android:icon="@drawable/info_24px"
+            android:title="@string/side_nav_about_title" />
+    </group>
+
+    <group>
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/logout_24px"
+            android:title="@string/side_nav_logout_title" />
+    </group>
+
+</menu>

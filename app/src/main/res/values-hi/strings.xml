@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="choose_language">भाषा चुनें</string>
+    <string name="language_english">English</string>
+    <string name="language_sinhala">සිංහල</string>
+    <string name="language_hindi">हिन्दी</string>
+    <string name="language_french">Français</string>
+    <string name="language_german">Deutsch</string>
+    <string name="language_russian">Русский</string>
+
+    <string name="map_route_stops">रूट स्टॉप्स</string>
+    <string name="map_nearby_highlights">नज़दीकी आकर्षण</string>
+    <string name="map_places_attribution">स्थान डेटा Google से</string>
+    <string name="map_loading_attractions">नज़दीकी आकर्षण लोड हो रहे हैं...</string>
+    <string name="map_no_attractions">25 किमी के अंदर कोई आकर्षण नहीं मिला</string>
+
+
+    <string name="book_now">अभी बुक करें</string>
+    <string name="booking_setup_next_step">अगला चरण: यात्री संख्या और पिकअप सेटअप</string>
+
+    <string name="package_duration_label">अवधि</string>
+    <string name="package_price_label">मूल्य</string>
+    <string name="package_route_label">रूट</string>
+    <string name="package_overview_label">सारांश</string>
+    <string name="package_highlights_label">मुख्य आकर्षण</string>
+
+    <string name="package_default_title">टूर पैकेज</string>
+    <string name="package_default_duration">5 दिन</string>
+    <string name="package_overview_sample">संस्कृति, सुंदर दृश्यों और यादगार यात्रा अनुभवों के साथ सावधानीपूर्वक तैयार किया गया श्रीलंका टूर।</string>
+    <string name="package_highlights_empty">मुख्य आकर्षण यहाँ दिखेंगे।</string>
+    <string name="package_overview_text">%1$s एक सावधानीपूर्वक तैयार किया गया %2$s टूर पैकेज है, जिसे यात्रियों को श्रीलंका के बेहतरीन आकर्षण आरामदायक और सहज तरीके से अनुभव कराने के लिए बनाया गया है।</string>
+
+    <string name="booking_setup_title">बुकिंग सेटअप</string>
+    <string name="booking_setup_subtitle">यात्रियों की संख्या, पिकअप स्थान और अपना मोबाइल नंबर चुनें।</string>
+    <string name="package_pax_label">लोगों की संख्या</string>
+    <string name="package_pickup_label">पिकअप स्थान</string>
+    <string name="package_mobile_label">मोबाइल नंबर</string>
+    <string name="package_select_pax_error">कृपया लोगों की संख्या चुनें</string>
+    <string name="package_select_pickup_error">कृपया पिकअप स्थान चुनें</string>
+    <string name="package_mobile_error_empty">कृपया अपना मोबाइल नंबर दर्ज करें</string>
+    <string name="package_mobile_error_invalid">कृपया एक मान्य मोबाइल नंबर दर्ज करें</string>
+    <string name="saved_to_my_activities">पैकेज My Activities में सहेज दिया गया</string>
+
+    <string name="wishlist_title">मेरी विशलिस्ट</string>
+    <string name="wishlist_subtitle">अपने पसंदीदा टूर सहेजें और उन्हें कभी भी देखें।</string>
+    <string name="wishlist_card_title">सहेजे गए टूर पैकेज</string>
+    <string name="wishlist_card_subtitle">त्वरित पहुँच के लिए अपनी पसंदीदा यात्राओं को एक ही स्थान पर रखें।</string>
+    <string name="wishlist_saved_packages">सहेजे गए पैकेज</string>
+    <string name="wishlist_empty_title">अभी तक कोई विशलिस्ट आइटम नहीं है</string>
+    <string name="wishlist_empty_message">किसी पैकेज को अपनी विशलिस्ट में सहेजने के लिए दिल के आइकन पर टैप करें।</string>
+
+    <string name="nearby_places_clicked">निकटवर्ती स्थान चुना गया</string>
+    <string name="settings_clicked">सेटिंग्स चुनी गई</string>
+    <string name="about_clicked">जानकारी चुनी गई</string>
+
+    <string name="guest_user">अतिथि</string>
+    <string name="no_email">कोई ईमेल नहीं</string>
+    <string name="no_country">कोई देश नहीं</string>
+    <string name="user_default_name">उपयोगकर्ता</string>
+
+    <string name="user_document_not_found">उपयोगकर्ता दस्तावेज़ नहीं मिला</string>
+    <string name="firestore_read_failed">Firestore पढ़ना विफल हुआ: %1$s</string>
+
+    <string name="logout_title">लॉग आउट</string>
+    <string name="logout_message">क्या आप वाकई लॉग आउट करना चाहते हैं?</string>
+    <string name="yes">हाँ</string>
+    <string name="cancel">रद्द करें</string>
+
+    <string name="my_activities_clicked">मेरी गतिविधियाँ चुनी गईं</string>
+    <string name="airport_shuttle_clicked">एयरपोर्ट शटल चुना गया</string>
+    <string name="wishlist_clicked">विशलिस्ट चुनी गई</string>
+
+    <string name="close_drawer">नेविगेशन ड्रॉअर बंद करें</string>
+
+    <string name="nav_header_name">Smart Explorer</string>
+    <string name="nav_header_subtitle">श्रीलंका खोजें</string>
+
+    <string name="side_nav_activities_title">मेरी गतिविधियाँ</string>
+    <string name="side_nav_settings_title">सेटिंग्स</string>
+    <string name="side_nav_places_title">निकटवर्ती स्थान</string>
+    <string name="side_nav_airport_shuttle_title">एयरपोर्ट शटल</string>
+    <string name="side_nav_languages_title">भाषा</string>
+    <string name="side_nav_wishlist_title">विशलिस्ट</string>
+    <string name="side_nav_about_title">जानकारी</string>
+    <string name="side_nav_login_title">लॉग इन</string>
+    <string name="side_nav_logout_title">लॉग आउट</string>
+
+    <string name="bottom_nav_home_title">होम</string>
+    <string name="bottom_nav_explore_title">एक्सप्लोर</string>
+    <string name="bottom_nav_map_title">मैप</string>
+    <string name="bottom_nav_booking_title">बुकिंग्स</string>
+    <string name="bottom_nav_profile_title">प्रोफ़ाइल</string>
+    <string name="search_hint">यहाँ खोजें</string>
+    <string name="hello_blank_fragment">खाली फ्रैगमेंट</string>
+
+    <string name="signin_title">साइन इन</string>
+    <string name="signin_subtitle">Smart Tourism में आपका फिर से स्वागत है</string>
+    <string name="email_hint">ईमेल</string>
+    <string name="password_hint">पासवर्ड</string>
+    <string name="forgot_password">पासवर्ड भूल गए?</string>
+    <string name="no_account_text">क्या आपका खाता नहीं है? </string>
+    <string name="sign_up">साइन अप</string>
+
+    <string name="tour_5_days">5 दिन</string>
+    <string name="tour_7_days">7 दिन</string>
+    <string name="tour_10_days">10 दिन</string>
+    <string name="tour_14_days">14 दिन</string>
+    <string name="default_package_title">5 दिन का टूर</string>
+    <string name="loading_route">रूट लोड हो रहा है...</string>
+
+    <string name="signup_title">साइन अप</string>
+    <string name="signup_subtitle">अपना Smart Tourism खाता बनाएँ</string>
+    <string name="first_name_hint">पहला नाम</string>
+    <string name="last_name_hint">अंतिम नाम</string>
+    <string name="country_hint">देश</string>
+    <string name="birthday_hint">जन्मतिथि</string>
+    <string name="retype_password_hint">पासवर्ड फिर से लिखें</string>
+    <string name="create_account">खाता बनाएँ</string>
+    <string name="already_have_account">क्या आपका पहले से खाता है? </string>
+
+    <string name="home_greeting">नमस्ते यात्री 👋</string>
+    <string name="home_title">श्रीलंका को और बेहतर तरीके से खोजें</string>
+    <string name="home_featured_tours">विशेष टूर</string>
+    <string name="home_featured_description">अवधि के अनुसार पैकेज चुनें और तैयार श्रीलंका यात्रा कार्यक्रम देखें।</string>
+    <string name="home_categories">श्रेणियाँ</string>
+    <string name="home_popular_packages">लोकप्रिय पैकेज</string>
+
+    <string name="profile_full_name">पूरा नाम</string>
+    <string name="profile_email_placeholder">user@email.com</string>
+    <string name="change_profile_pic">प्रोफ़ाइल चित्र बदलें</string>
+    <string name="personal_details">व्यक्तिगत विवरण</string>
+    <string name="profile_email_note">ईमेल परिवर्तन प्रोफ़ाइल विवरण से अलग संभाले जाने चाहिए।</string>
+    <string name="update_profile">प्रोफ़ाइल अपडेट करें</string>
+    <string name="delete_profile">प्रोफ़ाइल हटाएँ</string>
+
+    <string name="tour_package_title_sample">7 दिन का क्लासिक श्रीलंका टूर</string>
+    <string name="tour_package_description_sample">नेगोंबो • सिगिरिया • कैंडी • एल्ला • याला • गॉल</string>
+    <string name="tour_package_price_sample">$520</string>
+    <string name="view_details">विवरण देखें</string>
+
+    <string name="header_user_name">उपयोगकर्ता नाम</string>
+    <string name="header_user_email">user@email.com</string>
+    <string name="header_country">श्रीलंका</string>
+
+    <string name="my_activity_title">मेरी गतिविधियाँ</string>
+    <string name="my_activity_subtitle">अपने चुने हुए टूर प्रबंधित करें और चेकआउट पर जाएँ।</string>
+    <string name="remove_tour">टूर हटाएँ</string>
+    <string name="my_activity_empty_title">अभी कोई गतिविधि नहीं है</string>
+    <string name="my_activity_empty_message">आपके चुने हुए टूर यहाँ दिखाई देंगे।</string>
+    <string name="proceed_to_checkout">चेकआउट पर जाएँ</string>
+
+    <string name="tour_removed_success">टूर सफलतापूर्वक हटा दिया गया</string>
+    <string name="checkout_coming_soon">चेकआउट सुविधा जल्द आ रही है</string>
+
+</resources>

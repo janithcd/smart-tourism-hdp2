@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="choose_language">Выберите язык</string>
+    <string name="language_english">English</string>
+    <string name="language_sinhala">සිංහල</string>
+    <string name="language_hindi">हिन्दी</string>
+    <string name="language_french">Français</string>
+    <string name="language_german">Deutsch</string>
+    <string name="language_russian">Русский</string>
+
+    <string name="map_route_stops">Остановки маршрута</string>
+    <string name="map_nearby_highlights">Ближайшие достопримечательности</string>
+    <string name="map_places_attribution">Данные о местах предоставлены Google</string>
+    <string name="map_loading_attractions">Загрузка ближайших достопримечательностей...</string>
+    <string name="map_no_attractions">В пределах 25 км достопримечательности не найдены</string>
+
+    <string name="book_now">Забронировать</string>
+    <string name="booking_setup_next_step">Следующий шаг: настройка количества гостей и места встречи</string>
+
+    <string name="package_duration_label">Длительность</string>
+    <string name="package_price_label">Цена</string>
+    <string name="package_route_label">Маршрут</string>
+    <string name="package_overview_label">Обзор</string>
+    <string name="package_highlights_label">Основные моменты</string>
+
+    <string name="package_default_title">Туристический пакет</string>
+    <string name="package_default_duration">5 дней</string>
+    <string name="package_overview_sample">Тщательно продуманный тур по Шри-Ланке с культурой, красивыми видами и незабываемыми впечатлениями.</string>
+    <string name="package_highlights_empty">Основные моменты будут показаны здесь.</string>
+    <string name="package_overview_text">%1$s — это тщательно спланированный туристический пакет на %2$s, созданный для того, чтобы путешественники могли комфортно и удобно насладиться лучшими достопримечательностями Шри-Ланки.</string>
+
+    <string name="booking_setup_title">Настройка бронирования</string>
+    <string name="booking_setup_subtitle">Выберите количество путешественников, место посадки и ваш номер мобильного телефона.</string>
+    <string name="package_pax_label">Количество человек</string>
+    <string name="package_pickup_label">Место посадки</string>
+    <string name="package_mobile_label">Номер мобильного телефона</string>
+    <string name="package_select_pax_error">Пожалуйста, выберите количество человек</string>
+    <string name="package_select_pickup_error">Пожалуйста, выберите место посадки</string>
+    <string name="package_mobile_error_empty">Пожалуйста, введите ваш номер мобильного телефона</string>
+    <string name="package_mobile_error_invalid">Пожалуйста, введите действительный номер мобильного телефона</string>
+    <string name="saved_to_my_activities">Пакет сохранён в My Activities</string>
+
+    <string name="wishlist_title">Мой список желаемого</string>
+    <string name="wishlist_subtitle">Сохраняйте любимые туры и просматривайте их в любое время.</string>
+    <string name="wishlist_card_title">Сохранённые туристические пакеты</string>
+    <string name="wishlist_card_subtitle">Храните любимые поездки в одном месте для быстрого доступа.</string>
+    <string name="wishlist_saved_packages">Сохранённые пакеты</string>
+    <string name="wishlist_empty_title">Список желаемого пока пуст</string>
+    <string name="wishlist_empty_message">Нажмите на значок сердца, чтобы сохранить пакет в список желаемого.</string>
+
+    <string name="nearby_places_clicked">Выбраны ближайшие места</string>
+    <string name="settings_clicked">Выбраны настройки</string>
+    <string name="about_clicked">Выбран раздел «О приложении»</string>
+
+    <string name="guest_user">Гость</string>
+    <string name="no_email">Нет электронной почты</string>
+    <string name="no_country">Нет страны</string>
+    <string name="user_default_name">Пользователь</string>
+
+    <string name="user_document_not_found">Документ пользователя не найден</string>
+    <string name="firestore_read_failed">Не удалось прочитать Firestore: %1$s</string>
+
+    <string name="logout_title">Выйти</string>
+    <string name="logout_message">Вы уверены, что хотите выйти?</string>
+    <string name="yes">Да</string>
+    <string name="cancel">Отмена</string>
+
+    <string name="my_activities_clicked">Выбраны мои активности</string>
+    <string name="airport_shuttle_clicked">Выбран трансфер из аэропорта</string>
+    <string name="wishlist_clicked">Выбран список желаемого</string>
+
+    <string name="close_drawer">Закрыть панель навигации</string>
+
+    <string name="nav_header_name">Smart Explorer</string>
+    <string name="nav_header_subtitle">Откройте для себя Шри-Ланку</string>
+
+    <string name="side_nav_activities_title">Мои активности</string>
+    <string name="side_nav_settings_title">Настройки</string>
+    <string name="side_nav_places_title">Ближайшие места</string>
+    <string name="side_nav_airport_shuttle_title">Трансфер из аэропорта</string>
+    <string name="side_nav_languages_title">Язык</string>
+    <string name="side_nav_wishlist_title">Список желаемого</string>
+    <string name="side_nav_about_title">О приложении</string>
+    <string name="side_nav_login_title">Войти</string>
+    <string name="side_nav_logout_title">Выйти</string>
+
+    <string name="bottom_nav_home_title">Главная</string>
+    <string name="bottom_nav_explore_title">Обзор</string>
+    <string name="bottom_nav_map_title">Карта</string>
+    <string name="bottom_nav_booking_title">Бронирования</string>
+    <string name="bottom_nav_profile_title">Профиль</string>
+    <string name="search_hint">Искать здесь</string>
+    <string name="hello_blank_fragment">Пустой фрагмент</string>
+
+    <string name="signin_title">Войти</string>
+    <string name="signin_subtitle">С возвращением в Smart Tourism</string>
+    <string name="email_hint">Электронная почта</string>
+    <string name="password_hint">Пароль</string>
+    <string name="forgot_password">Забыли пароль?</string>
+    <string name="no_account_text">У вас нет аккаунта? </string>
+    <string name="sign_up">Зарегистрироваться</string>
+
+    <string name="tour_5_days">5 дней</string>
+    <string name="tour_7_days">7 дней</string>
+    <string name="tour_10_days">10 дней</string>
+    <string name="tour_14_days">14 дней</string>
+    <string name="default_package_title">Тур на 5 дней</string>
+    <string name="loading_route">Загрузка маршрута...</string>
+
+    <string name="signup_title">Регистрация</string>
+    <string name="signup_subtitle">Создайте свой аккаунт Smart Tourism</string>
+    <string name="first_name_hint">Имя</string>
+    <string name="last_name_hint">Фамилия</string>
+    <string name="country_hint">Страна</string>
+    <string name="birthday_hint">Дата рождения</string>
+    <string name="retype_password_hint">Повторите пароль</string>
+    <string name="create_account">Создать аккаунт</string>
+    <string name="already_have_account">У вас уже есть аккаунт? </string>
+
+    <string name="home_greeting">Здравствуйте, путешественник 👋</string>
+    <string name="home_title">Открывайте Шри-Ланку умнее</string>
+    <string name="home_featured_tours">Рекомендуемые туры</string>
+    <string name="home_featured_description">Выберите пакет по длительности и изучите готовые маршруты по Шри-Ланке.</string>
+    <string name="home_categories">Категории</string>
+    <string name="home_popular_packages">Популярные пакеты</string>
+
+    <string name="profile_full_name">Полное имя</string>
+    <string name="profile_email_placeholder">user@email.com</string>
+    <string name="change_profile_pic">Изменить фото профиля</string>
+    <string name="personal_details">Личные данные</string>
+    <string name="profile_email_note">Изменение электронной почты должно выполняться отдельно от данных профиля.</string>
+    <string name="update_profile">Обновить профиль</string>
+    <string name="delete_profile">Удалить профиль</string>
+
+    <string name="tour_package_title_sample">Классический тур по Шри-Ланке на 7 дней</string>
+    <string name="tour_package_description_sample">Негомбо • Сигирия • Канди • Элла • Яла • Галле</string>
+    <string name="tour_package_price_sample">$520</string>
+    <string name="view_details">Подробнее</string>
+
+    <string name="my_activity_title">Мои активности</string>
+    <string name="my_activity_subtitle">Управляйте выбранными турами и перейдите к оформлению заказа.</string>
+    <string name="remove_tour">Удалить тур</string>
+    <string name="my_activity_empty_title">Пока нет активностей</string>
+    <string name="my_activity_empty_message">Здесь будут отображаться выбранные вами туры.</string>
+    <string name="proceed_to_checkout">Перейти к оформлению</string>
+    <string name="tour_removed_success">Тур успешно удалён</string>
+    <string name="checkout_coming_soon">Оформление заказа скоро будет доступно</string>
+
+    <string name="header_user_name">Имя пользователя</string>
+    <string name="header_user_email">user@email.com</string>
+    <string name="header_country">Шри-Ланка</string>
+
+</resources>

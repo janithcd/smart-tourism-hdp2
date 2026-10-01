@@ -1,0 +1,67 @@
+plugins {
+    alias(libs.plugins.android.application)
+    id 'com.google.gms.google-services'
+}
+
+android {
+    namespace 'lk.janith.smart_tourism'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId "lk.janith.smart_tourism"
+        minSdk 24
+        targetSdk 36
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    buildFeatures {
+        viewBinding true
+    }
+
+}
+
+dependencies {
+    implementation libs.appcompat
+    implementation libs.material
+    implementation libs.activity
+    implementation libs.constraintlayout
+    implementation libs.picasso
+    implementation libs.glide
+
+    testImplementation libs.junit
+    androidTestImplementation libs.ext.junit
+    androidTestImplementation libs.espresso.core
+
+    compileOnly("org.projectlombok:lombok:1.18.44")
+    annotationProcessor("org.projectlombok:lombok:1.18.44")
+
+
+    implementation platform(libs.firebase.bom)
+    implementation libs.firebase.analytics
+
+    implementation(libs.firebase.auth)
+
+    implementation(libs.firebase.firestore)
+
+
+    implementation "com.google.android.gms:play-services-maps:20.0.0"
+    implementation "com.google.maps.android:android-maps-utils:4.0.0"
+
+
+    implementation "androidx.appcompat:appcompat:1.7.0"
+}

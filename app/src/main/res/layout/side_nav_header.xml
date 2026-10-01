@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="190dp"
+    android:background="@color/md_theme_primaryContainer"
+    android:padding="20dp">
+
+    <ImageView
+        android:id="@+id/headerLogo"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="top|end"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:src="@drawable/splash_logo"
+        tools:ignore="ContentDescription" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/headerAvatar"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_marginBottom="12dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/account_circle_24px"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/headerName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/header_user_name"
+            android:textColor="@color/md_theme_onPrimaryContainer"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/headerEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/header_user_email"
+            android:textColor="@color/md_theme_onPrimaryContainer"
+            android:textSize="14sp"
+            android:alpha="0.90" />
+
+        <TextView
+            android:id="@+id/headerCountry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@string/header_country"
+            android:textColor="@color/md_theme_onPrimaryContainer"
+            android:textSize="14sp"
+            android:alpha="0.80"
+            android:visibility="invisible" />
+
+    </LinearLayout>
+
+</FrameLayout>

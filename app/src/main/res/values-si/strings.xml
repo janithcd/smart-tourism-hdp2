@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="choose_language">භාෂාව තෝරන්න</string>
+    <string name="language_english">English</string>
+    <string name="language_sinhala">සිංහල</string>
+    <string name="language_hindi">हिन्दी</string>
+    <string name="language_french">Français</string>
+    <string name="language_german">Deutsch</string>
+    <string name="language_russian">Русский</string>
+
+    <string name="map_route_stops">මාර්ගයේ නතරවන ස්ථාන</string>
+    <string name="map_nearby_highlights">ආසන්න විශේෂ ස්ථාන</string>
+    <string name="map_places_attribution">ස්ථාන දත්ත Google වෙතින්</string>
+    <string name="map_loading_attractions">ආසන්න ආකර්ෂණීය ස්ථාන පූරණය වෙමින්...</string>
+    <string name="map_no_attractions">කි.මී. 25 ඇතුළත ආකර්ෂණීය ස්ථාන හමු නොවීය</string>
+
+    <string name="book_now">දැන් වෙන් කරන්න</string>
+    <string name="booking_setup_next_step">ඊළඟ පියවර: pax සහ pickup සැකසුම</string>
+
+    <string name="package_duration_label">කාලය</string>
+    <string name="package_price_label">මිල</string>
+    <string name="package_route_label">මාර්ගය</string>
+    <string name="package_overview_label">සාරාංශය</string>
+    <string name="package_highlights_label">විශේෂාංග</string>
+
+    <string name="package_default_title">සංචාර පැකේජය</string>
+    <string name="package_default_duration">දින 5</string>
+    <string name="package_overview_sample">සංස්කෘතිය, දර්ශනීය ස්ථාන සහ අමතක නොවන සංචාර අත්දැකීම් සමඟ සැලසුම් කළ ශ්‍රී ලංකා සංචාරයකි.</string>
+    <string name="package_highlights_empty">විශේෂාංග මෙහි පෙන්වනු ලැබේ.</string>
+    <string name="package_overview_text">%1$s යනු සංචාරකයින්ට ශ්‍රී ලංකාවේ හොඳම විශේෂ ස්ථාන සුවපහසුවෙන් හා පහසුවෙන් අත්විඳීමට උපකාරී වන %2$s සම්පූර්ණ සැලසුම් කළ සංචාර පැකේජයකි.</string>
+
+    <string name="booking_setup_title">වෙන් කිරීමේ සැකසුම</string>
+    <string name="booking_setup_subtitle">සංචාරකයින් ගණන, pickup ස්ථානය සහ ඔබගේ ජංගම දුරකථන අංකය තෝරන්න.</string>
+    <string name="package_pax_label">පුද්ගලයින් ගණන</string>
+    <string name="package_pickup_label">Pickup ස්ථානය</string>
+    <string name="package_mobile_label">ජංගම දුරකථන අංකය</string>
+    <string name="package_select_pax_error">කරුණාකර පුද්ගලයින් ගණන තෝරන්න</string>
+    <string name="package_select_pickup_error">කරුණාකර pickup ස්ථානය තෝරන්න</string>
+    <string name="package_mobile_error_empty">කරුණාකර ඔබගේ ජංගම දුරකථන අංකය ඇතුළත් කරන්න</string>
+    <string name="package_mobile_error_invalid">කරුණාකර වලංගු ජංගම දුරකථන අංකයක් ඇතුළත් කරන්න</string>
+    <string name="saved_to_my_activities">පැකේජය My Activities වෙත සුරකින ලදී</string>
+
+    <string name="wishlist_title">මගේ අභිලාෂ ලැයිස්තුව</string>
+    <string name="wishlist_subtitle">ඔබේ ප්‍රියතම සංචාර සුරකින්න සහ ඕනෑම වේලාවක බලන්න.</string>
+    <string name="wishlist_card_title">සුරකින ලද සංචාර පැකේජ</string>
+    <string name="wishlist_card_subtitle">ඉක්මන් ප්‍රවේශය සඳහා ඔබේ ප්‍රියතම සංචාර එකම තැනක තබා ගන්න.</string>
+    <string name="wishlist_saved_packages">සුරකින ලද පැකේජ</string>
+    <string name="wishlist_empty_title">තවම අභිලාෂ අයිතම නොමැත</string>
+    <string name="wishlist_empty_message">පැකේජයක් ඔබේ අභිලාෂ ලැයිස්තුවට සුරැකීමට හෘද සංකේතය තට්ටු කරන්න.</string>
+
+    <string name="nearby_places_clicked">ආසන්න ස්ථාන තෝරා ඇත</string>
+    <string name="settings_clicked">සැකසුම් තෝරා ඇත</string>
+    <string name="about_clicked">විස්තර තෝරා ඇත</string>
+
+    <string name="guest_user">අමුත්තා</string>
+    <string name="no_email">ඊමේල් නොමැත</string>
+    <string name="no_country">රටක් නොමැත</string>
+    <string name="user_default_name">පරිශීලකයා</string>
+
+    <string name="user_document_not_found">පරිශීලක ලේඛනය සොයාගත නොහැකි විය</string>
+    <string name="firestore_read_failed">Firestore කියවීම අසාර්ථක විය: %1$s</string>
+
+    <string name="logout_title">ඉවත් වන්න</string>
+    <string name="logout_message">ඔබට පිටවීමට අවශ්‍ය බව තහවුරුද?</string>
+    <string name="yes">ඔව්</string>
+    <string name="cancel">අවලංගු කරන්න</string>
+
+    <string name="my_activities_clicked">මගේ ක්‍රියාකාරකම් තෝරා ඇත</string>
+    <string name="airport_shuttle_clicked">ගුවන්තොටුපළ ෂටල් තෝරා ඇත</string>
+    <string name="wishlist_clicked">අභිලාෂ ලැයිස්තුව තෝරා ඇත</string>
+
+    <string name="close_drawer">නාවිගේෂන් පැනලය වසන්න</string>
+
+    <string name="nav_header_name">Smart Explorer</string>
+    <string name="nav_header_subtitle">ශ්‍රී ලංකාව සොයන්න</string>
+
+    <string name="side_nav_activities_title">මගේ ක්‍රියාකාරකම්</string>
+    <string name="side_nav_settings_title">සැකසුම්</string>
+    <string name="side_nav_places_title">ආසන්න ස්ථාන</string>
+    <string name="side_nav_airport_shuttle_title">ගුවන්තොටුපළ ෂටල්</string>
+    <string name="side_nav_languages_title">භාෂාව</string>
+    <string name="side_nav_wishlist_title">අභිලාෂ ලැයිස්තුව</string>
+    <string name="side_nav_about_title">විස්තර</string>
+    <string name="side_nav_login_title">ඇතුල් වන්න</string>
+    <string name="side_nav_logout_title">ඉවත් වන්න</string>
+
+    <string name="bottom_nav_home_title">මුල් පිටුව</string>
+    <string name="bottom_nav_explore_title">සොයන්න</string>
+    <string name="bottom_nav_map_title">සිතියම</string>
+    <string name="bottom_nav_booking_title">වෙන් කිරීම්</string>
+    <string name="bottom_nav_profile_title">පැතිකඩ</string>
+    <string name="search_hint">මෙහි සොයන්න</string>
+    <string name="hello_blank_fragment">හිස් කොටස</string>
+
+    <string name="signin_title">ඇතුල් වන්න</string>
+    <string name="signin_subtitle">Smart Tourism වෙත නැවත සාදරයෙන් පිළිගනිමු</string>
+    <string name="email_hint">ඊමේල්</string>
+    <string name="password_hint">මුරපදය</string>
+    <string name="forgot_password">මුරපදය අමතකද?</string>
+    <string name="no_account_text">ගිණුමක් නැද්ද? </string>
+    <string name="sign_up">ලියාපදිංචි වන්න</string>
+
+    <string name="tour_5_days">දින 5</string>
+    <string name="tour_7_days">දින 7</string>
+    <string name="tour_10_days">දින 10</string>
+    <string name="tour_14_days">දින 14</string>
+    <string name="default_package_title">දින 5 සංචාරය</string>
+    <string name="loading_route">මාර්ගය පූරණය වෙමින්...</string>
+
+    <string name="signup_title">ලියාපදිංචි වන්න</string>
+    <string name="signup_subtitle">ඔබගේ Smart Tourism ගිණුම සාදන්න</string>
+    <string name="first_name_hint">මුල් නම</string>
+    <string name="last_name_hint">අවසන් නම</string>
+    <string name="country_hint">රට</string>
+    <string name="birthday_hint">උපන්දිනය</string>
+    <string name="retype_password_hint">මුරපදය නැවත ටයිප් කරන්න</string>
+    <string name="create_account">ගිණුම සාදන්න</string>
+    <string name="already_have_account">දැනටමත් ගිණුමක් තිබේද? </string>
+
+    <string name="home_greeting">ආයුබෝවන් සංචාරකයනි 👋</string>
+    <string name="home_title">ශ්‍රී ලංකාව වඩා හොඳින් සොයන්න</string>
+    <string name="home_featured_tours">විශේෂ සංචාර</string>
+    <string name="home_featured_description">කාලසීමාව අනුව පැකේජයක් තෝරාගෙන සූදානම් කළ ශ්‍රී ලංකා සංචාර සැලසුම් සොයන්න.</string>
+    <string name="home_categories">කාණ්ඩ</string>
+    <string name="home_popular_packages">ජනප්‍රිය පැකේජ</string>
+
+    <string name="profile_full_name">සම්පූර්ණ නම</string>
+    <string name="profile_email_placeholder">user@email.com</string>
+    <string name="change_profile_pic">පැතිකඩ ඡායාරූපය වෙනස් කරන්න</string>
+    <string name="personal_details">පුද්ගලික තොරතුරු</string>
+    <string name="profile_email_note">ඊමේල් වෙනස් කිරීම පැතිකඩ තොරතුරු වලින් වෙනම කළ යුතුය.</string>
+    <string name="update_profile">පැතිකඩ යාවත්කාලීන කරන්න</string>
+    <string name="delete_profile">පැතිකඩ මකන්න</string>
+
+    <string name="tour_package_title_sample">දින 7 ශ්‍රී ලංකාවේ සාම්ප්‍රදායික සංචාරය</string>
+    <string name="tour_package_description_sample">නෙගොම්බෝ • සීගිරිය • මහනුවර • ඇල්ල • යාල • ගාල්ල</string>
+    <string name="tour_package_price_sample">$520</string>
+    <string name="view_details">විස්තර බලන්න</string>
+
+    <string name="header_user_name">පරිශීලක නම</string>
+    <string name="header_user_email">user@email.com</string>
+    <string name="header_country">ශ්‍රී ලංකාව</string>
+
+    <string name="my_activity_title">මගේ ක්‍රියාකාරකම්</string>
+    <string name="my_activity_subtitle">ඔබ තෝරාගත් සංචාර කළමනාකරණය කර checkout වෙත යන්න.</string>
+    <string name="remove_tour">සංචාරය ඉවත් කරන්න</string>
+    <string name="my_activity_empty_title">තවමත් ක්‍රියාකාරකම් නොමැත</string>
+    <string name="my_activity_empty_message">ඔබ තෝරාගත් සංචාර මෙහි පෙන්වනු ඇත.</string>
+    <string name="proceed_to_checkout">Checkout වෙත යන්න</string>
+
+
+
+</resources>

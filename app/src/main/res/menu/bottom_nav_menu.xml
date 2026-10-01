@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/bottom_home"
+            android:icon="@drawable/home_24px"
+            android:title="@string/bottom_nav_home_title" />
+
+        <item
+            android:id="@+id/bottom_map"
+            android:icon="@drawable/map_24px"
+            android:title="@string/bottom_nav_map_title" />
+
+        <item
+            android:id="@+id/bottom_bookings"
+            android:icon="@drawable/calendar_today_24px"
+            android:title="@string/bottom_nav_booking_title" />
+
+        <item
+            android:id="@+id/bottom_explore"
+            android:icon="@drawable/explore_24px"
+            android:title="@string/bottom_nav_explore_title" />
+
+        <item
+            android:id="@+id/bottom_profile"
+            android:icon="@drawable/account_circle_24px"
+            android:title="@string/bottom_nav_profile_title" />
+    </group>
+
+</menu>

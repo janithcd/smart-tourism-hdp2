@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="choose_language">Sprache auswählen</string>
+    <string name="language_english">English</string>
+    <string name="language_sinhala">සිංහල</string>
+    <string name="language_hindi">हिन्दी</string>
+    <string name="language_french">Français</string>
+    <string name="language_german">Deutsch</string>
+    <string name="language_russian">Русский</string>
+
+    <string name="map_route_stops">Routenstopps</string>
+    <string name="map_nearby_highlights">Sehenswürdigkeiten in der Nähe</string>
+    <string name="map_places_attribution">Ortsdaten von Google</string>
+    <string name="map_loading_attractions">Nahegelegene Sehenswürdigkeiten werden geladen...</string>
+    <string name="map_no_attractions">Keine Sehenswürdigkeiten innerhalb von 25 km gefunden</string>
+
+    <string name="book_now">Jetzt buchen</string>
+    <string name="booking_setup_next_step">Nächster Schritt: Personenanzahl und Abholort einrichten</string>
+
+    <string name="package_duration_label">Dauer</string>
+    <string name="package_price_label">Preis</string>
+    <string name="package_route_label">Route</string>
+    <string name="package_overview_label">Überblick</string>
+    <string name="package_highlights_label">Höhepunkte</string>
+
+    <string name="package_default_title">Reisepaket</string>
+    <string name="package_default_duration">5 Tage</string>
+    <string name="package_overview_sample">Eine sorgfältig geplante Sri-Lanka-Reise mit Kultur, Ausblicken und unvergesslichen Reiseerlebnissen.</string>
+    <string name="package_highlights_empty">Höhepunkte werden hier angezeigt.</string>
+    <string name="package_overview_text">%1$s ist ein sorgfältig geplantes %2$s-Reisepaket, das Reisenden helfen soll, die schönsten Höhepunkte Sri Lankas bequem und reibungslos zu erleben.</string>
+
+    <string name="booking_setup_title">Buchungseinrichtung</string>
+    <string name="booking_setup_subtitle">Wählen Sie die Anzahl der Reisenden, den Abholort und Ihre Mobilnummer aus.</string>
+    <string name="package_pax_label">Anzahl der Personen</string>
+    <string name="package_pickup_label">Abholort</string>
+    <string name="package_mobile_label">Mobilnummer</string>
+    <string name="package_select_pax_error">Bitte wählen Sie die Anzahl der Personen aus</string>
+    <string name="package_select_pickup_error">Bitte wählen Sie einen Abholort aus</string>
+    <string name="package_mobile_error_empty">Bitte geben Sie Ihre Mobilnummer ein</string>
+    <string name="package_mobile_error_invalid">Bitte geben Sie eine gültige Mobilnummer ein</string>
+    <string name="saved_to_my_activities">Paket wurde in My Activities gespeichert</string>
+
+    <string name="wishlist_title">Meine Wunschliste</string>
+    <string name="wishlist_subtitle">Speichern Sie Ihre Lieblingstouren und sehen Sie sie jederzeit an.</string>
+    <string name="wishlist_card_title">Gespeicherte Reisepakete</string>
+    <string name="wishlist_card_subtitle">Behalten Sie Ihre Lieblingsreisen an einem Ort für schnellen Zugriff.</string>
+    <string name="wishlist_saved_packages">Gespeicherte Pakete</string>
+    <string name="wishlist_empty_title">Noch keine Wunschlisten-Einträge</string>
+    <string name="wishlist_empty_message">Tippen Sie auf das Herzsymbol, um ein Paket zu Ihrer Wunschliste hinzuzufügen.</string>
+
+    <string name="nearby_places_clicked">Orte in der Nähe ausgewählt</string>
+    <string name="settings_clicked">Einstellungen ausgewählt</string>
+    <string name="about_clicked">Über uns ausgewählt</string>
+
+    <string name="guest_user">Gast</string>
+    <string name="no_email">Keine E-Mail</string>
+    <string name="no_country">Kein Land</string>
+    <string name="user_default_name">Benutzer</string>
+
+    <string name="user_document_not_found">Benutzerdokument nicht gefunden</string>
+    <string name="firestore_read_failed">Firestore-Lesen fehlgeschlagen: %1$s</string>
+
+    <string name="logout_title">Abmelden</string>
+    <string name="logout_message">Möchten Sie sich wirklich abmelden?</string>
+    <string name="yes">Ja</string>
+    <string name="cancel">Abbrechen</string>
+
+    <string name="my_activities_clicked">Meine Aktivitäten ausgewählt</string>
+    <string name="airport_shuttle_clicked">Flughafen-Shuttle ausgewählt</string>
+    <string name="wishlist_clicked">Wunschliste ausgewählt</string>
+
+    <string name="close_drawer">Navigationsmenü schließen</string>
+
+    <string name="nav_header_name">Smart Explorer</string>
+    <string name="nav_header_subtitle">Entdecken Sie Sri Lanka</string>
+
+    <string name="side_nav_activities_title">Meine Aktivitäten</string>
+    <string name="side_nav_settings_title">Einstellungen</string>
+    <string name="side_nav_places_title">Orte in der Nähe</string>
+    <string name="side_nav_airport_shuttle_title">Flughafen-Shuttle</string>
+    <string name="side_nav_languages_title">Sprache</string>
+    <string name="side_nav_wishlist_title">Wunschliste</string>
+    <string name="side_nav_about_title">Über uns</string>
+    <string name="side_nav_login_title">Anmelden</string>
+    <string name="side_nav_logout_title">Abmelden</string>
+
+    <string name="bottom_nav_home_title">Startseite</string>
+    <string name="bottom_nav_explore_title">Entdecken</string>
+    <string name="bottom_nav_map_title">Karte</string>
+    <string name="bottom_nav_booking_title">Buchungen</string>
+    <string name="bottom_nav_profile_title">Profil</string>
+    <string name="search_hint">Hier suchen</string>
+    <string name="hello_blank_fragment">Leeres Fragment</string>
+
+    <string name="signin_title">Anmelden</string>
+    <string name="signin_subtitle">Willkommen zurück bei Smart Tourism</string>
+    <string name="email_hint">E-Mail</string>
+    <string name="password_hint">Passwort</string>
+    <string name="forgot_password">Passwort vergessen?</string>
+    <string name="no_account_text">Sie haben noch kein Konto? </string>
+    <string name="sign_up">Registrieren</string>
+
+    <string name="tour_5_days">5 Tage</string>
+    <string name="tour_7_days">7 Tage</string>
+    <string name="tour_10_days">10 Tage</string>
+    <string name="tour_14_days">14 Tage</string>
+    <string name="default_package_title">5-Tage-Tour</string>
+    <string name="loading_route">Route wird geladen...</string>
+
+    <string name="signup_title">Registrieren</string>
+    <string name="signup_subtitle">Erstellen Sie Ihr Smart Tourism-Konto</string>
+    <string name="first_name_hint">Vorname</string>
+    <string name="last_name_hint">Nachname</string>
+    <string name="country_hint">Land</string>
+    <string name="birthday_hint">Geburtsdatum</string>
+    <string name="retype_password_hint">Passwort erneut eingeben</string>
+    <string name="create_account">Konto erstellen</string>
+    <string name="already_have_account">Haben Sie bereits ein Konto? </string>
+
+    <string name="home_greeting">Hallo Reisender 👋</string>
+    <string name="home_title">Entdecken Sie Sri Lanka intelligenter</string>
+    <string name="home_featured_tours">Empfohlene Touren</string>
+    <string name="home_featured_description">Wählen Sie ein Paket nach Dauer und entdecken Sie fertige Sri-Lanka-Reiserouten.</string>
+    <string name="home_categories">Kategorien</string>
+    <string name="home_popular_packages">Beliebte Pakete</string>
+
+    <string name="profile_full_name">Vollständiger Name</string>
+    <string name="profile_email_placeholder">user@email.com</string>
+    <string name="change_profile_pic">Profilbild ändern</string>
+    <string name="personal_details">Persönliche Daten</string>
+    <string name="profile_email_note">Änderungen der E-Mail sollten getrennt von den Profildaten behandelt werden.</string>
+    <string name="update_profile">Profil aktualisieren</string>
+    <string name="delete_profile">Profil löschen</string>
+
+    <string name="tour_package_title_sample">7 Tage klassisches Sri Lanka</string>
+    <string name="tour_package_description_sample">Negombo • Sigiriya • Kandy • Ella • Yala • Galle</string>
+    <string name="tour_package_price_sample">$520</string>
+    <string name="view_details">Details anzeigen</string>
+
+    <string name="header_user_name">Benutzername</string>
+    <string name="header_user_email">user@email.com</string>
+    <string name="header_country">Sri Lanka</string>
+
+    <string name="my_activity_title">Meine Aktivitäten</string>
+    <string name="my_activity_subtitle">Verwalten Sie Ihre ausgewählten Touren und fahren Sie mit dem Checkout fort.</string>
+    <string name="remove_tour">Tour entfernen</string>
+    <string name="my_activity_empty_title">Noch keine Aktivitäten</string>
+    <string name="my_activity_empty_message">Ihre ausgewählten Touren werden hier angezeigt.</string>
+    <string name="proceed_to_checkout">Zum Checkout</string>
+
+    <string name="tour_removed_success">Tour erfolgreich entfernt</string>
+    <string name="checkout_coming_soon">Checkout kommt bald</string>
+
+</resources>
