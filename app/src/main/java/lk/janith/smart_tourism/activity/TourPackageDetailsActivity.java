@@ -1,6 +1,7 @@
 package lk.janith.smart_tourism.activity;
 
 import android.content.Intent;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -15,6 +16,7 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -28,14 +30,19 @@ import lk.janith.smart_tourism.R;
 import lk.janith.smart_tourism.data.BookingStore;
 import lk.janith.smart_tourism.data.ReviewStore;
 import lk.janith.smart_tourism.data.ServiceCatalog;
+import lk.janith.smart_tourism.model.TourPackage;
 
 public class TourPackageDetailsActivity extends AppCompatActivity {
 
+    public static final String EXTRA_PACKAGE_ID = "packageId";
     public static final String EXTRA_TITLE = "extra_title";
     public static final String EXTRA_DURATION = "extra_duration";
     public static final String EXTRA_PRICE = "extra_price";
     public static final String EXTRA_DESCRIPTION = "extra_description";
     public static final String EXTRA_IMAGE_RES_ID = "extra_image_res_id";
+    public static final String EXTRA_IMAGE_URL = "extra_image_url";
+    public static final String EXTRA_ROUTE = "extra_route";
+    public static final String EXTRA_OVERVIEW = "extra_overview";
     public static final String EXTRA_SERVICE_TYPE = "extra_service_type";
     public static final String TYPE_TOUR = "Tour";
 
@@ -67,6 +74,20 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
     private String description;
     private String serviceType;
     private int imageResId;
+    private String imageUrl;
+
+    public static Intent intentFor(Context context, TourPackage tour) {
+        return new Intent(context, TourPackageDetailsActivity.class)
+                .putExtra(EXTRA_PACKAGE_ID, tour.getId())
+                .putExtra(EXTRA_TITLE, tour.getTitle())
+                .putExtra(EXTRA_DURATION, tour.getDuration())
+                .putExtra(EXTRA_PRICE, tour.getPrice())
+                .putExtra(EXTRA_DESCRIPTION, tour.getDescription())
+                .putExtra(EXTRA_ROUTE, tour.getRoute())
+                .putExtra(EXTRA_OVERVIEW, tour.getOverview())
+                .putExtra(EXTRA_IMAGE_URL, tour.getImageUrl())
+                .putExtra(EXTRA_IMAGE_RES_ID, tour.getImageResId());
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +120,9 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
         duration = getIntent().getStringExtra(EXTRA_DURATION);
         price = getIntent().getStringExtra(EXTRA_PRICE);
         description = getIntent().getStringExtra(EXTRA_DESCRIPTION);
+        String route = getIntent().getStringExtra(EXTRA_ROUTE);
+        String overview = getIntent().getStringExtra(EXTRA_OVERVIEW);
+        imageUrl = getIntent().getStringExtra(EXTRA_IMAGE_URL);
         String requestedType = getIntent().getStringExtra(EXTRA_SERVICE_TYPE);
         serviceType = ServiceCatalog.VEHICLE.equals(requestedType) || ServiceCatalog.GUIDE.equals(requestedType)
                 ? requestedType : TYPE_TOUR;
@@ -107,8 +131,13 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
         txtTitle.setText(title != null ? title : "");
         txtDuration.setText(duration != null ? duration : "");
         txtPrice.setText(price != null ? price : "");
-        txtRoute.setText(description != null ? description : "");
-        imgPackage.setImageResource(imageResId);
+        txtRoute.setText(route != null && !route.trim().isEmpty() ? route
+                : description != null ? description : "");
+        if (imageUrl != null && !imageUrl.trim().isEmpty()) {
+            Glide.with(this).load(imageUrl).placeholder(imageResId).error(imageResId).into(imgPackage);
+        } else {
+            imgPackage.setImageResource(imageResId);
+        }
 
         ((TextView) findViewById(R.id.detailType)).setText(getString(R.string.service_detail_type, serviceType));
         if (!TYPE_TOUR.equals(serviceType)) {
@@ -120,8 +149,8 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
             ((TextView) findViewById(R.id.detailHighlightsLabel)).setText(R.string.service_highlights_label);
         }
 
-        txtOverview.setText(TYPE_TOUR.equals(serviceType)
-                ? buildOverview(title, duration)
+        txtOverview.setText(overview != null && !overview.trim().isEmpty() ? overview
+                : TYPE_TOUR.equals(serviceType) ? buildOverview(title, duration)
                 : getString(R.string.service_overview_text, title, serviceType.toLowerCase(Locale.ROOT)));
         txtHighlights.setText(buildHighlights(description));
 
@@ -301,8 +330,9 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
                 .putString("package_service_type", serviceType)
                 .putString("package_duration", duration)
                 .putString("package_price", price)
-                .putString("package_description", description)
+                .putString("package_description", txtRoute.getText().toString())
                 .putInt("package_image_res_id", imageResId)
+                .putString("package_image_url", imageUrl != null ? imageUrl : "")
                 .putString("package_pax", paxValue)
                 .putString("package_pickup_location", pickupValue)
                 .putString("package_mobile_number", mobileValue)

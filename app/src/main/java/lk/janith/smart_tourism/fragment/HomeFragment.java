@@ -1,10 +1,10 @@
 package lk.janith.smart_tourism.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +22,7 @@ import lk.janith.smart_tourism.activity.TourPackageDetailsActivity;
 import lk.janith.smart_tourism.adapter.CategoryAdapter;
 import lk.janith.smart_tourism.adapter.HomeSliderAdapter;
 import lk.janith.smart_tourism.adapter.TourPackageAdapter;
+import lk.janith.smart_tourism.data.FirebaseTourCatalog;
 import lk.janith.smart_tourism.data.TourCatalog;
 import lk.janith.smart_tourism.model.Category;
 import lk.janith.smart_tourism.model.TourPackage;
@@ -32,13 +33,17 @@ public class HomeFragment extends Fragment {
     private LinearLayout layoutDots;
     private RecyclerView recyclerCategories;
     private RecyclerView recyclerPackages;
+    private TextView catalogSource;
 
     private final List<Integer> sliderImages = new ArrayList<>();
     private final List<Category> categoryList = new ArrayList<>();
     private final List<TourPackage> packageList = new ArrayList<>();
+    private final List<TourPackage> availablePackages = new ArrayList<>();
 
     private CategoryAdapter categoryAdapter;
     private TourPackageAdapter packageAdapter;
+    private boolean liveCatalog;
+    private String selectedCategoryId;
 
     public HomeFragment() {
         super(R.layout.fragment_home);
@@ -48,14 +53,20 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        liveCatalog = false;
+        selectedCategoryId = null;
+        packageAdapter = null;
+
         viewPagerSlider = view.findViewById(R.id.viewPagerSlider);
         layoutDots = view.findViewById(R.id.layoutDots);
         recyclerCategories = view.findViewById(R.id.recyclerCategories);
         recyclerPackages = view.findViewById(R.id.recyclerPackages);
+        catalogSource = view.findViewById(R.id.homeCatalogSource);
 
         setupSlider();
         setupCategories();
         setupPackages();
+        loadLivePackages();
     }
 
     private void setupSlider() {
@@ -103,6 +114,10 @@ public class HomeFragment extends Fragment {
 
             category.setSelected(true);
             categoryAdapter.notifyDataSetChanged();
+            if (liveCatalog) {
+                selectedCategoryId = category.getId();
+                showSelectedPackages();
+            }
         });
 
         recyclerCategories.setAdapter(categoryAdapter);
@@ -112,20 +127,62 @@ public class HomeFragment extends Fragment {
         recyclerPackages.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerPackages.setNestedScrollingEnabled(false);
 
-        packageList.clear();
-        packageList.addAll(TourCatalog.getPackages());
+        availablePackages.clear();
+        availablePackages.addAll(TourCatalog.getPackages());
+        showSelectedPackages();
 
         packageAdapter = new TourPackageAdapter(packageList, tourPackage -> {
-            Intent intent = new Intent(requireContext(), TourPackageDetailsActivity.class);
-            intent.putExtra(TourPackageDetailsActivity.EXTRA_TITLE, tourPackage.getTitle());
-            intent.putExtra(TourPackageDetailsActivity.EXTRA_DURATION, tourPackage.getDuration());
-            intent.putExtra(TourPackageDetailsActivity.EXTRA_PRICE, tourPackage.getPrice());
-            intent.putExtra(TourPackageDetailsActivity.EXTRA_DESCRIPTION, tourPackage.getDescription());
-            intent.putExtra(TourPackageDetailsActivity.EXTRA_IMAGE_RES_ID, tourPackage.getImageResId());
-            startActivity(intent);
+            startActivity(TourPackageDetailsActivity.intentFor(requireContext(), tourPackage));
         });
 
         recyclerPackages.setAdapter(packageAdapter);
+    }
+
+    private void loadLivePackages() {
+        FirebaseTourCatalog.loadPackages(new FirebaseTourCatalog.Listener<TourPackage>() {
+            @Override public void onLoaded(List<TourPackage> packages) {
+                if (!isAdded() || getView() == null || packages.isEmpty()) return;
+                liveCatalog = true;
+                selectedCategoryId = null;
+                availablePackages.clear();
+                availablePackages.addAll(packages);
+                categoryList.clear();
+                categoryList.add(new Category(getString(R.string.catalog_all_categories), true));
+                categoryAdapter.notifyDataSetChanged();
+                catalogSource.setText(R.string.catalog_live_tours_notice);
+                showSelectedPackages();
+                loadLiveCategories();
+            }
+
+            @Override public void onError(Exception error) {
+                // Keep the bundled sample catalogue available for an offline viva.
+            }
+        });
+    }
+
+    private void loadLiveCategories() {
+        FirebaseTourCatalog.loadCategories(new FirebaseTourCatalog.Listener<Category>() {
+            @Override public void onLoaded(List<Category> categories) {
+                if (!isAdded() || getView() == null || !liveCatalog) return;
+                categoryList.addAll(categories);
+                categoryAdapter.notifyDataSetChanged();
+            }
+
+            @Override public void onError(Exception error) {
+                // "All" still displays live packages if categories are unavailable.
+            }
+        });
+    }
+
+    private void showSelectedPackages() {
+        packageList.clear();
+        for (TourPackage tour : availablePackages) {
+            if (!liveCatalog || selectedCategoryId == null
+                    || selectedCategoryId.equals(tour.getCategoryId())) {
+                packageList.add(tour);
+            }
+        }
+        if (packageAdapter != null) packageAdapter.notifyDataSetChanged();
     }
 
     private void setupDots(int count, int currentPosition) {

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lk.janith.smart_tourism.R;
+import lk.janith.smart_tourism.activity.TourPackageDetailsActivity;
 import lk.janith.smart_tourism.adapter.TourPackageAdapter;
 import lk.janith.smart_tourism.model.TourPackage;
 
@@ -50,9 +51,8 @@ public class WishlistFragment extends Fragment {
 
         recyclerWishlist.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        adapter = new TourPackageAdapter(wishlist, tourPackage -> {
-            // Later you can open details screen here
-        });
+        adapter = new TourPackageAdapter(wishlist, tourPackage ->
+                startActivity(TourPackageDetailsActivity.intentFor(requireContext(), tourPackage)));
 
         recyclerWishlist.setAdapter(adapter);
 
@@ -85,28 +85,15 @@ public class WishlistFragment extends Fragment {
                 .collection("wishlist")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!isAdded() || getView() == null) return;
                     wishlist.clear();
 
                     for (com.google.firebase.firestore.DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
-                        String title = doc.getString("title");
-                        String duration = doc.getString("duration");
-                        String price = doc.getString("price");
-                        String description = doc.getString("description");
-                        Long imageResIdLong = doc.getLong("imageResId");
-
-                        int imageResId = imageResIdLong != null
-                                ? imageResIdLong.intValue()
-                                : R.drawable.location_on_24px;
-
-                        TourPackage tourPackage = new TourPackage(
-                                title != null ? title : "",
-                                duration != null ? duration : "",
-                                price != null ? price : "",
-                                description != null ? description : "",
-                                imageResId
-                        );
-
-                        wishlist.add(tourPackage);
+                        if (doc.getData() != null) {
+                            TourPackage tour = TourPackage.fromRecord(doc.getId(), doc.getData(),
+                                    R.drawable.sigiriya);
+                            if (!tour.getTitle().trim().isEmpty()) wishlist.add(tour);
+                        }
                     }
 
                     adapter.notifyDataSetChanged();
@@ -119,8 +106,10 @@ public class WishlistFragment extends Fragment {
                         emptyWishlistCard.setVisibility(View.GONE);
                     }
                 })
-                .addOnFailureListener(e ->
-                        Toast.makeText(requireContext(), "Failed to load wishlist: " + e.getMessage(), Toast.LENGTH_SHORT).show()
-                );
+                .addOnFailureListener(e -> {
+                    if (isAdded()) {
+                        Toast.makeText(requireContext(), "Failed to load wishlist: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }

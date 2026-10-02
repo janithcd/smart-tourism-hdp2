@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 
 import lk.janith.smart_tourism.R;
@@ -100,6 +101,7 @@ public class MyActivitiesFragment extends Fragment {
         String date = preferences.getString("package_travel_date", "");
         String time = preferences.getString("package_travel_time", "");
         int imageResId = preferences.getInt("package_image_res_id", R.drawable.location_on_24px);
+        String imageUrl = preferences.getString("package_image_url", "");
 
         boolean hasBooking = title != null && !title.trim().isEmpty();
 
@@ -116,7 +118,12 @@ public class MyActivitiesFragment extends Fragment {
         btnCheckout.setEnabled(true);
         btnCheckout.setAlpha(1f);
 
-        imgPackage.setImageResource(imageResId);
+        if (imageUrl != null && !imageUrl.trim().isEmpty()) {
+            Glide.with(this).load(imageUrl).placeholder(imageResId).error(imageResId).into(imgPackage);
+        } else {
+            Glide.with(this).clear(imgPackage);
+            imgPackage.setImageResource(imageResId);
+        }
         imgPackage.setScaleType("Tour".equals(type)
                 ? ImageView.ScaleType.CENTER_CROP : ImageView.ScaleType.CENTER_INSIDE);
         ((TextView) requireView().findViewById(R.id.activityServiceType)).setText(type);

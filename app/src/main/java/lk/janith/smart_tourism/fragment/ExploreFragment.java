@@ -24,6 +24,7 @@ import lk.janith.smart_tourism.R;
 import lk.janith.smart_tourism.activity.TourPackageDetailsActivity;
 import lk.janith.smart_tourism.adapter.TourPackageAdapter;
 import lk.janith.smart_tourism.adapter.TravelServiceAdapter;
+import lk.janith.smart_tourism.data.FirebaseTourCatalog;
 import lk.janith.smart_tourism.data.ServiceCatalog;
 import lk.janith.smart_tourism.data.TourCatalog;
 import lk.janith.smart_tourism.model.TourPackage;
@@ -40,6 +41,7 @@ public class ExploreFragment extends Fragment {
     private RecyclerView list;
     private TextInputEditText search;
     private TextView emptyState;
+    private TextView catalogSource;
     private int selectedTab;
 
     public ExploreFragment() {
@@ -49,19 +51,16 @@ public class ExploreFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        allPackages.clear();
+        allPackages.addAll(TourCatalog.getPackages());
         search = view.findViewById(R.id.editExploreSearch);
         list = view.findViewById(R.id.recyclerExplorePackages);
         emptyState = view.findViewById(R.id.exploreEmptyState);
+        catalogSource = view.findViewById(R.id.exploreCatalogSource);
 
         list.setLayoutManager(new LinearLayoutManager(requireContext()));
         tourAdapter = new TourPackageAdapter(filteredPackages, tourPackage -> {
-            Intent intent = new Intent(requireContext(), TourPackageDetailsActivity.class);
-            intent.putExtra(TourPackageDetailsActivity.EXTRA_TITLE, tourPackage.getTitle());
-            intent.putExtra(TourPackageDetailsActivity.EXTRA_DURATION, tourPackage.getDuration());
-            intent.putExtra(TourPackageDetailsActivity.EXTRA_PRICE, tourPackage.getPrice());
-            intent.putExtra(TourPackageDetailsActivity.EXTRA_DESCRIPTION, tourPackage.getDescription());
-            intent.putExtra(TourPackageDetailsActivity.EXTRA_IMAGE_RES_ID, tourPackage.getImageResId());
-            startActivity(intent);
+            startActivity(TourPackageDetailsActivity.intentFor(requireContext(), tourPackage));
         });
         serviceAdapter = new TravelServiceAdapter(filteredServices, service -> {
             Intent intent = new Intent(requireContext(), TourPackageDetailsActivity.class);
@@ -100,6 +99,23 @@ public class ExploreFragment extends Fragment {
                 filterItems();
             }
             @Override public void afterTextChanged(Editable s) { }
+        });
+        loadLivePackages();
+    }
+
+    private void loadLivePackages() {
+        FirebaseTourCatalog.loadPackages(new FirebaseTourCatalog.Listener<TourPackage>() {
+            @Override public void onLoaded(List<TourPackage> packages) {
+                if (!isAdded() || getView() == null || packages.isEmpty()) return;
+                allPackages.clear();
+                allPackages.addAll(packages);
+                catalogSource.setText(R.string.catalog_live_tours_notice);
+                filterItems();
+            }
+
+            @Override public void onError(Exception error) {
+                // The bundled tours, vehicles and guides are still browsable offline.
+            }
         });
     }
 
