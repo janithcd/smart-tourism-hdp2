@@ -59,10 +59,19 @@
                         android:src="@drawable/location_on_24px" />
 
                     <TextView
+                        android:id="@+id/activityServiceType"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:textColor="@color/md_theme_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
                         android:id="@+id/txtTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="14dp"
+                        android:layout_marginTop="4dp"
                         android:text="@string/package_default_title"
                         android:textColor="@color/md_theme_onSurface"
                         android:textSize="22sp"

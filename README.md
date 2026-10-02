@@ -1,6 +1,6 @@
 # Smart Tourism
 
-Android Java/XML application for Handheld Device Programming II. The current app has Firebase email/password authentication, profiles and wishlists in Firestore, a local tour catalogue, Google Maps, language resources, and a local demo booking and payment simulation.
+Android Java/XML application for Handheld Device Programming II. The current app has Firebase email/password authentication, profiles and wishlists in Firestore, sample tour/vehicle/guide catalogues, private on-device reviews, Google Maps, language resources, and a local demo booking and payment simulation.
 
 See [the proposal gap analysis](docs/proposal-gap-analysis.md) for feature coverage and the remaining viva work.
 
@@ -14,9 +14,9 @@ See [the proposal gap analysis](docs/proposal-gap-analysis.md) for feature cover
 
 ## Viva demo path
 
-Sign up or sign in → Home or Explore → open a tour → choose people, pickup, mobile number, travel date and pickup time → Book Now → My Activities → Continue to demo payment → choose Card (simulation), Mobile wallet (simulation), or Cash on arrival → Confirm demo booking → Bookings. Search for a destination on Explore and use the wishlist, profile, map, and language menu as other examples.
+Sign up or sign in → Explore → switch between Tours, Vehicles, and Guides → search and open a listing → choose people, pickup, mobile number, travel date and pickup time → Book Now → My Activities → Continue to demo payment → choose Card (simulation), Mobile wallet (simulation), or Cash on arrival → Confirm demo booking → Bookings. Open the listing again to save or edit a private 1–5 star review. Use the tour wishlist, profile, map, and language menu as other examples. Follow the [manual test checklist](docs/manual-test-checklist.md) when checking the build on a device.
 
-The booking confirmation writes a **local demo record** scoped to the signed-in user on that device, with the selected payment method and a simulated payment status. It does not collect card details, charge money, reserve a vehicle, contact a provider, or synchronize booking history to Firestore. The price shown comes from the static tour catalogue. Removing a booking removes only that local record. A local notification is shown after confirmation if the user allows notifications; this is not a push message from a provider.
+The booking confirmation writes a **local demo record** scoped to the signed-in user on that device, with the selected payment method and a simulated payment status. It does not collect card details, charge money, reserve a vehicle or guide, contact a provider, or synchronize booking history to Firestore. All listings and prices are illustrative. Removing a booking removes only that local record. Reviews are private to the signed-in account on the device and are not public ratings. A local notification is shown after confirmation if the user allows notifications; this is not a push message from a provider.
 
 ## Next work
 

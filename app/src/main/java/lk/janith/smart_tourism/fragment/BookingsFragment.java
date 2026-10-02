@@ -50,7 +50,11 @@ public class BookingsFragment extends Fragment {
         LayoutInflater inflater = LayoutInflater.from(requireContext());
         for (BookingStore.Booking booking : bookings) {
             View card = inflater.inflate(R.layout.item_booking, bookingList, false);
-            ((ImageView) card.findViewById(R.id.bookingImage)).setImageResource(booking.imageResId);
+            ImageView bookingImage = card.findViewById(R.id.bookingImage);
+            bookingImage.setImageResource(booking.imageResId);
+            bookingImage.setScaleType("Tour".equals(booking.type)
+                    ? ImageView.ScaleType.CENTER_CROP : ImageView.ScaleType.CENTER_INSIDE);
+            ((TextView) card.findViewById(R.id.bookingType)).setText(booking.type);
             ((TextView) card.findViewById(R.id.bookingTitle)).setText(booking.title);
             ((TextView) card.findViewById(R.id.bookingDate)).setText(
                     booking.time.isEmpty()

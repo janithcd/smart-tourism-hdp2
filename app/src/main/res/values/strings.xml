@@ -143,19 +143,40 @@
 
 
     <string name="my_activity_title">My Activities</string>
-    <string name="my_activity_subtitle">Manage your selected tours and continue to checkout.</string>
-    <string name="remove_tour">Remove Tour</string>
+    <string name="my_activity_subtitle">Manage your selected service and continue to the demo checkout.</string>
+    <string name="remove_tour">Remove service</string>
     <string name="my_activity_empty_title">No activities yet</string>
-    <string name="my_activity_empty_message">Your selected tours will appear here.</string>
+    <string name="my_activity_empty_message">Your selected tour, vehicle, or guide will appear here.</string>
     <string name="proceed_to_checkout">Proceed to Checkout</string>
 
     <string name="tour_removed_success">Tour removed successfully</string>
     <string name="checkout_coming_soon">Checkout coming soon</string>
 
-    <string name="explore_title">Explore tours</string>
-    <string name="explore_subtitle">Search the Sri Lanka tour catalogue by place or duration.</string>
-    <string name="explore_search_hint">Destination or tour name</string>
-    <string name="explore_empty">No tours match your search.</string>
+    <string name="explore_title">Explore services</string>
+    <string name="explore_subtitle">Browse tours, vehicles, and guides for a Sri Lanka trip.</string>
+    <string name="explore_tours_tab">Tours</string>
+    <string name="explore_vehicles_tab">Vehicles</string>
+    <string name="explore_guides_tab">Guides</string>
+    <string name="explore_demo_notice">Sample listings and prices for a project demo. Availability is not live.</string>
+    <string name="explore_search_hint">Search this category</string>
+    <string name="explore_empty">No services match your search in this category.</string>
+    <string name="service_image_description">Service icon</string>
+    <string name="service_detail_type">%1$s · Sample listing</string>
+    <string name="service_description_label">Service details</string>
+    <string name="service_highlights_label">Included highlights</string>
+    <string name="service_overview_text">%1$s is an illustrative %2$s service for trying the booking flow. The listed rate and availability are not confirmed by a provider.</string>
+    <string name="review_title">Your rating and review</string>
+    <string name="review_private_notice">Private demo feedback saved for your account on this device. Other travelers cannot see it.</string>
+    <string name="review_none">You have not saved a review for this listing.</string>
+    <string name="review_saved_status">Your saved rating: %1$d / 5</string>
+    <string name="review_comment_hint">Your review</string>
+    <string name="review_save">Save review</string>
+    <string name="review_remove">Remove review</string>
+    <string name="review_rating_required">Choose 1 to 5 stars.</string>
+    <string name="review_comment_required">Write a short review.</string>
+    <string name="review_saved">Your private demo review was saved.</string>
+    <string name="review_removed">Your review was removed.</string>
+    <string name="review_save_failed">Could not save your review. Try again.</string>
 
     <string name="booking_date_label">Travel date</string>
     <string name="booking_date_required">Select a travel date</string>
@@ -165,7 +186,7 @@
     <string name="booking_date_time_value">Travel: %1$s at %2$s</string>
     <string name="payment_continue_action">Continue to demo payment</string>
     <string name="payment_title">Payment simulation</string>
-    <string name="payment_explanation">Review your tour and choose a demo payment method.</string>
+    <string name="payment_explanation">Review your selected service and choose a demo payment method.</string>
     <string name="payment_method_title">Payment method</string>
     <string name="payment_card_demo">Card (simulation)</string>
     <string name="payment_wallet_demo">Mobile wallet (simulation)</string>
@@ -184,8 +205,8 @@
     <string name="booking_view_history">View bookings</string>
     <string name="bookings_title">My bookings</string>
     <string name="bookings_subtitle">Demo bookings saved for your account on this device.</string>
-    <string name="bookings_empty">No bookings yet. Explore a tour and save a demo booking.</string>
-    <string name="booking_image_description">Tour photograph</string>
+    <string name="bookings_empty">No bookings yet. Explore a service and save a demo booking.</string>
+    <string name="booking_image_description">Service image</string>
     <string name="booking_date_value">Travel date: %1$s</string>
     <string name="booking_payment_value">%1$s · %2$s</string>
     <string name="booking_details_value">%1$s · %2$s · %3$s · %4$s</string>

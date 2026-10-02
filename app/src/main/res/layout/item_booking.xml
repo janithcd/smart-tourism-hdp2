@@ -24,10 +24,19 @@
             android:scaleType="centerCrop" />
 
         <TextView
+            android:id="@+id/bookingType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/md_theme_primary"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <TextView
             android:id="@+id/bookingTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="4dp"
             android:textColor="@color/md_theme_onSurface"
             android:textSize="18sp"
             android:textStyle="bold" />

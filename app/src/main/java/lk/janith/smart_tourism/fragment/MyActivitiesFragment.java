@@ -90,6 +90,7 @@ public class MyActivitiesFragment extends Fragment {
         SharedPreferences preferences = BookingStore.draft(requireContext());
 
         String title = preferences.getString("package_title", "");
+        String type = preferences.getString("package_service_type", "Tour");
         String duration = preferences.getString("package_duration", "");
         String price = preferences.getString("package_price", "");
         String description = preferences.getString("package_description", "");
@@ -116,6 +117,9 @@ public class MyActivitiesFragment extends Fragment {
         btnCheckout.setAlpha(1f);
 
         imgPackage.setImageResource(imageResId);
+        imgPackage.setScaleType("Tour".equals(type)
+                ? ImageView.ScaleType.CENTER_CROP : ImageView.ScaleType.CENTER_INSIDE);
+        ((TextView) requireView().findViewById(R.id.activityServiceType)).setText(type);
         txtTitle.setText(title);
         txtDuration.setText(duration);
         txtPrice.setText(price);

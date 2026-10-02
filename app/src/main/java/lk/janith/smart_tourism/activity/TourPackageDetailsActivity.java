@@ -8,8 +8,10 @@ import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -24,6 +26,8 @@ import java.util.Locale;
 
 import lk.janith.smart_tourism.R;
 import lk.janith.smart_tourism.data.BookingStore;
+import lk.janith.smart_tourism.data.ReviewStore;
+import lk.janith.smart_tourism.data.ServiceCatalog;
 
 public class TourPackageDetailsActivity extends AppCompatActivity {
 
@@ -32,6 +36,8 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
     public static final String EXTRA_PRICE = "extra_price";
     public static final String EXTRA_DESCRIPTION = "extra_description";
     public static final String EXTRA_IMAGE_RES_ID = "extra_image_res_id";
+    public static final String EXTRA_SERVICE_TYPE = "extra_service_type";
+    public static final String TYPE_TOUR = "Tour";
 
     private ImageView imgPackage;
     private ImageView btnBack;
@@ -59,6 +65,7 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
     private String duration;
     private String price;
     private String description;
+    private String serviceType;
     private int imageResId;
 
     @Override
@@ -92,6 +99,9 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
         duration = getIntent().getStringExtra(EXTRA_DURATION);
         price = getIntent().getStringExtra(EXTRA_PRICE);
         description = getIntent().getStringExtra(EXTRA_DESCRIPTION);
+        String requestedType = getIntent().getStringExtra(EXTRA_SERVICE_TYPE);
+        serviceType = ServiceCatalog.VEHICLE.equals(requestedType) || ServiceCatalog.GUIDE.equals(requestedType)
+                ? requestedType : TYPE_TOUR;
         imageResId = getIntent().getIntExtra(EXTRA_IMAGE_RES_ID, R.drawable.location_on_24px);
 
         txtTitle.setText(title != null ? title : "");
@@ -100,11 +110,24 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
         txtRoute.setText(description != null ? description : "");
         imgPackage.setImageResource(imageResId);
 
-        txtOverview.setText(buildOverview(title, duration));
+        ((TextView) findViewById(R.id.detailType)).setText(getString(R.string.service_detail_type, serviceType));
+        if (!TYPE_TOUR.equals(serviceType)) {
+            imgPackage.setBackgroundResource(R.color.md_theme_primaryContainer);
+            imgPackage.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            int padding = (int) (getResources().getDisplayMetrics().density * 72);
+            imgPackage.setPadding(padding, padding, padding, padding);
+            ((TextView) findViewById(R.id.detailDescriptionLabel)).setText(R.string.service_description_label);
+            ((TextView) findViewById(R.id.detailHighlightsLabel)).setText(R.string.service_highlights_label);
+        }
+
+        txtOverview.setText(TYPE_TOUR.equals(serviceType)
+                ? buildOverview(title, duration)
+                : getString(R.string.service_overview_text, title, serviceType.toLowerCase(Locale.ROOT)));
         txtHighlights.setText(buildHighlights(description));
 
         setupPaxDropdown();
         setupPickupDropdown(duration);
+        setupReview();
         editTravelDate.setOnClickListener(v -> showDatePicker());
         editTravelTime.setOnClickListener(v -> showTimePicker());
 
@@ -179,7 +202,9 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
     private void setupPaxDropdown() {
         List<String> paxOptions = new ArrayList<>();
         paxOptions.add("1 Person");
-        for (int i = 2; i <= 8; i++) {
+        int capacity = ServiceCatalog.VEHICLE.equals(serviceType)
+                ? (title != null && title.contains("van") ? 7 : 3) : 8;
+        for (int i = 2; i <= capacity; i++) {
             paxOptions.add(i + " People");
         }
 
@@ -196,7 +221,17 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
     private void setupPickupDropdown(String durationValue) {
         List<String> pickupOptions = new ArrayList<>();
 
-        if (durationValue != null && durationValue.startsWith("5")) {
+        if (ServiceCatalog.VEHICLE.equals(serviceType) && title != null && title.contains("Airport")) {
+            pickupOptions.add("Bandaranaike International Airport");
+            pickupOptions.add("Colombo Hotel");
+        } else if (ServiceCatalog.GUIDE.equals(serviceType) && title != null && title.contains("Heritage")) {
+            pickupOptions.add("Sigiriya Meeting Point");
+        } else if (ServiceCatalog.GUIDE.equals(serviceType) && title != null && title.contains("Kandy")) {
+            pickupOptions.add("Kandy City Meeting Point");
+        } else if (ServiceCatalog.VEHICLE.equals(serviceType) || ServiceCatalog.GUIDE.equals(serviceType)) {
+            pickupOptions.add("Colombo Hotel");
+            pickupOptions.add("Colombo City Pickup");
+        } else if (durationValue != null && durationValue.startsWith("5")) {
             pickupOptions.add("Colombo Hotel");
             pickupOptions.add("Colombo City Pickup");
             pickupOptions.add("Colombo Railway Station");
@@ -263,6 +298,7 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
 
         preferences.edit()
                 .putString("package_title", title)
+                .putString("package_service_type", serviceType)
                 .putString("package_duration", duration)
                 .putString("package_price", price)
                 .putString("package_description", description)
@@ -273,6 +309,54 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
                 .putString("package_travel_date", dateValue)
                 .putString("package_travel_time", timeValue)
                 .apply();
+    }
+
+    private void setupReview() {
+        RatingBar rating = findViewById(R.id.reviewRating);
+        TextInputLayout commentLayout = findViewById(R.id.reviewCommentLayout);
+        TextInputEditText comment = findViewById(R.id.reviewComment);
+        TextView status = findViewById(R.id.reviewStatus);
+        MaterialButton remove = findViewById(R.id.btnRemoveReview);
+        ReviewStore.Review saved = ReviewStore.get(this, serviceType, title);
+        if (saved != null) {
+            rating.setRating(saved.stars);
+            comment.setText(saved.comment);
+            status.setText(getString(R.string.review_saved_status, saved.stars));
+            remove.setVisibility(View.VISIBLE);
+        }
+
+        findViewById(R.id.btnSaveReview).setOnClickListener(v -> {
+            commentLayout.setError(null);
+            String value = comment.getText() == null ? "" : comment.getText().toString().trim();
+            int stars = (int) rating.getRating();
+            if (stars < 1) {
+                Toast.makeText(this, R.string.review_rating_required, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (value.isEmpty()) {
+                commentLayout.setError(getString(R.string.review_comment_required));
+                return;
+            }
+            if (ReviewStore.save(this, serviceType, title, stars, value)) {
+                status.setText(getString(R.string.review_saved_status, stars));
+                remove.setVisibility(View.VISIBLE);
+                Toast.makeText(this, R.string.review_saved, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, R.string.review_save_failed, Toast.LENGTH_LONG).show();
+            }
+        });
+        remove.setOnClickListener(v -> {
+            if (ReviewStore.remove(this, serviceType, title)) {
+                rating.setRating(0);
+                comment.setText("");
+                commentLayout.setError(null);
+                status.setText(R.string.review_none);
+                remove.setVisibility(View.GONE);
+                Toast.makeText(this, R.string.review_removed, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, R.string.review_save_failed, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private String buildOverview(String titleValue, String durationValue) {
