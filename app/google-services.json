@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "7049022938",
-    "project_id": "smart-tourism-be6a6",
-    "storage_bucket": "smart-tourism-be6a6.firebasestorage.app"
+    "project_number": "474812237683",
+    "project_id": "smart-tourism-abbb0",
+    "storage_bucket": "smart-tourism-abbb0.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:7049022938:android:83f16f8393862319b084e3",
+        "mobilesdk_app_id": "1:474812237683:android:af744aca97090006796706",
         "android_client_info": {
           "package_name": "lk.janith.smart_tourism"
         }
@@ -15,13 +15,33 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBrXxTyCuzdHLyVcACYbu7OmMnJUGvF6Mg"
+          "current_key": "AIzaSyC6NfiDZBMLfe5suetS84IUiZC0K8nzygI"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": []
-        }      }
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:474812237683:android:de3a854cfcda49c3796706",
+        "android_client_info": {
+          "package_name": "lk.janith.smart_tourismadmin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6NfiDZBMLfe5suetS84IUiZC0K8nzygI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
     }
   ],
   "configuration_version": "1"

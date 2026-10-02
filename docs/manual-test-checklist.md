@@ -1,6 +1,6 @@
 # Android device test checklist
 
-Use a device or emulator with Google Play services. Build this branch, sign in to a test Firebase account, and record the device/Android version and each result. These checks need an installed app; a CI build alone cannot verify them.
+Use a device or emulator with Google Play services. Build the current branch, sign in to a test account in Firebase project `smart-tourism-abbb0`, and record the device/Android version and each result. Accounts from the old project do not automatically work in this project. These checks need an installed app; a CI build alone cannot verify them.
 
 | Step | Action | Expected result |
 | --- | --- | --- |
