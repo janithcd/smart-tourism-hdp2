@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -51,7 +52,12 @@ public class BookingsFragment extends Fragment {
         for (BookingStore.Booking booking : bookings) {
             View card = inflater.inflate(R.layout.item_booking, bookingList, false);
             ImageView bookingImage = card.findViewById(R.id.bookingImage);
-            bookingImage.setImageResource(booking.imageResId);
+            if (booking.imageUrl != null && !booking.imageUrl.trim().isEmpty()) {
+                Glide.with(this).load(booking.imageUrl).placeholder(booking.imageResId)
+                        .error(booking.imageResId).into(bookingImage);
+            } else {
+                bookingImage.setImageResource(booking.imageResId);
+            }
             bookingImage.setScaleType("Tour".equals(booking.type)
                     ? ImageView.ScaleType.CENTER_CROP : ImageView.ScaleType.CENTER_INSIDE);
             ((TextView) card.findViewById(R.id.bookingType)).setText(booking.type);

@@ -42,13 +42,15 @@ public final class BookingStore {
 
     public static final class Booking {
         public final String id, type, title, duration, price, route, pax, pickup, mobile, date, time;
+        public final String imageUrl;
         public final String paymentMethod, paymentStatus;
         public final int imageResId;
         public final long createdAt;
 
         private Booking(String id, String type, String title, String duration, String price, String route,
                         String pax, String pickup, String mobile, String date, String time,
-                        String paymentMethod, String paymentStatus, int imageResId, long createdAt) {
+                        String paymentMethod, String paymentStatus, int imageResId,
+                        String imageUrl, long createdAt) {
             this.id = id;
             this.type = type;
             this.title = title;
@@ -63,6 +65,7 @@ public final class BookingStore {
             this.paymentMethod = paymentMethod;
             this.paymentStatus = paymentStatus;
             this.imageResId = imageResId;
+            this.imageUrl = imageUrl;
             this.createdAt = createdAt;
         }
 
@@ -82,6 +85,7 @@ public final class BookingStore {
             json.put("paymentMethod", paymentMethod);
             json.put("paymentStatus", paymentStatus);
             json.put("imageResId", imageResId);
+            json.put("imageUrl", imageUrl);
             json.put("createdAt", createdAt);
             return json;
         }
@@ -96,6 +100,7 @@ public final class BookingStore {
                     json.optString("paymentMethod", "Demo booking"),
                     json.optString("paymentStatus", "No payment recorded"),
                     json.optInt("imageResId", R.drawable.location_on_24px),
+                    json.optString("imageUrl"),
                     json.optLong("createdAt"));
         }
     }
@@ -139,6 +144,7 @@ public final class BookingStore {
                 draft.getString("package_mobile_number", ""), date, time,
                 paymentMethod, paymentStatus,
                 draft.getInt("package_image_res_id", R.drawable.location_on_24px),
+                draft.getString("package_image_url", ""),
                 System.currentTimeMillis());
 
         try {

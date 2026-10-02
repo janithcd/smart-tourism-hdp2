@@ -140,6 +140,9 @@
     <string name="home_featured_description">Choose a package by duration and explore ready-made Sri Lanka itineraries.</string>
     <string name="home_categories">Categories</string>
     <string name="home_popular_packages">Popular Packages</string>
+    <string name="catalog_all_categories">All</string>
+    <string name="catalog_demo_tours_notice">Sample tours for the demo. Availability is not live.</string>
+    <string name="catalog_live_tours_notice">Tours from Firebase. Booking and payment remain a local demo; vehicles and guides are samples.</string>
 
 
     <string name="my_activity_title">My Activities</string>

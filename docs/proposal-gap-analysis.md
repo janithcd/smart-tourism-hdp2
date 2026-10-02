@@ -5,7 +5,7 @@ Source: *Smart Tourism and Travel Booking Mobile Application*, project proposal 
 | Proposed requirement | Current evidence | Status / next step |
 | --- | --- | --- |
 | Tourist registration and login | Firebase email/password sign-up, sign-in, profile | Implemented; verify Firebase configuration and user flow on device. |
-| Tour browsing and service details | Four static packages, Home/Explore list, category search, details | Demo implemented; catalogue is hardcoded. |
+| Tour browsing and service details | Active Firestore packages and categories on Home/Explore, image/route/overview details, bundled tour fallback and Explore search | Implemented with offline fallback; verify catalogue reads, category filtering and details on a device. |
 | Vehicle and guide browsing | Three illustrative vehicles and three guide services in Explore, each with details and the same local booking flow | Demo implemented; no real providers, availability, or rates. |
 | Provider/business registration and service management | Only tourist-style registration | Missing. Add role-aware registration and provider listing management with Firestore rules. |
 | Booking scheduling | Date, time, travelers, pickup, phone, draft | Demo implemented; validate the full flow on device. |
@@ -18,7 +18,7 @@ Source: *Smart Tourism and Travel Booking Mobile Application*, project proposal 
 | Multimedia and sensors | Tour photographs and image carousel; no sensor interaction | Partial; add a purposeful sensor feature and verify multimedia requirement with lecturer. |
 | UI animations/transitions | Splash, page slider and Material components | Partial; inspect against the assessment criteria. |
 | Administrator panel | No admin interface or protected role | Missing. |
-| Testing and security | Debug build workflow, basic template tests, Firebase authentication | Partial; add functional tests, review Firestore rules and protect the Maps key. |
+| Testing and security | Debug build workflow, tour record mapping unit tests, Firebase authentication | Partial; run device checks, review Firestore rules and protect the Maps key. |
 
 ## Viva preparation order
 

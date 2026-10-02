@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.widget.ImageViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -61,7 +62,14 @@ public class TourPackageAdapter extends RecyclerView.Adapter<TourPackageAdapter.
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         TourPackage tourPackage = packageList.get(position);
 
-        holder.imgPackage.setImageResource(tourPackage.getImageResId());
+        if (tourPackage.getImageUrl() != null && !tourPackage.getImageUrl().trim().isEmpty()) {
+            Glide.with(holder.itemView.getContext()).load(tourPackage.getImageUrl())
+                    .placeholder(tourPackage.getImageResId())
+                    .error(tourPackage.getImageResId()).into(holder.imgPackage);
+        } else {
+            Glide.with(holder.itemView.getContext()).clear(holder.imgPackage);
+            holder.imgPackage.setImageResource(tourPackage.getImageResId());
+        }
         holder.txtTitle.setText(tourPackage.getTitle());
         holder.txtDuration.setText(tourPackage.getDuration());
         holder.txtPrice.setText(tourPackage.getPrice());
@@ -140,11 +148,18 @@ public class TourPackageAdapter extends RecyclerView.Adapter<TourPackageAdapter.
 
         } else {
             Map<String, Object> wishlistItem = new HashMap<>();
+            if (tourPackage.getId() != null && !tourPackage.getId().trim().isEmpty()) {
+                wishlistItem.put("packageId", tourPackage.getId());
+            }
             wishlistItem.put("title", tourPackage.getTitle());
             wishlistItem.put("duration", tourPackage.getDuration());
             wishlistItem.put("description", tourPackage.getDescription());
-            wishlistItem.put("price", tourPackage.getPrice());
+            wishlistItem.put("price", tourPackage.getWishlistPrice());
             wishlistItem.put("imageResId", tourPackage.getImageResId());
+            wishlistItem.put("imageUrl", tourPackage.getImageUrl());
+            wishlistItem.put("categoryId", tourPackage.getCategoryId());
+            wishlistItem.put("route", tourPackage.getRoute());
+            wishlistItem.put("overview", tourPackage.getOverview());
 
             firebaseFirestore.collection("users")
                     .document(uid)
@@ -163,6 +178,9 @@ public class TourPackageAdapter extends RecyclerView.Adapter<TourPackageAdapter.
     }
 
     private String buildWishlistDocId(TourPackage tourPackage) {
+        if (tourPackage.getId() != null && !tourPackage.getId().trim().isEmpty()) {
+            return tourPackage.getId();
+        }
         String raw = tourPackage.getTitle() + "_" + tourPackage.getDuration();
         return raw.replaceAll("[^a-zA-Z0-9]", "_").toLowerCase(Locale.ROOT);
     }
