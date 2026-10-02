@@ -27,7 +27,7 @@ public final class BookingStore {
     private static String userId() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
-            throw new IllegalStateException("Sign in before booking a tour");
+            throw new IllegalStateException("Sign in before booking a service");
         }
         return user.getUid();
     }
@@ -41,14 +41,16 @@ public final class BookingStore {
     }
 
     public static final class Booking {
-        public final String id, title, duration, price, route, pax, pickup, mobile, date;
+        public final String id, type, title, duration, price, route, pax, pickup, mobile, date, time;
+        public final String paymentMethod, paymentStatus;
         public final int imageResId;
         public final long createdAt;
 
-        private Booking(String id, String title, String duration, String price, String route,
-                        String pax, String pickup, String mobile, String date, int imageResId,
-                        long createdAt) {
+        private Booking(String id, String type, String title, String duration, String price, String route,
+                        String pax, String pickup, String mobile, String date, String time,
+                        String paymentMethod, String paymentStatus, int imageResId, long createdAt) {
             this.id = id;
+            this.type = type;
             this.title = title;
             this.duration = duration;
             this.price = price;
@@ -57,6 +59,9 @@ public final class BookingStore {
             this.pickup = pickup;
             this.mobile = mobile;
             this.date = date;
+            this.time = time;
+            this.paymentMethod = paymentMethod;
+            this.paymentStatus = paymentStatus;
             this.imageResId = imageResId;
             this.createdAt = createdAt;
         }
@@ -64,6 +69,7 @@ public final class BookingStore {
         private JSONObject toJson() throws JSONException {
             JSONObject json = new JSONObject();
             json.put("id", id);
+            json.put("type", type);
             json.put("title", title);
             json.put("duration", duration);
             json.put("price", price);
@@ -72,17 +78,24 @@ public final class BookingStore {
             json.put("pickup", pickup);
             json.put("mobile", mobile);
             json.put("date", date);
+            json.put("time", time);
+            json.put("paymentMethod", paymentMethod);
+            json.put("paymentStatus", paymentStatus);
             json.put("imageResId", imageResId);
             json.put("createdAt", createdAt);
             return json;
         }
 
         private static Booking fromJson(JSONObject json) {
-            return new Booking(json.optString("id"), json.optString("title"),
+            return new Booking(json.optString("id"), json.optString("type", "Tour"),
+                    json.optString("title"),
                     json.optString("duration"), json.optString("price"),
                     json.optString("route"), json.optString("pax"),
                     json.optString("pickup"), json.optString("mobile"),
-                    json.optString("date"), json.optInt("imageResId", R.drawable.location_on_24px),
+                    json.optString("date"), json.optString("time"),
+                    json.optString("paymentMethod", "Demo booking"),
+                    json.optString("paymentStatus", "No payment recorded"),
+                    json.optInt("imageResId", R.drawable.location_on_24px),
                     json.optLong("createdAt"));
         }
     }
@@ -104,20 +117,27 @@ public final class BookingStore {
         return bookings;
     }
 
-    /** Persist the selected tour as a local demo booking. No payment or server request occurs. */
-    public static Booking confirmDraft(Context context) {
+    /** Persist the selected service as a local demo booking. No payment or server request occurs. */
+    public static Booking confirmDraft(Context context, String paymentMethod) {
         SharedPreferences draft = draft(context);
         String title = draft.getString("package_title", "");
         String date = draft.getString("package_travel_date", "");
-        if (title == null || title.trim().isEmpty() || date == null || date.isEmpty()) {
+        String time = draft.getString("package_travel_time", "");
+        if (title == null || title.trim().isEmpty() || date == null || date.isEmpty()
+                || time == null || time.isEmpty() || paymentMethod == null || paymentMethod.isEmpty()) {
             return null;
         }
 
-        Booking booking = new Booking(UUID.randomUUID().toString(), title,
+        String paymentStatus = "Cash on arrival".equals(paymentMethod)
+                ? "Payment due on arrival" : "Paid (simulation only)";
+
+        Booking booking = new Booking(UUID.randomUUID().toString(),
+                draft.getString("package_service_type", "Tour"), title,
                 draft.getString("package_duration", ""), draft.getString("package_price", ""),
                 draft.getString("package_description", ""), draft.getString("package_pax", ""),
                 draft.getString("package_pickup_location", ""),
-                draft.getString("package_mobile_number", ""), date,
+                draft.getString("package_mobile_number", ""), date, time,
+                paymentMethod, paymentStatus,
                 draft.getInt("package_image_res_id", R.drawable.location_on_24px),
                 System.currentTimeMillis());
 

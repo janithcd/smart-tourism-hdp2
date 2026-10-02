@@ -1,5 +1,6 @@
 package lk.janith.smart_tourism.fragment;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -12,10 +13,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import lk.janith.smart_tourism.R;
-import lk.janith.smart_tourism.activity.MainActivity;
+import lk.janith.smart_tourism.activity.PaymentActivity;
 import lk.janith.smart_tourism.data.BookingStore;
 
 public class MyActivitiesFragment extends Fragment {
@@ -29,6 +29,7 @@ public class MyActivitiesFragment extends Fragment {
     private TextView txtPickup;
     private TextView txtMobile;
     private TextView txtTravelDate;
+    private TextView txtTravelTime;
 
     private View emptyStateCard;
     private View activityCard;
@@ -53,6 +54,7 @@ public class MyActivitiesFragment extends Fragment {
         txtPickup = view.findViewById(R.id.txtPickup);
         txtMobile = view.findViewById(R.id.txtMobile);
         txtTravelDate = view.findViewById(R.id.txtTravelDate);
+        txtTravelTime = view.findViewById(R.id.txtTravelTime);
 
         emptyStateCard = view.findViewById(R.id.emptyStateCard);
         activityCard = view.findViewById(R.id.activityCard);
@@ -74,27 +76,7 @@ public class MyActivitiesFragment extends Fragment {
                 loadDraftBooking();
                 return;
             }
-            new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle(R.string.booking_confirm_title)
-                    .setMessage(getString(R.string.booking_confirm_message,
-                            draft.getString("package_title", ""),
-                            draft.getString("package_travel_date", "")))
-                    .setNegativeButton(R.string.cancel, null)
-                    .setPositiveButton(R.string.booking_confirm_action, (dialog, which) -> {
-                        BookingStore.Booking booking = BookingStore.confirmDraft(requireContext());
-                        if (booking == null) {
-                            Toast.makeText(requireContext(), R.string.booking_save_failed, Toast.LENGTH_LONG).show();
-                            return;
-                        }
-                        loadDraftBooking();
-                        new MaterialAlertDialogBuilder(requireContext())
-                                .setTitle(R.string.booking_saved_title)
-                                .setMessage(R.string.booking_saved_message)
-                                .setPositiveButton(R.string.booking_view_history, (confirmation, button) ->
-                                        ((MainActivity) requireActivity()).showBookingsScreen())
-                                .show();
-                    })
-                    .show();
+            startActivity(new Intent(requireContext(), PaymentActivity.class));
         });
     }
 
@@ -108,6 +90,7 @@ public class MyActivitiesFragment extends Fragment {
         SharedPreferences preferences = BookingStore.draft(requireContext());
 
         String title = preferences.getString("package_title", "");
+        String type = preferences.getString("package_service_type", "Tour");
         String duration = preferences.getString("package_duration", "");
         String price = preferences.getString("package_price", "");
         String description = preferences.getString("package_description", "");
@@ -115,6 +98,7 @@ public class MyActivitiesFragment extends Fragment {
         String pickup = preferences.getString("package_pickup_location", "");
         String mobile = preferences.getString("package_mobile_number", "");
         String date = preferences.getString("package_travel_date", "");
+        String time = preferences.getString("package_travel_time", "");
         int imageResId = preferences.getInt("package_image_res_id", R.drawable.location_on_24px);
 
         boolean hasBooking = title != null && !title.trim().isEmpty();
@@ -133,6 +117,9 @@ public class MyActivitiesFragment extends Fragment {
         btnCheckout.setAlpha(1f);
 
         imgPackage.setImageResource(imageResId);
+        imgPackage.setScaleType("Tour".equals(type)
+                ? ImageView.ScaleType.CENTER_CROP : ImageView.ScaleType.CENTER_INSIDE);
+        ((TextView) requireView().findViewById(R.id.activityServiceType)).setText(type);
         txtTitle.setText(title);
         txtDuration.setText(duration);
         txtPrice.setText(price);
@@ -141,6 +128,7 @@ public class MyActivitiesFragment extends Fragment {
         txtPickup.setText(pickup);
         txtMobile.setText(mobile);
         txtTravelDate.setText(date);
+        txtTravelTime.setText(time);
     }
 
     private void clearDraftBooking() {

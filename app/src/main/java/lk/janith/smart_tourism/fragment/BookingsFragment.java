@@ -50,15 +50,23 @@ public class BookingsFragment extends Fragment {
         LayoutInflater inflater = LayoutInflater.from(requireContext());
         for (BookingStore.Booking booking : bookings) {
             View card = inflater.inflate(R.layout.item_booking, bookingList, false);
-            ((ImageView) card.findViewById(R.id.bookingImage)).setImageResource(booking.imageResId);
+            ImageView bookingImage = card.findViewById(R.id.bookingImage);
+            bookingImage.setImageResource(booking.imageResId);
+            bookingImage.setScaleType("Tour".equals(booking.type)
+                    ? ImageView.ScaleType.CENTER_CROP : ImageView.ScaleType.CENTER_INSIDE);
+            ((TextView) card.findViewById(R.id.bookingType)).setText(booking.type);
             ((TextView) card.findViewById(R.id.bookingTitle)).setText(booking.title);
             ((TextView) card.findViewById(R.id.bookingDate)).setText(
-                    getString(R.string.booking_date_value, booking.date));
+                    booking.time.isEmpty()
+                            ? getString(R.string.booking_date_value, booking.date)
+                            : getString(R.string.booking_date_time_value, booking.date, booking.time));
             ((TextView) card.findViewById(R.id.bookingDetails)).setText(
                     getString(R.string.booking_details_value, booking.duration, booking.pax,
                             booking.pickup, booking.price));
             ((TextView) card.findViewById(R.id.bookingReference)).setText(
                     getString(R.string.booking_reference, booking.id.substring(0, 8).toUpperCase(java.util.Locale.ROOT)));
+            ((TextView) card.findViewById(R.id.bookingPayment)).setText(
+                    getString(R.string.booking_payment_value, booking.paymentMethod, booking.paymentStatus));
             MaterialButton remove = card.findViewById(R.id.btnRemoveBooking);
             remove.setOnClickListener(v -> new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.booking_remove_title)
