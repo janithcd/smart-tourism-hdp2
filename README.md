@@ -1,6 +1,6 @@
 # Smart Tourism
 
-Android Java/XML application for Handheld Device Programming II. The current app has Firebase email/password authentication, profiles and wishlists in Firestore, a Firestore tour catalogue with a bundled sample fallback, admin tour/category editors and a demo booking review screen, sample vehicles/guides, private on-device reviews, Google Maps with a magnetic compass, language resources, and a demo booking/payment simulation.
+Android Java/XML application for Handheld Device Programming II. The current app has Firebase email/password authentication, profiles and wishlists in Firestore, a Firestore tour catalogue with a bundled sample fallback, admin tour/category editors and a demo booking review screen, sample vehicles/guides, private on-device reviews, Google Maps with a magnetic compass, location-based Nearby Places, language resources, and a demo booking/payment simulation.
 
 See [the proposal gap analysis](docs/proposal-gap-analysis.md) for feature coverage and the remaining viva work.
 
@@ -8,7 +8,7 @@ See [the proposal gap analysis](docs/proposal-gap-analysis.md) for feature cover
 
 1. Open this directory in Android Studio and let Gradle sync.
 2. Use an Android device or emulator with Google Play services (min SDK 24).
-3. Add `MAPS_API_KEY=your_restricted_android_maps_key` to the root `local.properties` file. Keep that file out of Git. Configure an Android app restriction for package `lk.janith.smart_tourism` and the signing certificate SHA-1 in Google Cloud. Without this key, map tiles cannot load.
+3. Add `MAPS_API_KEY=your_restricted_android_maps_key` to the root `local.properties` file. Keep that file out of Git. Configure an Android app restriction for package `lk.janith.smart_tourism` and the signing certificate SHA-1 in Google Cloud. Enable **Maps SDK for Android** and **Places API (New)** for the same Google Cloud project, and allow both APIs in the key's API restrictions. The project needs active billing for Places. Without this key, map tiles and Nearby Places cannot load. The key is embedded in the Android app, so Android application and API restrictions remain essential.
 4. The included `app/google-services.json` links to Firebase project `smart-tourism-abbb0` and contains registrations for the tourist and admin Android apps. This repository builds the tourist app with package `lk.janith.smart_tourism`; the Google services plugin selects that entry. In this Firebase project, enable email/password authentication and [review and publish the Firestore rules](docs/admin-tour-setup.md) for owner-only profiles/wishlists, published catalogues, and admin-only writes. Accounts and documents in the previous project `smart-tourism-be6a6` are not available here unless separately migrated; create a new test account and catalogue documents here if needed.
 5. Run the `app` configuration. For command-line verification, run `gradlew.bat :app:assembleDebug` on Windows.
 
@@ -30,6 +30,8 @@ New booking confirmations write a **demo submission** to `demo_bookings` in Fire
 - Test registration, Firestore rules, catalogue loading and fallback, the map key, and the full booking path on a physical Android device.
 - Check the admin editors and demo booking list against the actual Firebase project with an administrator and a regular tourist; the repository's rules tests run in the Firestore emulator.
 - `MapFragment` also calls the Routes and Places web APIs directly with the map key. A key restricted for the Android Maps SDK may be rejected by those web APIs. Move those requests behind a backend with a separate restricted server key, or use the appropriate Android SDK before treating live routes and nearby places as reliable. The straight-line route fallback is only an estimate.
+- Nearby Places uses the Places Android SDK directly and asks for foreground location only when the tourist taps Find near me. It searches attractions, food, stays or help around the current position, showing coordinates/accuracy, a Google Map and external directions. Results stay in memory and are refreshed when the user requests a new location or selects a category. Check precise, approximate, denied and disabled location on a device; this feature does not fix the separate legacy `MapFragment` web-service calls. Before public release, publish Terms of Use and a Privacy Policy covering the location search and linking Google's terms and privacy policy as required by Google Maps Platform.
+- Complete Settings and About, photo upload, administrator-managed vehicles and guides, and optional biometric app access in later slices. The current profile photo editor accepts an image URL only; Explore's vehicles and guides are still bundled examples.
 - Plan provider registration, real reservations/status, and any required push notifications or multimedia after checking the brief. Admin review is a demo flag and does not accept or fulfill a booking.
 
 ## Credential handling
