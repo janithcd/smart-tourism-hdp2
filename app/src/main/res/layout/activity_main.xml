@@ -24,21 +24,6 @@
             android:layout_height="?attr/actionBarSize"
             android:title="@string/toolbar_title">
 
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginStart="10dp"
-
-                android:layout_marginEnd="10dp"
-                android:hint="@string/search_hint"
-                android:inputType="text"
-                android:drawableStart="@drawable/search_24px"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-
-                android:textSize="14sp"
-                android:background="@drawable/costom_input_search"/>
-
         </com.google.android.material.appbar.MaterialToolbar>
 
         <FrameLayout

@@ -26,14 +26,18 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Source;
 
+import java.util.Locale;
+
 import lk.janith.smart_tourism.R;
 import lk.janith.smart_tourism.fragment.BookingsFragment;
+import lk.janith.smart_tourism.fragment.AboutFragment;
 import lk.janith.smart_tourism.fragment.ExploreFragment;
 import lk.janith.smart_tourism.fragment.HomeFragment;
 import lk.janith.smart_tourism.fragment.MapFragment;
 import lk.janith.smart_tourism.fragment.MyActivitiesFragment;
 import lk.janith.smart_tourism.fragment.NearbyPlacesFragment;
 import lk.janith.smart_tourism.fragment.ProfileFragment;
+import lk.janith.smart_tourism.fragment.SettingsFragment;
 import lk.janith.smart_tourism.fragment.WishlistFragment;
 import lk.janith.smart_tourism.model.User;
 
@@ -60,11 +64,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void showBookingsScreen() {
+        clearDrawerBackStack();
         if (bottomNavigationView.getSelectedItemId() == R.id.bottom_bookings) {
             loadFragment(new BookingsFragment(), R.string.bottom_nav_booking_title, false);
         } else {
             bottomNavigationView.setSelectedItemId(R.id.bottom_bookings);
         }
+    }
+
+    public void openProfileScreen() {
+        clearDrawerBackStack();
+        if (bottomNavigationView.getSelectedItemId() == R.id.bottom_profile) {
+            loadFragment(new ProfileFragment(), R.string.bottom_nav_profile_title, false);
+        } else {
+            bottomNavigationView.setSelectedItemId(R.id.bottom_profile);
+        }
+    }
+
+    public void confirmSignOut() {
+        showLogoutDialog();
+    }
+
+    private void clearDrawerBackStack() {
+        getSupportFragmentManager().popBackStackImmediate(null,
+                androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 
     @Override
@@ -86,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toolbar = findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
+        getSupportFragmentManager().addOnBackStackChangedListener(this::updateToolbarTitle);
 
         toggle = new ActionBarDrawerToggle(
                 this,
@@ -111,6 +135,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
+            clearDrawerBackStack();
+            MenuItem checkedDrawerItem = navigationView.getCheckedItem();
+            if (checkedDrawerItem != null) checkedDrawerItem.setChecked(false);
             int id = item.getItemId();
 
             if (id == R.id.bottom_home) {
@@ -140,6 +167,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (getIntent() != null && getIntent().getBooleanExtra("open_bookings", false)) {
             showBookingsScreen();
         }
+        if (savedInstanceState != null) updateToolbarTitle();
     }
 
     @Override
@@ -269,6 +297,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toolbar.setTitle(getString(titleResId));
     }
 
+    private void updateToolbarTitle() {
+        Fragment current = getSupportFragmentManager().findFragmentById(R.id.contentFrame);
+        if (current instanceof SettingsFragment) {
+            toolbar.setTitle(R.string.side_nav_settings_title);
+            navigationView.setCheckedItem(R.id.nav_settings);
+        } else if (current instanceof AboutFragment) {
+            toolbar.setTitle(R.string.side_nav_about_title);
+            navigationView.setCheckedItem(R.id.nav_about);
+        } else if (current instanceof NearbyPlacesFragment) {
+            toolbar.setTitle(R.string.side_nav_places_title);
+            navigationView.setCheckedItem(R.id.nav_near_places);
+        } else if (current instanceof WishlistFragment) {
+            toolbar.setTitle(R.string.side_nav_wishlist_title);
+            navigationView.setCheckedItem(R.id.nav_wishlist);
+        } else if (current instanceof MyActivitiesFragment) {
+            toolbar.setTitle(R.string.side_nav_activities_title);
+            navigationView.setCheckedItem(R.id.nav_my_activities);
+        } else {
+            int title = current instanceof MapFragment ? R.string.bottom_nav_map_title
+                    : current instanceof BookingsFragment ? R.string.bottom_nav_booking_title
+                    : current instanceof ExploreFragment ? R.string.bottom_nav_explore_title
+                    : current instanceof ProfileFragment ? R.string.bottom_nav_profile_title
+                    : R.string.bottom_nav_home_title;
+            toolbar.setTitle(title);
+            MenuItem selected = navigationView.getCheckedItem();
+            if (selected != null) selected.setChecked(false);
+        }
+    }
+
     private void showLogoutDialog() {
         new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.logout_title)
@@ -286,8 +343,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .show();
     }
 
-    private void showLanguageDialog() {
+    public void showLanguageDialog() {
         String[] languages = {
+                getString(R.string.settings_system_default),
                 getString(R.string.language_english),
                 getString(R.string.language_sinhala),
                 getString(R.string.language_hindi),
@@ -295,24 +353,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 getString(R.string.language_german),
                 getString(R.string.language_russian)
         };
+        String[] tags = {"", "en", "si", "hi", "fr", "de", "ru"};
+        Locale current = AppCompatDelegate.getApplicationLocales().get(0);
+        int selected = 0;
+        if (current != null) {
+            for (int i = 1; i < tags.length; i++) {
+                if (tags[i].equals(current.getLanguage())) selected = i;
+            }
+        }
 
         new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.choose_language)
-                .setItems(languages, (dialog, which) -> {
-                    if (which == 0) {
-                        setAppLanguage("en");
-                    } else if (which == 1) {
-                        setAppLanguage("si");
-                    } else if (which == 2) {
-                        setAppLanguage("hi");
-                    } else if (which == 3) {
-                        setAppLanguage("fr");
-                    } else if (which == 4) {
-                        setAppLanguage("de");
-                    } else if (which == 5) {
-                        setAppLanguage("ru");
-                    }
+                .setSingleChoiceItems(languages, selected, (dialog, which) -> {
+                    dialog.dismiss();
+                    setAppLanguage(tags[which]);
                 })
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 
@@ -345,10 +401,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             loadFragment(new NearbyPlacesFragment(), R.string.side_nav_places_title, true);
 
         } else if (id == R.id.nav_settings) {
-            Toast.makeText(this, getString(R.string.settings_clicked), Toast.LENGTH_SHORT).show();
+            loadFragment(new SettingsFragment(), R.string.side_nav_settings_title, true);
 
         } else if (id == R.id.nav_about) {
-            Toast.makeText(this, getString(R.string.about_clicked), Toast.LENGTH_SHORT).show();
+            loadFragment(new AboutFragment(), R.string.side_nav_about_title, true);
 
         } else if (id == R.id.nav_languages) {
             showLanguageDialog();
