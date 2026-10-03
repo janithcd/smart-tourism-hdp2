@@ -139,6 +139,26 @@
     <string name="about_google_terms">Google Maps terms</string>
     <string name="about_google_privacy">Google privacy policy</string>
     <string name="about_no_browser">No browser is available to open this link.</string>
+    <string name="help_heading">How can we help?</string>
+    <string name="help_intro">Quick answers about the app, plus official contacts for help while travelling in Sri Lanka.</string>
+    <string name="help_common_questions">Using Smart Tourism</string>
+    <string name="help_booking_question">Is a booking confirmed after payment?</string>
+    <string name="help_booking_answer">No. Bookings and payment choices in this app are demonstrations. No charge is made and no tour, vehicle, or guide is reserved. You can review your demo submissions in Bookings.</string>
+    <string name="help_nearby_question">How do I find places near me?</string>
+    <string name="help_nearby_answer">Open Nearby Places from the menu, tap Find near me, and allow location access. Choose Attractions, Food, or Stays. Check that location and internet are on if results do not load.</string>
+    <string name="help_account_question">Where do I change my profile photo?</string>
+    <string name="help_account_answer">Open Profile, tap Change profile photo, then select an image. You can manage the app theme, language, and permissions in Settings.</string>
+    <string name="help_tourism_contacts">Official tourism contacts</string>
+    <string name="help_contacts_note">These are the Sri Lanka Tourism Development Authority’s public contacts for travel information. They do not manage this app’s demo bookings. Tap a number to open the dialer or the email to compose a message.</string>
+    <string name="help_hotline_button">Tourism hotline · 1912</string>
+    <string name="help_office_button">Tourism office · +94 11 242 6800</string>
+    <string name="help_email_button">Email · info@srilanka.travel</string>
+    <string name="help_hotline_number" translatable="false">1912</string>
+    <string name="help_office_number" translatable="false">+94112426800</string>
+    <string name="help_email_address" translatable="false">info@srilanka.travel</string>
+    <string name="help_source_button">View official contact source</string>
+    <string name="help_no_dialer">No phone dialer is available on this device.</string>
+    <string name="help_no_email_app">No email app is available on this device.</string>
 
     <string name="guest_user">Guest</string>
     <string name="no_email">No email</string>
@@ -167,6 +187,7 @@
 
     <string name="side_nav_activities_title">My Activities</string>
     <string name="side_nav_settings_title">Settings</string>
+    <string name="side_nav_help_title">Help</string>
     <string name="side_nav_places_title">Nearby Places</string>
     <string name="side_nav_airport_shuttle_title">Airport Shuttle</string>
     <string name="side_nav_languages_title">Language</string>
@@ -370,7 +391,15 @@
 
     <string name="profile_full_name">Full Name</string>
     <string name="profile_email_placeholder">user@email.com</string>
-    <string name="change_profile_pic">Change Profile Pic</string>
+    <string name="change_profile_pic">Change profile photo</string>
+    <string name="profile_photo_description">Your profile photo</string>
+    <string name="profile_photo_uploading">Uploading photo…</string>
+    <string name="profile_photo_type_error">Choose a JPEG, PNG, or WebP image.</string>
+    <string name="profile_photo_size_error">Choose an image smaller than 5 MB.</string>
+    <string name="profile_photo_read_error">Could not open this image. Try another one.</string>
+    <string name="profile_photo_upload_error">Could not upload the photo. Check Firebase Storage and your connection.</string>
+    <string name="profile_photo_profile_error">The image uploaded, but the profile could not be saved. Please retry.</string>
+    <string name="profile_photo_saved">Profile photo updated.</string>
     <string name="personal_details">Personal Details</string>
     <string name="profile_email_note">Email changes should be handled separately from profile details.</string>
     <string name="update_profile">Update Profile</string>

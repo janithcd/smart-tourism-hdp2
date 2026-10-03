@@ -65,6 +65,7 @@ dependencies {
     implementation(libs.firebase.auth)
 
     implementation(libs.firebase.firestore)
+    implementation(libs.firebase.storage)
 
 
     implementation "com.google.android.gms:play-services-maps:20.0.0"

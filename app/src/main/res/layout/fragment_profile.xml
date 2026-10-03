@@ -45,6 +45,7 @@
                         android:id="@+id/profileAvatar"
                         android:layout_width="110dp"
                         android:layout_height="110dp"
+                        android:contentDescription="@string/profile_photo_description"
                         android:scaleType="centerCrop"
                         android:src="@drawable/account_circle_24px" />
 

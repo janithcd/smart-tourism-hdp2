@@ -18,7 +18,6 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
-import com.bumptech.glide.Glide;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
@@ -33,17 +32,17 @@ import lk.janith.smart_tourism.fragment.BookingsFragment;
 import lk.janith.smart_tourism.fragment.AboutFragment;
 import lk.janith.smart_tourism.fragment.ExploreFragment;
 import lk.janith.smart_tourism.fragment.HomeFragment;
+import lk.janith.smart_tourism.fragment.HelpFragment;
 import lk.janith.smart_tourism.fragment.MapFragment;
 import lk.janith.smart_tourism.fragment.MyActivitiesFragment;
 import lk.janith.smart_tourism.fragment.NearbyPlacesFragment;
 import lk.janith.smart_tourism.fragment.ProfileFragment;
 import lk.janith.smart_tourism.fragment.SettingsFragment;
 import lk.janith.smart_tourism.fragment.WishlistFragment;
+import lk.janith.smart_tourism.data.ProfilePhoto;
 import lk.janith.smart_tourism.model.User;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-
-    private static final String DEFAULT_PROFILE_PIC_URL = "https://openclipart.org/image/800px/346569";
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
@@ -232,12 +231,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             headerEmail.setText(getString(R.string.no_email));
             headerCountry.setText(getString(R.string.no_country));
 
-            Glide.with(this)
-                    .load(DEFAULT_PROFILE_PIC_URL)
-                    .placeholder(R.drawable.account_circle_24px)
-                    .error(R.drawable.account_circle_24px)
-                    .circleCrop()
-                    .into(headerAvatar);
+            ProfilePhoto.load(headerAvatar, "", null);
             return;
         }
 
@@ -259,17 +253,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             headerEmail.setText(user.getEmail() != null ? user.getEmail() : getString(R.string.no_email));
                             headerCountry.setText(user.getCountry() != null ? user.getCountry() : getString(R.string.no_country));
 
-                            String profileUrl = user.getProfilePic();
-                            if (profileUrl == null || profileUrl.trim().isEmpty()) {
-                                profileUrl = DEFAULT_PROFILE_PIC_URL;
-                            }
-
-                            Glide.with(MainActivity.this)
-                                    .load(profileUrl)
-                                    .placeholder(R.drawable.account_circle_24px)
-                                    .error(R.drawable.account_circle_24px)
-                                    .circleCrop()
-                                    .into(headerAvatar);
+                            ProfilePhoto.load(headerAvatar, user.getProfilePic(), uid);
                         }
                     } else {
                         Toast.makeText(MainActivity.this, getString(R.string.user_document_not_found), Toast.LENGTH_LONG).show();
@@ -302,6 +286,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (current instanceof SettingsFragment) {
             toolbar.setTitle(R.string.side_nav_settings_title);
             navigationView.setCheckedItem(R.id.nav_settings);
+        } else if (current instanceof HelpFragment) {
+            toolbar.setTitle(R.string.side_nav_help_title);
+            navigationView.setCheckedItem(R.id.nav_help);
         } else if (current instanceof AboutFragment) {
             toolbar.setTitle(R.string.side_nav_about_title);
             navigationView.setCheckedItem(R.id.nav_about);
@@ -402,6 +389,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         } else if (id == R.id.nav_settings) {
             loadFragment(new SettingsFragment(), R.string.side_nav_settings_title, true);
+
+        } else if (id == R.id.nav_help) {
+            loadFragment(new HelpFragment(), R.string.side_nav_help_title, true);
 
         } else if (id == R.id.nav_about) {
             loadFragment(new AboutFragment(), R.string.side_nav_about_title, true);
