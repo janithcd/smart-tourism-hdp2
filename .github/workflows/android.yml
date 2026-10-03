@@ -9,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Check tracked files for credentials
+        run: python3 scripts/check_tracked_secrets.py
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
