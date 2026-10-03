@@ -32,6 +32,7 @@ import lk.janith.smart_tourism.fragment.ExploreFragment;
 import lk.janith.smart_tourism.fragment.HomeFragment;
 import lk.janith.smart_tourism.fragment.MapFragment;
 import lk.janith.smart_tourism.fragment.MyActivitiesFragment;
+import lk.janith.smart_tourism.fragment.NearbyPlacesFragment;
 import lk.janith.smart_tourism.fragment.ProfileFragment;
 import lk.janith.smart_tourism.fragment.WishlistFragment;
 import lk.janith.smart_tourism.model.User;
@@ -341,7 +342,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Toast.makeText(this, getString(R.string.airport_shuttle_clicked), Toast.LENGTH_SHORT).show();
 
         } else if (id == R.id.nav_near_places) {
-            Toast.makeText(this, getString(R.string.nearby_places_clicked), Toast.LENGTH_SHORT).show();
+            loadFragment(new NearbyPlacesFragment(), R.string.side_nav_places_title, true);
 
         } else if (id == R.id.nav_settings) {
             Toast.makeText(this, getString(R.string.settings_clicked), Toast.LENGTH_SHORT).show();

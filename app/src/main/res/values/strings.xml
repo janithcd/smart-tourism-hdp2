@@ -72,7 +72,32 @@
     <string name="package_pickup_label">Pickup Location</string>
 
 
-    <string name="nearby_places_clicked">Nearby Places clicked</string>
+    <string name="nearby_intro">Discover useful places around your current location. Location is used only for this search.</string>
+    <string name="nearby_find">Find near me</string>
+    <string name="nearby_prompt">Tap Find near me to use your location.</string>
+    <string name="nearby_attractions">Attractions</string>
+    <string name="nearby_food">Food</string>
+    <string name="nearby_stays">Stays</string>
+    <string name="nearby_help">Help</string>
+    <string name="nearby_locating">Finding your location…</string>
+    <string name="nearby_searching">Searching for places…</string>
+    <string name="nearby_results_ready">Tap a place to see it on the map, or open directions.</string>
+    <string name="nearby_no_results">No places found nearby in this category. Try another category.</string>
+    <string name="nearby_permission_denied">Location permission was denied. Tap Find near me to try again or open app settings.</string>
+    <string name="nearby_location_off">Turn on device location to find nearby places.</string>
+    <string name="nearby_location_settings">Location settings</string>
+    <string name="nearby_no_location">A current location is not available. Check GPS and connectivity, then try again.</string>
+    <string name="nearby_location_failed">Could not get your location. Try again.</string>
+    <string name="nearby_search_failed">Could not load places. Check your connection and enable Places API (New) for this app’s restricted key.</string>
+    <string name="nearby_key_missing">Add the Android Maps/Places key to local.properties to use nearby search.</string>
+    <string name="nearby_setup_failed">Places could not start. Check the Google API key setup.</string>
+    <string name="nearby_coordinates">Location: %1$.4f, %2$.4f · accuracy about %3$d m</string>
+    <string name="nearby_coordinates_approximate">Approximate location: %1$.4f, %2$.4f · accuracy about %3$d m</string>
+    <string name="nearby_you">Your location</string>
+    <string name="nearby_unnamed_place">Unnamed place</string>
+    <string name="nearby_directions">Directions</string>
+    <string name="nearby_no_maps_app">No app is available to open directions.</string>
+    <string name="nearby_google_maps_attribution" translatable="false">Google Maps</string>
     <string name="settings_clicked">Settings clicked</string>
     <string name="about_clicked">About clicked</string>
 
