@@ -167,7 +167,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void refreshAdminMenu() {
         MenuItem manageTours = navigationView.getMenu().findItem(R.id.nav_manage_tours);
+        MenuItem manageCategories = navigationView.getMenu().findItem(R.id.nav_manage_categories);
+        MenuItem adminBookings = navigationView.getMenu().findItem(R.id.nav_admin_bookings);
         manageTours.setVisible(false);
+        manageCategories.setVisible(false);
+        adminBookings.setVisible(false);
         if (firebaseAuth.getCurrentUser() == null) return;
 
         String uid = firebaseAuth.getCurrentUser().getUid();
@@ -175,9 +179,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .addOnSuccessListener(this, document -> {
                     if (firebaseAuth.getCurrentUser() != null
                             && uid.equals(firebaseAuth.getCurrentUser().getUid())) {
-                        manageTours.setVisible(document.exists()
+                        boolean isAdmin = document.exists()
                                 && Boolean.TRUE.equals(document.getBoolean("active"))
-                                && "admin".equals(document.getString("role")));
+                                && "admin".equals(document.getString("role"));
+                        manageTours.setVisible(isAdmin);
+                        manageCategories.setVisible(isAdmin);
+                        adminBookings.setVisible(isAdmin);
                     }
                 });
     }
@@ -323,6 +330,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         } else if (id == R.id.nav_manage_tours) {
             startActivity(new Intent(this, AdminToursActivity.class));
+
+        } else if (id == R.id.nav_manage_categories) {
+            startActivity(new Intent(this, AdminCategoriesActivity.class));
+
+        } else if (id == R.id.nav_admin_bookings) {
+            startActivity(new Intent(this, AdminBookingsActivity.class));
 
         } else if (id == R.id.nav_airport_shuttle) {
             Toast.makeText(this, getString(R.string.airport_shuttle_clicked), Toast.LENGTH_SHORT).show();

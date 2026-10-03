@@ -16,7 +16,7 @@ import java.util.UUID;
 
 import lk.janith.smart_tourism.R;
 
-/** Local demo records, scoped to the signed-in Firebase user on this device. */
+/** Local demo history, scoped to the signed-in Firebase user on this device. */
 public final class BookingStore {
     private static final String DRAFT_PREFIX = "smart_tourism_booking_draft_";
     private static final String HISTORY_PREFIX = "smart_tourism_booking_history_";
@@ -44,13 +44,14 @@ public final class BookingStore {
         public final String id, type, title, duration, price, route, pax, pickup, mobile, date, time;
         public final String imageUrl;
         public final String paymentMethod, paymentStatus;
+        public final boolean cloudSaved;
         public final int imageResId;
         public final long createdAt;
 
         private Booking(String id, String type, String title, String duration, String price, String route,
                         String pax, String pickup, String mobile, String date, String time,
                         String paymentMethod, String paymentStatus, int imageResId,
-                        String imageUrl, long createdAt) {
+                        String imageUrl, long createdAt, boolean cloudSaved) {
             this.id = id;
             this.type = type;
             this.title = title;
@@ -67,6 +68,7 @@ public final class BookingStore {
             this.imageResId = imageResId;
             this.imageUrl = imageUrl;
             this.createdAt = createdAt;
+            this.cloudSaved = cloudSaved;
         }
 
         private JSONObject toJson() throws JSONException {
@@ -87,6 +89,7 @@ public final class BookingStore {
             json.put("imageResId", imageResId);
             json.put("imageUrl", imageUrl);
             json.put("createdAt", createdAt);
+            json.put("cloudSaved", cloudSaved);
             return json;
         }
 
@@ -101,7 +104,7 @@ public final class BookingStore {
                     json.optString("paymentStatus", "No payment recorded"),
                     json.optInt("imageResId", R.drawable.location_on_24px),
                     json.optString("imageUrl"),
-                    json.optLong("createdAt"));
+                    json.optLong("createdAt"), json.optBoolean("cloudSaved", false));
         }
     }
 
@@ -122,8 +125,8 @@ public final class BookingStore {
         return bookings;
     }
 
-    /** Persist the selected service as a local demo booking. No payment or server request occurs. */
-    public static Booking confirmDraft(Context context, String paymentMethod) {
+    /** Build a demo submission from the draft; the caller sends it to Firestore first. */
+    public static Booking prepareDraft(Context context, String paymentMethod) {
         SharedPreferences draft = draft(context);
         String title = draft.getString("package_title", "");
         String date = draft.getString("package_travel_date", "");
@@ -145,19 +148,24 @@ public final class BookingStore {
                 paymentMethod, paymentStatus,
                 draft.getInt("package_image_res_id", R.drawable.location_on_24px),
                 draft.getString("package_image_url", ""),
-                System.currentTimeMillis());
+                System.currentTimeMillis(), true);
 
+        return booking;
+    }
+
+    /** Keep a device copy after Firestore has acknowledged the demo submission. */
+    public static boolean saveConfirmed(Context context, Booking booking) {
         try {
             SharedPreferences history = history(context);
             JSONArray existing = new JSONArray(history.getString(HISTORY_KEY, "[]"));
             JSONArray updated = new JSONArray();
             updated.put(booking.toJson());
             for (int i = 0; i < existing.length(); i++) updated.put(existing.get(i));
-            if (!history.edit().putString(HISTORY_KEY, updated.toString()).commit()) return null;
-            draft.edit().clear().apply();
-            return booking;
+            if (!history.edit().putString(HISTORY_KEY, updated.toString()).commit()) return false;
+            draft(context).edit().clear().apply();
+            return true;
         } catch (JSONException ignored) {
-            return null;
+            return false;
         }
     }
 

@@ -20,6 +20,12 @@
             android:name=".activity.AdminToursActivity"
             android:exported="false" />
         <activity
+            android:name=".activity.AdminCategoriesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.AdminBookingsActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.PaymentActivity"
             android:exported="false" />
         <activity

@@ -19,6 +19,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import lk.janith.smart_tourism.R;
 import lk.janith.smart_tourism.data.BookingStore;
+import lk.janith.smart_tourism.data.FirebaseBookingStore;
 import lk.janith.smart_tourism.receiver.BookingConfirmationReceiver;
 
 /** Simulates a payment choice without collecting card details or contacting a payment service. */
@@ -26,6 +27,7 @@ public class PaymentActivity extends AppCompatActivity {
     private static final String PENDING_METHOD = "pending_payment_method";
     private String pendingPaymentMethod;
     private RadioGroup paymentMethods;
+    private boolean saving;
 
     private final ActivityResultLauncher<String> notificationPermission = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(), granted -> {
@@ -104,11 +106,42 @@ public class PaymentActivity extends AppCompatActivity {
     }
 
     private void saveBooking(String method, boolean canNotify) {
-        BookingStore.Booking booking = BookingStore.confirmDraft(this, method);
+        if (saving) return;
+        BookingStore.Booking booking = BookingStore.prepareDraft(this, method);
         if (booking == null) {
             Toast.makeText(this, R.string.booking_save_failed, Toast.LENGTH_LONG).show();
             return;
         }
+        saving = true;
+        findViewById(R.id.btnConfirmPayment).setEnabled(false);
+        Toast.makeText(this, R.string.booking_saving_cloud, Toast.LENGTH_SHORT).show();
+        try {
+            FirebaseBookingStore.submit(booking)
+                    .addOnSuccessListener(this, unused -> {
+                        saving = false;
+                        if (!BookingStore.saveConfirmed(this, booking)) {
+                            FirebaseBookingStore.remove(booking.id);
+                            findViewById(R.id.btnConfirmPayment).setEnabled(true);
+                            Toast.makeText(this, R.string.booking_save_failed, Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                        showSaved(booking, canNotify);
+                    })
+                    .addOnFailureListener(this, error -> {
+                        saving = false;
+                        findViewById(R.id.btnConfirmPayment).setEnabled(true);
+                        Toast.makeText(this,
+                                getString(R.string.booking_cloud_failed, error.getMessage()),
+                                Toast.LENGTH_LONG).show();
+                    });
+        } catch (IllegalStateException error) {
+            saving = false;
+            findViewById(R.id.btnConfirmPayment).setEnabled(true);
+            Toast.makeText(this, R.string.booking_save_failed, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void showSaved(BookingStore.Booking booking, boolean canNotify) {
         if (canNotify) {
             Intent notification = new Intent(this, BookingConfirmationReceiver.class);
             notification.setAction(BookingConfirmationReceiver.ACTION_BOOKING_SAVED);

@@ -20,6 +20,7 @@ import java.util.List;
 
 import lk.janith.smart_tourism.R;
 import lk.janith.smart_tourism.data.BookingStore;
+import lk.janith.smart_tourism.data.FirebaseBookingStore;
 
 public class BookingsFragment extends Fragment {
     private LinearLayout bookingList;
@@ -73,20 +74,36 @@ public class BookingsFragment extends Fragment {
                     getString(R.string.booking_reference, booking.id.substring(0, 8).toUpperCase(java.util.Locale.ROOT)));
             ((TextView) card.findViewById(R.id.bookingPayment)).setText(
                     getString(R.string.booking_payment_value, booking.paymentMethod, booking.paymentStatus));
+            ((TextView) card.findViewById(R.id.bookingCloudStatus)).setText(
+                    booking.cloudSaved ? R.string.booking_shared_demo : R.string.booking_local_only);
             MaterialButton remove = card.findViewById(R.id.btnRemoveBooking);
             remove.setOnClickListener(v -> new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.booking_remove_title)
-                    .setMessage(R.string.booking_remove_message)
+                    .setMessage(booking.cloudSaved ? R.string.booking_remove_cloud_message
+                            : R.string.booking_remove_message)
                     .setNegativeButton(R.string.cancel, null)
                     .setPositiveButton(R.string.booking_remove_action, (dialog, which) -> {
-                        if (BookingStore.remove(requireContext(), booking.id)) {
-                            showBookings();
-                        } else {
-                            Toast.makeText(requireContext(), R.string.booking_save_failed, Toast.LENGTH_LONG).show();
+                        if (!booking.cloudSaved) {
+                            removeLocal(booking.id);
+                            return;
                         }
+                        FirebaseBookingStore.remove(booking.id)
+                                .addOnSuccessListener(requireActivity(), unused -> removeLocal(booking.id))
+                                .addOnFailureListener(requireActivity(), error ->
+                                        Toast.makeText(requireContext(),
+                                                getString(R.string.booking_remove_failed, error.getMessage()),
+                                                Toast.LENGTH_LONG).show());
                     })
                     .show());
             bookingList.addView(card);
+        }
+    }
+
+    private void removeLocal(String bookingId) {
+        if (BookingStore.remove(requireContext(), bookingId)) {
+            showBookings();
+        } else {
+            Toast.makeText(requireContext(), R.string.booking_save_failed, Toast.LENGTH_LONG).show();
         }
     }
 }
