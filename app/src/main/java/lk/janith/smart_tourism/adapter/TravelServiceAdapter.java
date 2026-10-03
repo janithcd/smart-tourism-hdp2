@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.List;
@@ -39,7 +40,18 @@ public final class TravelServiceAdapter extends RecyclerView.Adapter<TravelServi
     @Override
     public void onBindViewHolder(@NonNull Holder holder, int position) {
         TravelService service = services.get(position);
-        holder.image.setImageResource(service.imageResId);
+        if (service.imageUrl != null && !service.imageUrl.isEmpty()) {
+            holder.image.setPadding(0, 0, 0, 0);
+            holder.image.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            Glide.with(holder.itemView).load(service.imageUrl)
+                    .placeholder(service.imageResId).error(service.imageResId).into(holder.image);
+        } else {
+            Glide.with(holder.itemView).clear(holder.image);
+            int padding = (int) (holder.itemView.getResources().getDisplayMetrics().density * 16);
+            holder.image.setPadding(padding, padding, padding, padding);
+            holder.image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            holder.image.setImageResource(service.imageResId);
+        }
         holder.type.setText(service.type);
         holder.title.setText(service.title);
         holder.description.setText(service.description);

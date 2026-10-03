@@ -55,6 +55,11 @@
             android:title="@string/admin_manage_categories"
             android:visible="false" />
         <item
+            android:id="@+id/nav_manage_services"
+            android:icon="@drawable/airport_shuttle_24px"
+            android:title="@string/admin_manage_services"
+            android:visible="false" />
+        <item
             android:id="@+id/nav_admin_bookings"
             android:icon="@drawable/calendar_today_24px"
             android:title="@string/admin_demo_bookings"

@@ -44,6 +44,9 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
     public static final String EXTRA_ROUTE = "extra_route";
     public static final String EXTRA_OVERVIEW = "extra_overview";
     public static final String EXTRA_SERVICE_TYPE = "extra_service_type";
+    public static final String EXTRA_CAPACITY = "extra_capacity";
+    public static final String EXTRA_PICKUP = "extra_pickup";
+    public static final String EXTRA_SERVICE_LIVE = "extra_service_live";
     public static final String TYPE_TOUR = "Tour";
 
     private ImageView imgPackage;
@@ -75,6 +78,8 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
     private String serviceType;
     private int imageResId;
     private String imageUrl;
+    private int capacity;
+    private String servicePickup;
 
     public static Intent intentFor(Context context, TourPackage tour) {
         return new Intent(context, TourPackageDetailsActivity.class)
@@ -126,6 +131,9 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
         String requestedType = getIntent().getStringExtra(EXTRA_SERVICE_TYPE);
         serviceType = ServiceCatalog.VEHICLE.equals(requestedType) || ServiceCatalog.GUIDE.equals(requestedType)
                 ? requestedType : TYPE_TOUR;
+        capacity = getIntent().getIntExtra(EXTRA_CAPACITY, 8);
+        servicePickup = getIntent().getStringExtra(EXTRA_PICKUP);
+        boolean liveService = getIntent().getBooleanExtra(EXTRA_SERVICE_LIVE, false);
         imageResId = getIntent().getIntExtra(EXTRA_IMAGE_RES_ID, R.drawable.location_on_24px);
 
         txtTitle.setText(title != null ? title : "");
@@ -139,19 +147,23 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
             imgPackage.setImageResource(imageResId);
         }
 
-        ((TextView) findViewById(R.id.detailType)).setText(getString(R.string.service_detail_type, serviceType));
+        ((TextView) findViewById(R.id.detailType)).setText(getString(
+                liveService ? R.string.service_detail_live : R.string.service_detail_type, serviceType));
         if (!TYPE_TOUR.equals(serviceType)) {
-            imgPackage.setBackgroundResource(R.color.md_theme_primaryContainer);
-            imgPackage.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            int padding = (int) (getResources().getDisplayMetrics().density * 72);
-            imgPackage.setPadding(padding, padding, padding, padding);
+            if (imageUrl == null || imageUrl.isEmpty()) {
+                imgPackage.setBackgroundResource(R.color.md_theme_primaryContainer);
+                imgPackage.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                int padding = (int) (getResources().getDisplayMetrics().density * 72);
+                imgPackage.setPadding(padding, padding, padding, padding);
+            }
             ((TextView) findViewById(R.id.detailDescriptionLabel)).setText(R.string.service_description_label);
             ((TextView) findViewById(R.id.detailHighlightsLabel)).setText(R.string.service_highlights_label);
         }
 
         txtOverview.setText(overview != null && !overview.trim().isEmpty() ? overview
                 : TYPE_TOUR.equals(serviceType) ? buildOverview(title, duration)
-                : getString(R.string.service_overview_text, title, serviceType.toLowerCase(Locale.ROOT)));
+                : getString(liveService ? R.string.service_live_overview : R.string.service_overview_text,
+                        title, serviceType.toLowerCase(Locale.ROOT)));
         txtHighlights.setText(buildHighlights(description));
 
         setupPaxDropdown();
@@ -231,9 +243,8 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
     private void setupPaxDropdown() {
         List<String> paxOptions = new ArrayList<>();
         paxOptions.add("1 Person");
-        int capacity = ServiceCatalog.VEHICLE.equals(serviceType)
-                ? (title != null && title.contains("van") ? 7 : 3) : 8;
-        for (int i = 2; i <= capacity; i++) {
+        int maxPeople = TYPE_TOUR.equals(serviceType) ? 8 : Math.max(1, Math.min(capacity, 30));
+        for (int i = 2; i <= maxPeople; i++) {
             paxOptions.add(i + " People");
         }
 
@@ -250,7 +261,9 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
     private void setupPickupDropdown(String durationValue) {
         List<String> pickupOptions = new ArrayList<>();
 
-        if (ServiceCatalog.VEHICLE.equals(serviceType) && title != null && title.contains("Airport")) {
+        if (!TYPE_TOUR.equals(serviceType) && servicePickup != null && !servicePickup.trim().isEmpty()) {
+            pickupOptions.add(servicePickup);
+        } else if (ServiceCatalog.VEHICLE.equals(serviceType) && title != null && title.contains("Airport")) {
             pickupOptions.add("Bandaranaike International Airport");
             pickupOptions.add("Colombo Hotel");
         } else if (ServiceCatalog.GUIDE.equals(serviceType) && title != null && title.contains("Heritage")) {

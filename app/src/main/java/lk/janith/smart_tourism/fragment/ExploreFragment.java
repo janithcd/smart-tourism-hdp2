@@ -25,6 +25,7 @@ import lk.janith.smart_tourism.activity.TourPackageDetailsActivity;
 import lk.janith.smart_tourism.adapter.TourPackageAdapter;
 import lk.janith.smart_tourism.adapter.TravelServiceAdapter;
 import lk.janith.smart_tourism.data.FirebaseTourCatalog;
+import lk.janith.smart_tourism.data.FirebaseServiceCatalog;
 import lk.janith.smart_tourism.data.ServiceCatalog;
 import lk.janith.smart_tourism.data.TourCatalog;
 import lk.janith.smart_tourism.model.TourPackage;
@@ -43,6 +44,9 @@ public class ExploreFragment extends Fragment {
     private TextView emptyState;
     private TextView catalogSource;
     private int selectedTab;
+    private boolean liveTours;
+    private boolean liveVehicles;
+    private boolean liveGuides;
 
     public ExploreFragment() {
         super(R.layout.fragment_explore);
@@ -70,6 +74,10 @@ public class ExploreFragment extends Fragment {
             intent.putExtra(TourPackageDetailsActivity.EXTRA_PRICE, service.price);
             intent.putExtra(TourPackageDetailsActivity.EXTRA_DESCRIPTION, service.description);
             intent.putExtra(TourPackageDetailsActivity.EXTRA_IMAGE_RES_ID, service.imageResId);
+            intent.putExtra(TourPackageDetailsActivity.EXTRA_IMAGE_URL, service.imageUrl);
+            intent.putExtra(TourPackageDetailsActivity.EXTRA_CAPACITY, service.capacity);
+            intent.putExtra(TourPackageDetailsActivity.EXTRA_PICKUP, service.pickup);
+            intent.putExtra(TourPackageDetailsActivity.EXTRA_SERVICE_LIVE, !service.sample);
             startActivity(intent);
         });
 
@@ -101,6 +109,7 @@ public class ExploreFragment extends Fragment {
             @Override public void afterTextChanged(Editable s) { }
         });
         loadLivePackages();
+        loadLiveServices();
     }
 
     private void loadLivePackages() {
@@ -109,12 +118,41 @@ public class ExploreFragment extends Fragment {
                 if (!isAdded() || getView() == null || packages.isEmpty()) return;
                 allPackages.clear();
                 allPackages.addAll(packages);
-                catalogSource.setText(R.string.catalog_live_tours_notice);
+                liveTours = true;
                 filterItems();
             }
 
             @Override public void onError(Exception error) {
-                // The bundled tours, vehicles and guides are still browsable offline.
+                // Bundled tours remain browsable offline.
+            }
+        });
+    }
+
+    private void loadLiveServices() {
+        FirebaseServiceCatalog.load(new FirebaseServiceCatalog.Listener() {
+            @Override public void onLoaded(List<TravelService> services) {
+                if (!isAdded() || getView() == null) return;
+                List<TravelService> publishedVehicles = new ArrayList<>();
+                List<TravelService> publishedGuides = new ArrayList<>();
+                for (TravelService service : services) {
+                    if (ServiceCatalog.VEHICLE.equals(service.type)) publishedVehicles.add(service);
+                    else if (ServiceCatalog.GUIDE.equals(service.type)) publishedGuides.add(service);
+                }
+                if (!publishedVehicles.isEmpty()) {
+                    vehicles.clear();
+                    vehicles.addAll(publishedVehicles);
+                    liveVehicles = true;
+                }
+                if (!publishedGuides.isEmpty()) {
+                    guides.clear();
+                    guides.addAll(publishedGuides);
+                    liveGuides = true;
+                }
+                filterItems();
+            }
+
+            @Override public void onError(Exception error) {
+                // Keep bundled samples available while offline or before the rules are published.
             }
         });
     }
@@ -126,6 +164,10 @@ public class ExploreFragment extends Fragment {
     }
 
     private void filterItems() {
+        catalogSource.setText(selectedTab == 0
+                ? (liveTours ? R.string.catalog_live_tours_notice : R.string.explore_demo_notice)
+                : (selectedTab == 1 ? liveVehicles : liveGuides)
+                ? R.string.service_live_notice : R.string.service_sample_notice);
         String query = search.getText() == null ? "" : search.getText().toString();
         String needle = query.trim().toLowerCase(Locale.ROOT);
         if (selectedTab == 0) {
