@@ -1,0 +1,97 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function owns(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    // Only a Firebase Console or Admin SDK operator can create/change an admin document.
+    // The existing project uses admins/{authUid}: { active: true, role: 'admin' }.
+    function isAdmin() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.active == true
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function validTour() {
+      let data = request.resource.data;
+      return data.keys().hasAll([
+          'title', 'duration', 'price', 'categoryId', 'description',
+          'route', 'overview', 'imageUrl', 'active', 'featured'
+        ])
+        && data.title is string && data.title.size() > 0 && data.title.size() <= 100
+        && data.duration is string && data.duration.size() > 0 && data.duration.size() <= 40
+        && data.price is number && data.price > 0 && data.price <= 1000000
+        && data.categoryId is string && data.categoryId.size() <= 100
+        && data.description is string && data.description.size() <= 2000
+        && data.route is string && data.route.size() <= 2000
+        && data.overview is string && data.overview.size() <= 2000
+        && data.imageUrl is string && data.imageUrl.size() <= 500
+        && (data.imageUrl == '' || data.imageUrl.matches('https://.*'))
+        && data.active is bool && data.featured is bool;
+    }
+
+    match /admins/{uid} {
+      allow get: if owns(uid);
+      allow list, create, update, delete: if false;
+    }
+
+    match /users/{uid} {
+      allow get: if owns(uid);
+      allow list: if false;
+      allow create: if owns(uid)
+        && request.resource.data.keys().hasOnly([
+          'uid', 'fname', 'lname', 'email', 'country', 'birthday', 'profilePic'
+        ])
+        && request.resource.data.uid == uid
+        && request.resource.data.email == request.auth.token.email;
+      allow update: if owns(uid)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'fname', 'lname', 'country', 'birthday', 'profilePic'
+        ]);
+      allow delete: if owns(uid);
+
+      match /wishlist/{itemId} {
+        allow read, write: if owns(uid);
+      }
+    }
+
+    match /packages/{packageId} {
+      // Tourist queries must include whereEqualTo('active', true).
+      allow get, list: if isAdmin() || resource.data.active == true;
+      allow create: if isAdmin() && validTour()
+        && request.resource.data.keys().hasOnly([
+          'title', 'duration', 'price', 'categoryId', 'description',
+          'route', 'overview', 'imageUrl', 'active', 'featured'
+        ]);
+      allow update: if isAdmin() && validTour()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'title', 'duration', 'price', 'categoryId', 'description',
+          'route', 'overview', 'imageUrl', 'active', 'featured'
+        ]);
+      allow delete: if false; // Hide a tour with active: false instead.
+    }
+
+    match /categories/{categoryId} {
+      allow get, list: if isAdmin() || resource.data.active == true;
+      allow create: if isAdmin()
+        && request.resource.data.keys().hasAll(['title', 'active'])
+        && request.resource.data.keys().hasOnly(['title', 'active', 'description', 'imageUrl'])
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.title.size() <= 100
+        && request.resource.data.active is bool;
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'title', 'active', 'description', 'imageUrl'
+        ]);
+      allow delete: if false;
+    }
+  }
+}
