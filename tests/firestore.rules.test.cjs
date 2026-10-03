@@ -1,0 +1,127 @@
+const test = require('node:test');
+const fs = require('node:fs');
+const path = require('node:path');
+const {
+  initializeTestEnvironment,
+  assertSucceeds,
+  assertFails
+} = require('@firebase/rules-unit-testing');
+const {
+  doc,
+  collection,
+  getDoc,
+  getDocs,
+  query,
+  where,
+  setDoc,
+  updateDoc,
+  deleteDoc
+} = require('firebase/firestore');
+
+let env;
+const validTour = {
+  title: 'Kandy Heritage',
+  duration: '2 Days',
+  price: 120,
+  categoryId: '',
+  description: 'A sample tour',
+  route: 'Colombo to Kandy',
+  overview: 'Culture and scenery',
+  imageUrl: '',
+  active: false,
+  featured: false
+};
+
+test.before(async () => {
+  env = await initializeTestEnvironment({
+    projectId: 'demo-smart-tourism',
+    firestore: {
+      host: '127.0.0.1',
+      port: 8080,
+      rules: fs.readFileSync(path.join(__dirname, '..', 'firestore.rules'), 'utf8')
+    }
+  });
+});
+test.beforeEach(async () => env.clearFirestore());
+test.after(async () => { if (env) await env.cleanup(); });
+
+async function seed(documentPath, data) {
+  await env.withSecurityRulesDisabled(async context => {
+    await setDoc(doc(context.firestore(), documentPath), data);
+  });
+}
+
+const client = (uid, email) => env.authenticatedContext(uid, { email }).firestore();
+
+test('a user can create and edit only their own profile and wishlist', async () => {
+  const alice = client('alice', 'alice@example.com');
+  const bob = client('bob', 'bob@example.com');
+  const profile = doc(alice, 'users/alice');
+  await assertSucceeds(setDoc(profile, {
+    uid: 'alice', email: 'alice@example.com', fname: 'Alice', lname: 'A',
+    country: 'Sri Lanka', birthday: '01/01/2000', profilePic: ''
+  }));
+  await assertSucceeds(updateDoc(profile, { fname: 'Alicia' }));
+  await assertFails(updateDoc(profile, { role: 'admin' }));
+  await assertFails(setDoc(doc(bob, 'users/alice/wishlist/tour'), { title: 'Private' }));
+  await assertSucceeds(setDoc(doc(alice, 'users/alice/wishlist/tour'), { title: 'Saved' }));
+  await assertFails(getDoc(doc(bob, 'users/alice')));
+  await assertFails(setDoc(doc(alice, 'users/alice'), {
+    uid: 'alice', email: 'alice@example.com', role: 'admin'
+  }));
+});
+
+test('only a trusted operator can grant the admin role', async () => {
+  const alice = client('alice', 'alice@example.com');
+  await assertFails(setDoc(doc(alice, 'admins/alice'), { active: true, role: 'admin' }));
+  await seed('admins/alice', { active: true, role: 'admin' });
+  await assertSucceeds(getDoc(doc(alice, 'admins/alice')));
+  await assertFails(updateDoc(doc(alice, 'admins/alice'), { active: false }));
+  await assertFails(getDoc(doc(client('bob', 'bob@example.com'), 'admins/alice')));
+});
+
+test('tourists can query only published tours; administrators can inspect drafts', async () => {
+  await seed('admins/admin', { active: true, role: 'admin' });
+  await seed('packages/draft', { ...validTour, active: false });
+  await seed('packages/published', { ...validTour, active: true });
+  const tourist = client('alice', 'alice@example.com');
+  const admin = client('admin', 'admin@example.com');
+  await assertSucceeds(getDocs(query(collection(tourist, 'packages'), where('active', '==', true))));
+  await assertFails(getDocs(collection(tourist, 'packages')));
+  await assertFails(getDoc(doc(tourist, 'packages/draft')));
+  await assertSucceeds(getDocs(collection(admin, 'packages')));
+});
+
+test('only active admins can publish valid tours; nobody can delete them', async () => {
+  await seed('admins/admin', { active: true, role: 'admin' });
+  const admin = client('admin', 'admin@example.com');
+  const tourist = client('alice', 'alice@example.com');
+  await assertFails(setDoc(doc(tourist, 'packages/attempt'), validTour));
+  await assertSucceeds(setDoc(doc(admin, 'packages/new'), validTour));
+  await assertFails(updateDoc(doc(tourist, 'packages/new'), { active: true }));
+  await assertFails(updateDoc(doc(admin, 'packages/new'), { price: -1 }));
+  await assertFails(updateDoc(doc(admin, 'packages/new'), { adminOnly: true }));
+  await assertSucceeds(updateDoc(doc(admin, 'packages/new'), { active: true, price: 125 }));
+  await assertFails(deleteDoc(doc(admin, 'packages/new')));
+  await seed('admins/admin', { active: false, role: 'admin' });
+  await assertFails(updateDoc(doc(admin, 'packages/new'), { active: false }));
+});
+
+test('role names other than admin have no manager access', async () => {
+  await seed('admins/provider', { active: true, role: 'provider' });
+  const provider = client('provider', 'provider@example.com');
+  await assertFails(getDocs(collection(provider, 'packages')));
+  await assertFails(setDoc(doc(provider, 'packages/unauthorized'), validTour));
+});
+
+test('only published categories are visible to tourists', async () => {
+  await seed('admins/admin', { active: true, role: 'admin' });
+  await seed('categories/hidden', { title: 'Hidden', active: false });
+  await seed('categories/culture', { title: 'Culture', active: true });
+  const tourist = client('alice', 'alice@example.com');
+  const admin = client('admin', 'admin@example.com');
+  await assertSucceeds(getDocs(query(collection(tourist, 'categories'), where('active', '==', true))));
+  await assertFails(getDoc(doc(tourist, 'categories/hidden')));
+  await assertFails(setDoc(doc(tourist, 'categories/new'), { title: 'New', active: true }));
+  await assertSucceeds(getDocs(collection(admin, 'categories')));
+});

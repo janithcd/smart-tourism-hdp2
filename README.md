@@ -1,6 +1,6 @@
 # Smart Tourism
 
-Android Java/XML application for Handheld Device Programming II. The current app has Firebase email/password authentication, profiles and wishlists in Firestore, a Firestore tour catalogue with a bundled sample fallback, sample vehicles/guides, private on-device reviews, Google Maps, language resources, and a local demo booking and payment simulation.
+Android Java/XML application for Handheld Device Programming II. The current app has Firebase email/password authentication, profiles and wishlists in Firestore, a Firestore tour catalogue with a bundled sample fallback, an admin-only tour editor, sample vehicles/guides, private on-device reviews, Google Maps with a magnetic compass, language resources, and a local demo booking and payment simulation.
 
 See [the proposal gap analysis](docs/proposal-gap-analysis.md) for feature coverage and the remaining viva work.
 
@@ -9,12 +9,12 @@ See [the proposal gap analysis](docs/proposal-gap-analysis.md) for feature cover
 1. Open this directory in Android Studio and let Gradle sync.
 2. Use an Android device or emulator with Google Play services (min SDK 24).
 3. Add `MAPS_API_KEY=your_restricted_android_maps_key` to the root `local.properties` file. Keep that file out of Git. Configure an Android app restriction for package `lk.janith.smart_tourism` and the signing certificate SHA-1 in Google Cloud. Without this key, map tiles cannot load.
-4. The included `app/google-services.json` links to Firebase project `smart-tourism-abbb0` and contains registrations for the tourist and admin Android apps. This repository builds the tourist app with package `lk.janith.smart_tourism`; the Google services plugin selects that entry. In this Firebase project, enable email/password authentication and provide suitable Firestore rules for each signed-in user's `users/{uid}` document and `wishlist` subcollection, plus read access to active `categories` and `packages`. Accounts and documents in the previous project `smart-tourism-be6a6` are not available here unless separately migrated; create a new test account and catalogue documents here if needed.
+4. The included `app/google-services.json` links to Firebase project `smart-tourism-abbb0` and contains registrations for the tourist and admin Android apps. This repository builds the tourist app with package `lk.janith.smart_tourism`; the Google services plugin selects that entry. In this Firebase project, enable email/password authentication and [review and publish the Firestore rules](docs/admin-tour-setup.md) for owner-only profiles/wishlists, published catalogues, and admin-only writes. Accounts and documents in the previous project `smart-tourism-be6a6` are not available here unless separately migrated; create a new test account and catalogue documents here if needed.
 5. Run the `app` configuration. For command-line verification, run `gradlew.bat :app:assembleDebug` on Windows.
 
 ## Viva demo path
 
-Sign up or sign in → Explore → switch between Tours, Vehicles, and Guides → search and open a listing → choose people, pickup, mobile number, travel date and pickup time → Book Now → My Activities → Continue to demo payment → choose Card (simulation), Mobile wallet (simulation), or Cash on arrival → Confirm demo booking → Bookings. Open the listing again to save or edit a private 1–5 star review. Use the tour wishlist, profile, map, and language menu as other examples. Follow the [manual test checklist](docs/manual-test-checklist.md) when checking the build on a device.
+Sign up or sign in → Explore → switch between Tours, Vehicles, and Guides → search and open a listing → choose people, pickup, mobile number, travel date and pickup time → Book Now → My Activities → Continue to demo payment → choose Card (simulation), Mobile wallet (simulation), or Cash on arrival → Confirm demo booking → Bookings. Open the listing again to save or edit a private 1–5 star review. Use the tour wishlist, profile, map compass, and language menu as other examples. After the [admin setup](docs/admin-tour-setup.md), an admin account can add and publish a tour for Home and Explore. Follow the [manual test checklist](docs/manual-test-checklist.md) when checking the build on a device.
 
 ## Original Firestore catalogue
 
@@ -28,8 +28,9 @@ The booking confirmation writes a **local demo record** scoped to the signed-in 
 
 - Compare the app with the assignment brief and marking rubric.
 - Test registration, Firestore rules, catalogue loading and fallback, the map key, and the full booking path on a physical Android device.
+- Check the admin editor against the actual Firebase project with an administrator and a regular tourist; the repository's rules tests run in the Firestore emulator.
 - `MapFragment` also calls the Routes and Places web APIs directly with the map key. A key restricted for the Android Maps SDK may be rejected by those web APIs. Move those requests behind a backend with a separate restricted server key, or use the appropriate Android SDK before treating live routes and nearby places as reliable. The straight-line route fallback is only an estimate.
-- Add any required notifications, sensor interactions, multimedia, remote booking backend, or admin features after checking the brief.
+- Plan provider registration, shared booking status, and any required push notifications or multimedia after checking the brief. The in-app admin editor currently manages tours only.
 
 ## Credential handling
 

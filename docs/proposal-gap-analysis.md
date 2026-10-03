@@ -17,13 +17,13 @@ Source: *Smart Tourism and Travel Booking Mobile Application*, project proposal 
 | Local storage and network communication | SharedPreferences drafts/history, Firebase Auth/Firestore, Maps requests | Demonstrated; local history is not synchronized. |
 | Multimedia and sensors | Tour photographs and image carousel; Map screen magnetic compass from the rotation-vector sensor | Partial; verify heading and sensor fallback on a device, and check multimedia requirement with lecturer. |
 | UI animations/transitions | Splash, page slider and Material components | Partial; inspect against the assessment criteria. |
-| Administrator panel | No admin interface or protected role | Missing. |
-| Testing and security | Debug build workflow, tour record mapping unit tests, Firebase authentication | Partial; run device checks, review Firestore rules and protect the Maps key. |
+| Administrator panel | In-app tour editor checks `admins/{uid}` and adds validated package writes under Firestore rules | Partial; deploy reviewed rules and test with the actual admin account. The older separate admin app is not in this repo. |
+| Testing and security | Debug build, tour record tests, Firestore rules with emulator tests, Firebase authentication | Partial; run device checks, publish the reviewed rules, and protect the Maps key. |
 
 ## Viva preparation order
 
 1. Run the draft PR on a device using the [manual test checklist](manual-test-checklist.md): registration, login, each Explore category, reviews, date/time validation, payment simulation, notification, booking history, wishlist, and map. Record actual failures and fix them first.
-2. Implement provider/admin roles and booking status updates only with enforceable Firestore rules. A screen that merely looks like an admin panel would not protect data.
+2. Set up and test the [admin tour manager](admin-tour-setup.md) with the reviewed Firestore rules. Provider registration and booking status updates still need a backend design.
 3. Verify the compass on a sensor-equipped phone, assess push notifications and multimedia, and collect functional test evidence.
 4. Prepare a short presentation that states which features are working demos and which proposal items remain incomplete. Do not describe local demo bookings or simulated payments as live transactions.
 

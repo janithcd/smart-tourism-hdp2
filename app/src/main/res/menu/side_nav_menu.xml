@@ -40,6 +40,14 @@
 
     <group>
         <item
+            android:id="@+id/nav_manage_tours"
+            android:icon="@drawable/explore_24px"
+            android:title="@string/admin_manage_tours"
+            android:visible="false" />
+    </group>
+
+    <group>
+        <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/logout_24px"
             android:title="@string/side_nav_logout_title" />
