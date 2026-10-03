@@ -14,8 +14,10 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Lifecycle;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.firebase.auth.FirebaseAuth;
 
 import lk.janith.smart_tourism.R;
 import lk.janith.smart_tourism.data.BookingStore;
@@ -28,6 +30,7 @@ public class PaymentActivity extends AppCompatActivity {
     private String pendingPaymentMethod;
     private RadioGroup paymentMethods;
     private boolean saving;
+    private BookingStore.Booking pendingConfirmedBooking;
 
     private final ActivityResultLauncher<String> notificationPermission = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(), granted -> {
@@ -71,6 +74,16 @@ public class PaymentActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (pendingConfirmedBooking != null) {
+            BookingStore.Booking booking = pendingConfirmedBooking;
+            pendingConfirmedBooking = null;
+            showSaved(booking);
+        }
+    }
+
     private void confirmSelection(SharedPreferences draft) {
         int selected = paymentMethods.getCheckedRadioButtonId();
         final String method;
@@ -112,23 +125,42 @@ public class PaymentActivity extends AppCompatActivity {
             Toast.makeText(this, R.string.booking_save_failed, Toast.LENGTH_LONG).show();
             return;
         }
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            Toast.makeText(this, R.string.booking_save_failed, Toast.LENGTH_LONG).show();
+            return;
+        }
+        String ownerUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         saving = true;
         findViewById(R.id.btnConfirmPayment).setEnabled(false);
         Toast.makeText(this, R.string.booking_saving_cloud, Toast.LENGTH_SHORT).show();
         try {
             FirebaseBookingStore.submit(booking)
-                    .addOnSuccessListener(this, unused -> {
+                    .addOnSuccessListener(unused -> {
                         saving = false;
-                        if (!BookingStore.saveConfirmed(this, booking)) {
+                        if (!BookingStore.saveConfirmed(getApplicationContext(), booking, ownerUid)) {
                             FirebaseBookingStore.remove(booking.id);
-                            findViewById(R.id.btnConfirmPayment).setEnabled(true);
-                            Toast.makeText(this, R.string.booking_save_failed, Toast.LENGTH_LONG).show();
+                            if (!isFinishing() && !isDestroyed()) {
+                                findViewById(R.id.btnConfirmPayment).setEnabled(true);
+                                Toast.makeText(this, R.string.booking_save_failed, Toast.LENGTH_LONG).show();
+                            }
                             return;
                         }
-                        showSaved(booking, canNotify);
+                        if (canNotify) postConfirmationNotification(booking);
+                        if (isFinishing() || isDestroyed()) return;
+                        if (FirebaseAuth.getInstance().getCurrentUser() == null
+                                || !ownerUid.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                            finish();
+                            return;
+                        }
+                        if (getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
+                            showSaved(booking);
+                        } else {
+                            pendingConfirmedBooking = booking;
+                        }
                     })
-                    .addOnFailureListener(this, error -> {
+                    .addOnFailureListener(error -> {
                         saving = false;
+                        if (isFinishing() || isDestroyed()) return;
                         findViewById(R.id.btnConfirmPayment).setEnabled(true);
                         Toast.makeText(this,
                                 getString(R.string.booking_cloud_failed, error.getMessage()),
@@ -141,15 +173,15 @@ public class PaymentActivity extends AppCompatActivity {
         }
     }
 
-    private void showSaved(BookingStore.Booking booking, boolean canNotify) {
-        if (canNotify) {
-            Intent notification = new Intent(this, BookingConfirmationReceiver.class);
-            notification.setAction(BookingConfirmationReceiver.ACTION_BOOKING_SAVED);
-            notification.putExtra(BookingConfirmationReceiver.EXTRA_TITLE, booking.title);
-            notification.putExtra(BookingConfirmationReceiver.EXTRA_REFERENCE, booking.id);
-            sendBroadcast(notification);
-        }
+    private void postConfirmationNotification(BookingStore.Booking booking) {
+        Intent notification = new Intent(this, BookingConfirmationReceiver.class);
+        notification.setAction(BookingConfirmationReceiver.ACTION_BOOKING_SAVED);
+        notification.putExtra(BookingConfirmationReceiver.EXTRA_TITLE, booking.title);
+        notification.putExtra(BookingConfirmationReceiver.EXTRA_REFERENCE, booking.id);
+        getApplicationContext().sendBroadcast(notification);
+    }
 
+    private void showSaved(BookingStore.Booking booking) {
         new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.booking_saved_title)
                 .setMessage(R.string.booking_saved_message)

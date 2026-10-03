@@ -33,11 +33,19 @@ public final class BookingStore {
     }
 
     public static SharedPreferences draft(Context context) {
-        return context.getSharedPreferences(DRAFT_PREFIX + userId(), Context.MODE_PRIVATE);
+        return draftFor(context, userId());
+    }
+
+    private static SharedPreferences draftFor(Context context, String uid) {
+        return context.getSharedPreferences(DRAFT_PREFIX + uid, Context.MODE_PRIVATE);
     }
 
     private static SharedPreferences history(Context context) {
-        return context.getSharedPreferences(HISTORY_PREFIX + userId(), Context.MODE_PRIVATE);
+        return historyFor(context, userId());
+    }
+
+    private static SharedPreferences historyFor(Context context, String uid) {
+        return context.getSharedPreferences(HISTORY_PREFIX + uid, Context.MODE_PRIVATE);
     }
 
     public static final class Booking {
@@ -154,15 +162,15 @@ public final class BookingStore {
     }
 
     /** Keep a device copy after Firestore has acknowledged the demo submission. */
-    public static boolean saveConfirmed(Context context, Booking booking) {
+    public static boolean saveConfirmed(Context context, Booking booking, String ownerUid) {
         try {
-            SharedPreferences history = history(context);
+            SharedPreferences history = historyFor(context, ownerUid);
             JSONArray existing = new JSONArray(history.getString(HISTORY_KEY, "[]"));
             JSONArray updated = new JSONArray();
             updated.put(booking.toJson());
             for (int i = 0; i < existing.length(); i++) updated.put(existing.get(i));
             if (!history.edit().putString(HISTORY_KEY, updated.toString()).commit()) return false;
-            draft(context).edit().clear().apply();
+            draftFor(context, ownerUid).edit().clear().apply();
             return true;
         } catch (JSONException ignored) {
             return false;
