@@ -1,10 +1,13 @@
 package lk.janith.smart_tourism.fragment;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.provider.OpenableColumns;
 import android.view.LayoutInflater;
@@ -29,8 +32,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Source;
-import com.google.firebase.storage.StorageMetadata;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
@@ -62,10 +65,11 @@ public class ProfileFragment extends Fragment {
     private FirebaseFirestore firebaseFirestore;
 
     private String currentUid = "";
-    private boolean uploadingPhoto;
+    private boolean savingPhoto;
+    private int profileLoadGeneration;
     private final ActivityResultLauncher<PickVisualMediaRequest> photoPicker =
             registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
-                if (uri != null) uploadProfilePicture(uri);
+                if (uri != null) saveProfilePicture(uri);
             });
 
     public ProfileFragment() {
@@ -107,13 +111,24 @@ public class ProfileFragment extends Fragment {
                         .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
                         .build()));
         btnDeleteProfile.setOnClickListener(v -> showDeleteProfileDialog());
-
+        if (savingPhoto) {
+            btnChangeProfilePic.setEnabled(false);
+            btnDeleteProfile.setEnabled(false);
+            btnChangeProfilePic.setText(R.string.profile_photo_saving);
+            profileProgressBar.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
         loadUserProfile();
+    }
+
+    @Override
+    public void onDestroyView() {
+        profileLoadGeneration++;
+        super.onDestroyView();
     }
 
     private void loadUserProfile() {
@@ -123,6 +138,8 @@ public class ProfileFragment extends Fragment {
         }
 
         currentUid = firebaseAuth.getCurrentUser().getUid();
+        int generation = ++profileLoadGeneration;
+        ProfilePhoto.load(profileAvatar, "", currentUid);
 
         showLoading(true);
         setTemporaryValues();
@@ -131,6 +148,7 @@ public class ProfileFragment extends Fragment {
 
         userRef.get(Source.CACHE)
                 .addOnSuccessListener(documentSnapshot -> {
+                    if (!canBind(generation)) return;
                     if (documentSnapshot.exists()) {
                         User cachedUser = documentSnapshot.toObject(User.class);
                         if (cachedUser != null) {
@@ -141,6 +159,7 @@ public class ProfileFragment extends Fragment {
 
         userRef.get(Source.SERVER)
                 .addOnSuccessListener(documentSnapshot -> {
+                    if (!canBind(generation)) return;
                     showLoading(false);
 
                     if (documentSnapshot.exists()) {
@@ -154,9 +173,14 @@ public class ProfileFragment extends Fragment {
                     }
                 })
                 .addOnFailureListener(e -> {
+                    if (!canBind(generation)) return;
                     showLoading(false);
                     Toast.makeText(requireContext(), "Firestore read failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
+    }
+
+    private boolean canBind(int generation) {
+        return isAdded() && getView() != null && generation == profileLoadGeneration;
     }
 
     private void bindUser(User user) {
@@ -173,7 +197,7 @@ public class ProfileFragment extends Fragment {
         editCountry.setText(user.getCountry() != null ? user.getCountry() : "");
         editBirthday.setText(user.getBirthday() != null ? user.getBirthday() : "");
 
-        if (!uploadingPhoto) ProfilePhoto.load(profileAvatar, user.getProfilePic(), currentUid);
+        if (!savingPhoto) ProfilePhoto.load(profileAvatar, user.getProfilePic(), currentUid);
     }
 
     private void updateProfile() {
@@ -251,8 +275,8 @@ public class ProfileFragment extends Fragment {
                 });
     }
 
-    private void uploadProfilePicture(Uri uri) {
-        if (uploadingPhoto || firebaseAuth.getCurrentUser() == null) return;
+    private void saveProfilePicture(Uri uri) {
+        if (savingPhoto || firebaseAuth.getCurrentUser() == null) return;
         String uid = firebaseAuth.getCurrentUser().getUid();
         String type = requireContext().getContentResolver().getType(uri);
         if (!"image/jpeg".equals(type) && !"image/png".equals(type)
@@ -276,41 +300,48 @@ public class ProfileFragment extends Fragment {
             return;
         }
 
-        uploadingPhoto = true;
+        savingPhoto = true;
         btnChangeProfilePic.setEnabled(false);
-        btnChangeProfilePic.setText(R.string.profile_photo_uploading);
+        btnDeleteProfile.setEnabled(false);
+        btnChangeProfilePic.setText(R.string.profile_photo_saving);
         profileProgressBar.setVisibility(View.VISIBLE);
 
-        StorageMetadata metadata = new StorageMetadata.Builder().setContentType(type).build();
-        ProfilePhoto.referenceFor(uid).putFile(uri, metadata)
-                .addOnSuccessListener(task -> firebaseFirestore.collection("users").document(uid)
-                        .update("profilePic", ProfilePhoto.pathFor(uid))
-                        .addOnSuccessListener(unused -> {
-                            finishPhotoUpload();
-                            if (isAdded() && getView() != null && uid.equals(currentUid)) {
-                                ProfilePhoto.load(profileAvatar, ProfilePhoto.pathFor(uid), uid);
-                                refreshMainHeader();
-                                Toast.makeText(requireContext(), R.string.profile_photo_saved, Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .addOnFailureListener(error -> {
-                            finishPhotoUpload();
-                            if (isAdded()) Toast.makeText(requireContext(),
-                                    R.string.profile_photo_profile_error, Toast.LENGTH_LONG).show();
-                        }))
-                .addOnFailureListener(error -> {
-                    finishPhotoUpload();
-                    if (isAdded()) Toast.makeText(requireContext(),
-                            R.string.profile_photo_upload_error, Toast.LENGTH_LONG).show();
-                });
+        Context appContext = requireContext().getApplicationContext();
+        new Thread(() -> {
+            IOException failure = null;
+            try {
+                ProfilePhoto.save(appContext, uri, uid);
+            } catch (IOException error) {
+                failure = error;
+            } catch (RuntimeException error) {
+                failure = new IOException("Could not read the selected photo", error);
+            }
+            IOException result = failure;
+            new Handler(Looper.getMainLooper()).post(() -> {
+                if (result == null) profileLoadGeneration++;
+                finishPhotoSave();
+                if (!isAdded() || getView() == null || firebaseAuth.getCurrentUser() == null
+                        || !uid.equals(firebaseAuth.getCurrentUser().getUid())) return;
+                if (result == null) {
+                    ProfilePhoto.load(profileAvatar, "", uid);
+                    refreshMainHeader();
+                    Toast.makeText(requireContext(), R.string.profile_photo_saved_local, Toast.LENGTH_SHORT).show();
+                } else {
+                    int message = result instanceof ProfilePhoto.PhotoTooLargeException
+                            ? R.string.profile_photo_size_error : R.string.profile_photo_save_error;
+                    Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
+                }
+            });
+        }, "profile-photo-save").start();
     }
 
-    private void finishPhotoUpload() {
-        uploadingPhoto = false;
+    private void finishPhotoSave() {
+        savingPhoto = false;
         if (isAdded() && getView() != null) {
             btnChangeProfilePic.setEnabled(true);
+            btnDeleteProfile.setEnabled(true);
             btnChangeProfilePic.setText(R.string.change_profile_pic);
-            profileProgressBar.setVisibility(View.GONE);
+            showLoading(false);
         }
     }
 
@@ -332,7 +363,8 @@ public class ProfileFragment extends Fragment {
         String uid = firebaseAuth.getCurrentUser().getUid();
 
         firebaseAuth.getCurrentUser().delete()
-                .addOnSuccessListener(unused ->
+                .addOnSuccessListener(unused -> {
+                        ProfilePhoto.delete(requireContext(), uid);
                         firebaseFirestore.collection("users")
                                 .document(uid)
                                 .delete()
@@ -347,8 +379,8 @@ public class ProfileFragment extends Fragment {
                                 .addOnFailureListener(e -> {
                                     btnDeleteProfile.setEnabled(true);
                                     Toast.makeText(requireContext(), "Firestore delete failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                                })
-                )
+                                });
+                })
                 .addOnFailureListener(e -> {
                     btnDeleteProfile.setEnabled(true);
                     Toast.makeText(requireContext(), "Delete failed: " + e.getMessage() + ". Please sign in again and retry.", Toast.LENGTH_LONG).show();
