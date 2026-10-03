@@ -31,6 +31,10 @@ The booking confirmation writes a **local demo record** scoped to the signed-in 
 - `MapFragment` also calls the Routes and Places web APIs directly with the map key. A key restricted for the Android Maps SDK may be rejected by those web APIs. Move those requests behind a backend with a separate restricted server key, or use the appropriate Android SDK before treating live routes and nearby places as reliable. The straight-line route fallback is only an estimate.
 - Add any required notifications, sensor interactions, multimedia, remote booking backend, or admin features after checking the brief.
 
-The Maps API key previously committed to the public repository should be rotated or disabled in Google Cloud. Removing it from current source does not remove it from Git history.
+## Credential handling
 
-The Firebase configuration file and the Maps API key are separate. Switching Firebase projects does not supply the Maps key in `local.properties` or move old Authentication users and Firestore documents.
+An early public commit contained a Google Maps API key in `AndroidManifest.xml`. Current source uses `${MAPS_API_KEY}` from the ignored root `local.properties`, but the original key is still visible in Git history. Treat it as exposed: in its Google Cloud project, restrict it immediately, replace it with a new Android-restricted key for `lk.janith.smart_tourism` and the correct signing SHA-1, then disable or delete the old key after confirming the replacement works. Do not paste a key into an issue, screenshot, commit, or pull request. Rewriting Git history alone does not revoke a key or remove it from other clones and cached references.
+
+`app/google-services.json` is intentionally tracked because the Android Firebase SDK needs this client configuration. Its Firebase API key identifies a project; it does not authorize database access. In Google Cloud Credentials, keep that key limited to the Firebase APIs the app uses, and enforce Firestore Security Rules. Use a separate restricted key for Maps. Switching Firebase projects does not supply a Maps key or move old Authentication users and Firestore documents.
+
+The CI credential check scans tracked files for common key and private-key formats and rejects local credential files. It excludes the expected Firebase API key in `google-services.json`; GitHub secret scanning and push protection should also be enabled in the repository settings. This check cannot undo a previous disclosure or detect every possible credential format.
