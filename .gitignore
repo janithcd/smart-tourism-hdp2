@@ -7,6 +7,8 @@
 .externalNativeBuild/
 .cxx/
 .DS_Store
+__pycache__/
+*.py[cod]
 
 # Local configuration and credentials (never commit actual keys)
 **/local.properties
