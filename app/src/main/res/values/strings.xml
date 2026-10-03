@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name" translatable="false">Smart Tourism</string>
-    <string name="app_version" translatable="false">Version 1.0.2</string>
+    <string name="app_version" translatable="false">Version 1.0</string>
     <string name="app_copy" translatable="false">JTECH Solutions</string>
 
 
@@ -100,6 +100,45 @@
     <string name="nearby_google_maps_attribution" translatable="false">Google Maps</string>
     <string name="settings_clicked">Settings clicked</string>
     <string name="about_clicked">About clicked</string>
+    <string name="settings_intro">Manage your display, permissions, and account.</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_theme_summary">Choose how the app looks.</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_language_summary">Some screens may still show English.</string>
+    <string name="settings_system_default">System default</string>
+    <string name="settings_light">Light</string>
+    <string name="settings_dark">Dark</string>
+    <string-array name="settings_theme_options">
+        <item>@string/settings_system_default</item>
+        <item>@string/settings_light</item>
+        <item>@string/settings_dark</item>
+    </string-array>
+    <string name="settings_permissions">Device permissions</string>
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_notifications_summary">Manage booking notifications in Android settings.</string>
+    <string name="settings_location">Location access</string>
+    <string name="settings_location_summary">Used on demand in Nearby Places.</string>
+    <string name="settings_allowed">Allowed</string>
+    <string name="settings_not_allowed">Off</string>
+    <string name="settings_precise">Precise</string>
+    <string name="settings_approximate">Approximate</string>
+    <string name="settings_account">Account</string>
+    <string name="settings_edit_profile">Edit profile</string>
+    <string name="settings_cannot_open">Could not open Android settings on this device.</string>
+    <string name="about_author">Developed by Janith Chamuka Dasanayaka</string>
+    <string name="about_version">Version %1$s</string>
+    <string name="about_unknown_version">Unknown</string>
+    <string name="about_app_section">About the app</string>
+    <string name="about_app_description">Explore Sri Lankan tours and find places near your current location. Tour and category listings can be managed by an administrator.</string>
+    <string name="about_data_section">Your data and bookings</string>
+    <string name="about_data_description">Firebase stores your sign-in account, profile, wishlist, and new demo booking submissions. An administrator can review those submissions. A copy of your booking history and your private reviews remain on this device. Nearby Places sends your location to Google Maps when you search; this app does not save your GPS location in Firestore.</string>
+    <string name="about_booking_notice">Vehicles and guides still use sample listings. Bookings and payment choices are simulations; they do not reserve a service or charge a card.</string>
+    <string name="about_links_section">Links</string>
+    <string name="about_source">View project source</string>
+    <string name="about_google_terms">Google Maps terms</string>
+    <string name="about_google_privacy">Google privacy policy</string>
+    <string name="about_no_browser">No browser is available to open this link.</string>
 
     <string name="guest_user">Guest</string>
     <string name="no_email">No email</string>
