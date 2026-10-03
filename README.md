@@ -1,6 +1,6 @@
 # Smart Tourism
 
-Android Java/XML application for Handheld Device Programming II. The current app has Firebase email/password authentication, profiles and wishlists in Firestore, a Firestore tour catalogue with a bundled sample fallback, an admin-only tour editor, sample vehicles/guides, private on-device reviews, Google Maps with a magnetic compass, language resources, and a local demo booking and payment simulation.
+Android Java/XML application for Handheld Device Programming II. The current app has Firebase email/password authentication, profiles and wishlists in Firestore, a Firestore tour catalogue with a bundled sample fallback, admin tour/category editors and a demo booking review screen, sample vehicles/guides, private on-device reviews, Google Maps with a magnetic compass, language resources, and a demo booking/payment simulation.
 
 See [the proposal gap analysis](docs/proposal-gap-analysis.md) for feature coverage and the remaining viva work.
 
@@ -14,23 +14,23 @@ See [the proposal gap analysis](docs/proposal-gap-analysis.md) for feature cover
 
 ## Viva demo path
 
-Sign up or sign in → Explore → switch between Tours, Vehicles, and Guides → search and open a listing → choose people, pickup, mobile number, travel date and pickup time → Book Now → My Activities → Continue to demo payment → choose Card (simulation), Mobile wallet (simulation), or Cash on arrival → Confirm demo booking → Bookings. Open the listing again to save or edit a private 1–5 star review. Use the tour wishlist, profile, map compass, and language menu as other examples. After the [admin setup](docs/admin-tour-setup.md), an admin account can add and publish a tour for Home and Explore. Follow the [manual test checklist](docs/manual-test-checklist.md) when checking the build on a device.
+Sign up or sign in → Explore → switch between Tours, Vehicles, and Guides → search and open a listing → choose people, pickup, mobile number, travel date and pickup time → Book Now → My Activities → Continue to demo payment → choose Card (simulation), Mobile wallet (simulation), or Cash on arrival → Confirm demo booking → Bookings. Open the listing again to save or edit a private 1–5 star review. Use the tour wishlist, profile, map compass, and language menu as other examples. After the [admin setup](docs/admin-tour-setup.md), an admin can create a category, assign it to a tour with the dropdown, publish both, and view the new demo booking in **Demo bookings**. Follow the [manual test checklist](docs/manual-test-checklist.md) when checking the build on a device.
 
 ## Original Firestore catalogue
 
 The original local Android Studio copy had a Firestore catalogue that was absent from the GitHub upload. Home and Explore now query active documents in `packages`; Home also loads active documents in `categories` and filters tours by `categoryId`. A package has `title`, `duration`, numeric `price`, `description`, `route`, `overview`, `imageUrl`, `categoryId`, and `active: true`. A category has `title` and `active: true`; its document ID is used as the package's `categoryId`. Only nonempty active packages replace the bundled sample tours. If reads fail or return no active packages, the app keeps the bundled tours. The screen labels indicate which source is showing; Logcat tag `FirebaseTourCatalog` reports failed reads. Vehicles and guides stay illustrative.
 
-The original Firestore wishlist used a numeric price and package ID, whereas newer demo items use a string price and a local drawable. The app can display both. The old Firestore `my_activities` drafts are not copied into the new on-device booking flow, and no checkout or payment is performed on Firestore. The old project's data must be migrated or recreated in `smart-tourism-abbb0` before it appears in this app.
+The original Firestore wishlist used a numeric price and package ID, whereas newer demo items use a string price and a local drawable. The app can display both. The old Firestore `my_activities` drafts are not copied into the new booking flow, and no real checkout or payment is performed. The old project's data must be migrated or recreated in `smart-tourism-abbb0` before it appears in this app.
 
-The booking confirmation writes a **local demo record** scoped to the signed-in user on that device, with the selected payment method and a simulated payment status. It does not collect card details, charge money, reserve a vehicle or guide, contact a provider, or synchronize booking history to Firestore. All listings and prices are illustrative. Removing a booking removes only that local record. Reviews are private to the signed-in account on the device and are not public ratings. A local notification is shown after confirmation if the user allows notifications; this is not a push message from a provider.
+New booking confirmations write a **demo submission** to `demo_bookings` in Firestore and then save a local history copy scoped to the signed-in user on that device. This requires an internet connection and the updated Firestore rules. The admin can see the latest 50 submissions and mark one Reviewed; a tourist can read or remove only their own submission and cannot change its review status. Earlier local-only demo records remain only on their original device. Booking history is not downloaded to another device. The app does not collect card details, charge money, reserve a vehicle or guide, or contact a provider. Prices and payment statuses are illustrative and user-supplied. Removing a new booking removes the cloud submission and local copy; removing an older local record removes only its local copy. Reviews are private to the signed-in account on the device and are not public ratings. A local notification is shown after confirmation if allowed; this is not a push message from a provider.
 
 ## Next work
 
 - Compare the app with the assignment brief and marking rubric.
 - Test registration, Firestore rules, catalogue loading and fallback, the map key, and the full booking path on a physical Android device.
-- Check the admin editor against the actual Firebase project with an administrator and a regular tourist; the repository's rules tests run in the Firestore emulator.
+- Check the admin editors and demo booking list against the actual Firebase project with an administrator and a regular tourist; the repository's rules tests run in the Firestore emulator.
 - `MapFragment` also calls the Routes and Places web APIs directly with the map key. A key restricted for the Android Maps SDK may be rejected by those web APIs. Move those requests behind a backend with a separate restricted server key, or use the appropriate Android SDK before treating live routes and nearby places as reliable. The straight-line route fallback is only an estimate.
-- Plan provider registration, shared booking status, and any required push notifications or multimedia after checking the brief. The in-app admin editor currently manages tours only.
+- Plan provider registration, real reservations/status, and any required push notifications or multimedia after checking the brief. Admin review is a demo flag and does not accept or fulfill a booking.
 
 ## Credential handling
 

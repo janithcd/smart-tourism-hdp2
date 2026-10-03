@@ -1,10 +1,12 @@
 package lk.janith.smart_tourism.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -46,7 +49,10 @@ public class AdminToursActivity extends AppCompatActivity {
     private TextInputEditText title;
     private TextInputEditText duration;
     private TextInputEditText price;
-    private TextInputEditText categoryId;
+    private MaterialAutoCompleteTextView categoryPicker;
+    private final List<String> categoryIds = new ArrayList<>();
+    private final List<String> categoryLabels = new ArrayList<>();
+    private String selectedCategoryId = "";
     private TextInputEditText description;
     private TextInputEditText route;
     private TextInputEditText overview;
@@ -75,7 +81,12 @@ public class AdminToursActivity extends AppCompatActivity {
         title = findViewById(R.id.adminTitle);
         duration = findViewById(R.id.adminDuration);
         price = findViewById(R.id.adminPrice);
-        categoryId = findViewById(R.id.adminCategoryId);
+        categoryPicker = findViewById(R.id.adminCategoryPicker);
+        categoryPicker.setOnClickListener(v -> categoryPicker.showDropDown());
+        categoryPicker.setOnItemClickListener((parent, view, position, id) ->
+                selectedCategoryId = ((CategoryChoice) parent.getItemAtPosition(position)).id);
+        resetCategoryOptions();
+        updateCategoryPicker();
         description = findViewById(R.id.adminDescription);
         route = findViewById(R.id.adminRoute);
         overview = findViewById(R.id.adminOverview);
@@ -85,9 +96,13 @@ public class AdminToursActivity extends AppCompatActivity {
         save = findViewById(R.id.adminSave);
 
         findViewById(R.id.adminNew).setOnClickListener(v -> clearEditor());
+        findViewById(R.id.adminOpenCategories).setOnClickListener(v ->
+                startActivity(new Intent(this, AdminCategoriesActivity.class)));
         save.setOnClickListener(v -> saveTour());
         if (savedInstanceState != null) {
             editingDocumentId = savedInstanceState.getString("editing_document_id");
+            selectedCategoryId = savedInstanceState.getString("selected_category_id", "");
+            updateCategoryPicker();
             if (editingDocumentId != null) editorTitle.setText(R.string.admin_edit_tour);
         }
     }
@@ -101,6 +116,7 @@ public class AdminToursActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putString("editing_document_id", editingDocumentId);
+        outState.putString("selected_category_id", selectedCategoryId);
         super.onSaveInstanceState(outState);
     }
 
@@ -128,6 +144,7 @@ public class AdminToursActivity extends AppCompatActivity {
                     content.setVisibility(View.VISIBLE);
                     status.setText(R.string.admin_access_granted);
                     loadTours();
+                    loadCategories();
                 })
                 .addOnFailureListener(this, error -> {
                     if (isCurrentUser(uid)) status.setText(R.string.admin_access_unavailable);
@@ -179,6 +196,65 @@ public class AdminToursActivity extends AppCompatActivity {
                 });
     }
 
+    private void resetCategoryOptions() {
+        categoryIds.clear();
+        categoryLabels.clear();
+        categoryIds.add("");
+        categoryLabels.add(getString(R.string.admin_no_category));
+    }
+
+    private void loadCategories() {
+        firestore.collection("categories").get(Source.SERVER)
+                .addOnSuccessListener(this, snapshot -> {
+                    if (!authorized || isFinishing()) return;
+                    resetCategoryOptions();
+                    List<DocumentSnapshot> documents = new ArrayList<>(snapshot.getDocuments());
+                    documents.sort(Comparator.comparing(doc ->
+                            text(doc.getString("title")).toLowerCase(Locale.ROOT)));
+                    for (DocumentSnapshot doc : documents) {
+                        categoryIds.add(doc.getId());
+                        String label = text(doc.getString("title"));
+                        if (label.isEmpty()) label = doc.getId();
+                        if (Boolean.FALSE.equals(doc.getBoolean("active"))) {
+                            label += getString(R.string.admin_category_hidden_suffix);
+                        }
+                        categoryLabels.add(label);
+                    }
+                    updateCategoryPicker();
+                })
+                .addOnFailureListener(this, error -> {
+                    if (authorized && !isFinishing())
+                        status.setText(getString(R.string.admin_categories_load_failed, error.getMessage()));
+                });
+    }
+
+    private void updateCategoryPicker() {
+        if (!selectedCategoryId.isEmpty() && !categoryIds.contains(selectedCategoryId)) {
+            categoryIds.add(selectedCategoryId);
+            categoryLabels.add(getString(R.string.admin_unknown_category, selectedCategoryId));
+        }
+        List<CategoryChoice> choices = new ArrayList<>();
+        for (int i = 0; i < categoryIds.size(); i++) {
+            choices.add(new CategoryChoice(categoryIds.get(i), categoryLabels.get(i)));
+        }
+        categoryPicker.setAdapter(new ArrayAdapter<>(this,
+                android.R.layout.simple_dropdown_item_1line, choices));
+        int selectedIndex = categoryIds.indexOf(selectedCategoryId);
+        categoryPicker.setText(categoryLabels.get(Math.max(selectedIndex, 0)), false);
+    }
+
+    private static final class CategoryChoice {
+        final String id;
+        final String label;
+
+        CategoryChoice(String id, String label) {
+            this.id = id;
+            this.label = label;
+        }
+
+        @NonNull @Override public String toString() { return label; }
+    }
+
     private void editTour(DocumentSnapshot doc) {
         editingDocumentId = doc.getId();
         editorTitle.setText(R.string.admin_edit_tour);
@@ -188,7 +264,8 @@ public class AdminToursActivity extends AppCompatActivity {
         price.setText(rawPrice instanceof Number
                 ? String.format(Locale.US, "%.2f", ((Number) rawPrice).doubleValue())
                 : rawPrice instanceof String ? (String) rawPrice : "");
-        categoryId.setText(text(doc.getString("categoryId")));
+        selectedCategoryId = text(doc.getString("categoryId"));
+        updateCategoryPicker();
         description.setText(text(doc.getString("description")));
         route.setText(text(doc.getString("route")));
         overview.setText(text(doc.getString("overview")));
@@ -204,7 +281,8 @@ public class AdminToursActivity extends AppCompatActivity {
         title.setText("");
         duration.setText("");
         price.setText("");
-        categoryId.setText("");
+        selectedCategoryId = "";
+        updateCategoryPicker();
         description.setText("");
         route.setText("");
         overview.setText("");
@@ -220,7 +298,7 @@ public class AdminToursActivity extends AppCompatActivity {
         String tourTitle = value(title);
         String tourDuration = value(duration);
         String tourPrice = value(price);
-        String tourCategory = value(categoryId);
+        String tourCategory = selectedCategoryId;
         String tourDescription = value(description);
         String tourRoute = value(route);
         String tourOverview = value(overview);

@@ -13,6 +13,9 @@ const {
   getDocs,
   query,
   where,
+  limit,
+  orderBy,
+  serverTimestamp,
   setDoc,
   updateDoc,
   deleteDoc
@@ -124,4 +127,49 @@ test('only published categories are visible to tourists', async () => {
   await assertFails(getDoc(doc(tourist, 'categories/hidden')));
   await assertFails(setDoc(doc(tourist, 'categories/new'), { title: 'New', active: true }));
   await assertSucceeds(getDocs(collection(admin, 'categories')));
+  await assertFails(setDoc(doc(tourist, 'categories/fake'), { title: 'Fake', active: true }));
+  await assertSucceeds(setDoc(doc(admin, 'categories/draft'), {
+    title: 'Nature', active: false, description: '', imageUrl: ''
+  }));
+  await assertFails(updateDoc(doc(admin, 'categories/draft'), { title: '' }));
+  await assertFails(updateDoc(doc(admin, 'categories/draft'), { imageUrl: 'http://not-secure' }));
+  await assertFails(updateDoc(doc(admin, 'categories/draft'), { unknownField: true }));
+  await assertSucceeds(updateDoc(doc(admin, 'categories/draft'), { active: true }));
+  await assertSucceeds(getDoc(doc(tourist, 'categories/draft')));
+  await assertFails(deleteDoc(doc(admin, 'categories/draft')));
+});
+
+test('demo submissions are private, owned, and reviewable only by active admins', async () => {
+  await seed('admins/admin', { active: true, role: 'admin' });
+  const alice = client('alice', 'alice@example.com');
+  const bob = client('bob', 'bob@example.com');
+  const admin = client('admin', 'admin@example.com');
+  const booking = {
+    id: 'test-booking', uid: 'alice', email: 'alice@example.com', source: 'demo',
+    title: 'Kandy Heritage', type: 'Tour', duration: '2 Days', price: '$120',
+    route: 'Colombo to Kandy', pax: '2', pickup: 'Colombo', mobile: '0700000000',
+    date: '2026-10-06', time: '10:00', paymentMethod: 'Card (simulation)',
+    paymentStatus: 'Paid (simulation only)', reviewStatus: 'New',
+    createdAt: serverTimestamp()
+  };
+  const path = 'demo_bookings/test-booking';
+  await assertFails(setDoc(doc(bob, path), booking));
+  await assertFails(setDoc(doc(alice, path), { ...booking, reviewStatus: 'Reviewed' }));
+  await assertFails(setDoc(doc(alice, path), { ...booking, source: 'real' }));
+  await assertFails(setDoc(doc(alice, path), { ...booking, paymentStatus: 'Paid' }));
+  await assertSucceeds(setDoc(doc(alice, path), booking));
+  await assertSucceeds(getDoc(doc(alice, path)));
+  await assertFails(getDoc(doc(bob, path)));
+  await assertFails(getDocs(collection(alice, 'demo_bookings')));
+  await assertSucceeds(getDocs(query(collection(admin, 'demo_bookings'),
+    orderBy('createdAt', 'desc'), limit(50))));
+  await assertFails(getDocs(collection(admin, 'demo_bookings')));
+  await assertFails(updateDoc(doc(alice, path), { reviewStatus: 'Reviewed' }));
+  await assertFails(updateDoc(doc(admin, path), { uid: 'admin' }));
+  await assertSucceeds(updateDoc(doc(admin, path), { reviewStatus: 'Reviewed' }));
+  await assertFails(deleteDoc(doc(admin, path)));
+  await assertFails(deleteDoc(doc(bob, path)));
+  await seed('admins/admin', { active: false, role: 'admin' });
+  await assertFails(getDocs(query(collection(admin, 'demo_bookings'), limit(50))));
+  await assertSucceeds(deleteDoc(doc(alice, path)));
 });

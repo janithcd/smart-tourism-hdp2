@@ -37,6 +37,50 @@ service cloud.firestore {
         && data.active is bool && data.featured is bool;
     }
 
+    function validCategory() {
+      let data = request.resource.data;
+      return data.keys().hasAll(['title', 'active'])
+        && data.title is string && data.title.size() > 0 && data.title.size() <= 100
+        && data.active is bool
+        && (!data.keys().hasAny(['description']) ||
+          (data.description is string && data.description.size() <= 2000))
+        && (!data.keys().hasAny(['imageUrl']) ||
+          (data.imageUrl is string && data.imageUrl.size() <= 500
+            && (data.imageUrl == '' || data.imageUrl.matches('https://.*'))));
+    }
+
+    // Demo submissions are user supplied; payment details never prove a real charge.
+    function validDemoBooking(bookingId) {
+      let data = request.resource.data;
+      return data.keys().hasAll([
+          'id', 'uid', 'email', 'source', 'title', 'type', 'duration', 'price',
+          'route', 'pax', 'pickup', 'mobile', 'date', 'time', 'paymentMethod',
+          'paymentStatus', 'reviewStatus', 'createdAt'
+        ])
+        && data.keys().hasOnly([
+          'id', 'uid', 'email', 'source', 'title', 'type', 'duration', 'price',
+          'route', 'pax', 'pickup', 'mobile', 'date', 'time', 'paymentMethod',
+          'paymentStatus', 'reviewStatus', 'createdAt'
+        ])
+        && data.id == bookingId && data.uid == request.auth.uid
+        && data.email == request.auth.token.email
+        && data.source == 'demo' && data.reviewStatus == 'New'
+        && data.createdAt == request.time
+        && data.title is string && data.title.size() > 0 && data.title.size() <= 100
+        && data.type is string && data.type.size() > 0 && data.type.size() <= 40
+        && data.duration is string && data.duration.size() <= 80
+        && data.price is string && data.price.size() <= 80
+        && data.route is string && data.route.size() <= 2000
+        && data.pax is string && data.pax.size() <= 40
+        && data.pickup is string && data.pickup.size() <= 250
+        && data.mobile is string && data.mobile.size() <= 40
+        && data.date is string && data.date.size() > 0 && data.date.size() <= 40
+        && data.time is string && data.time.size() > 0 && data.time.size() <= 40
+        && data.paymentMethod in ['Cash on arrival', 'Card (simulation)', 'Mobile wallet (simulation)']
+        && data.paymentStatus == (data.paymentMethod == 'Cash on arrival'
+          ? 'Payment due on arrival' : 'Paid (simulation only)');
+    }
+
     match /admins/{uid} {
       allow get: if owns(uid);
       allow list, create, update, delete: if false;
@@ -80,18 +124,23 @@ service cloud.firestore {
 
     match /categories/{categoryId} {
       allow get, list: if isAdmin() || resource.data.active == true;
-      allow create: if isAdmin()
-        && request.resource.data.keys().hasAll(['title', 'active'])
-        && request.resource.data.keys().hasOnly(['title', 'active', 'description', 'imageUrl'])
-        && request.resource.data.title is string
-        && request.resource.data.title.size() > 0
-        && request.resource.data.title.size() <= 100
-        && request.resource.data.active is bool;
-      allow update: if isAdmin()
+      allow create: if isAdmin() && validCategory()
+        && request.resource.data.keys().hasOnly(['title', 'active', 'description', 'imageUrl']);
+      allow update: if isAdmin() && validCategory()
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
           'title', 'active', 'description', 'imageUrl'
         ]);
       allow delete: if false;
+    }
+
+    match /demo_bookings/{bookingId} {
+      allow get: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
+      allow list: if isAdmin() && request.query.limit <= 50;
+      allow create: if signedIn() && validDemoBooking(bookingId);
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reviewStatus'])
+        && request.resource.data.reviewStatus in ['New', 'Reviewed'];
+      allow delete: if signedIn() && resource.data.uid == request.auth.uid;
     }
   }
 }

@@ -44,6 +44,16 @@
             android:icon="@drawable/explore_24px"
             android:title="@string/admin_manage_tours"
             android:visible="false" />
+        <item
+            android:id="@+id/nav_manage_categories"
+            android:icon="@drawable/garden_cart_40px"
+            android:title="@string/admin_manage_categories"
+            android:visible="false" />
+        <item
+            android:id="@+id/nav_admin_bookings"
+            android:icon="@drawable/calendar_today_24px"
+            android:title="@string/admin_demo_bookings"
+            android:visible="false" />
     </group>
 
     <group>
