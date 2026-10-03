@@ -77,6 +77,15 @@
                         android:text="@string/change_profile_pic"
                         android:textAllCaps="false"
                         app:strokeColor="@color/md_theme_primary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:gravity="center"
+                        android:text="@string/profile_photo_local_note"
+                        android:textColor="@color/md_theme_onSurfaceVariant"
+                        android:textSize="12sp" />
                 </LinearLayout>
 
                 <TextView

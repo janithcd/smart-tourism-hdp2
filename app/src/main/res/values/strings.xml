@@ -132,7 +132,7 @@
     <string name="about_app_section">About the app</string>
     <string name="about_app_description">Explore Sri Lankan tours and find places near your current location. Tour and category listings can be managed by an administrator.</string>
     <string name="about_data_section">Your data and bookings</string>
-    <string name="about_data_description">Firebase stores your sign-in account, profile, wishlist, and new demo booking submissions. An administrator can review those submissions. A copy of your booking history and your private reviews remain on this device. Nearby Places sends your location to Google Maps when you search; this app does not save your GPS location in Firestore.</string>
+    <string name="about_data_description">Firebase stores your sign-in account, profile details, wishlist, and new demo booking submissions. An administrator can review those submissions. Your selected profile photo, a copy of your booking history, and your private reviews remain on this device. Nearby Places sends your location to Google Maps when you search; this app does not save your GPS location in Firestore.</string>
     <string name="about_booking_notice">Vehicles and guides still use sample listings. Bookings and payment choices are simulations; they do not reserve a service or charge a card.</string>
     <string name="about_links_section">Links</string>
     <string name="about_source">View project source</string>
@@ -393,13 +393,13 @@
     <string name="profile_email_placeholder">user@email.com</string>
     <string name="change_profile_pic">Change profile photo</string>
     <string name="profile_photo_description">Your profile photo</string>
-    <string name="profile_photo_uploading">Uploading photo…</string>
+    <string name="profile_photo_saving">Saving photo…</string>
+    <string name="profile_photo_local_note">Saved on this device only. It will not appear on another phone or after reinstalling.</string>
     <string name="profile_photo_type_error">Choose a JPEG, PNG, or WebP image.</string>
     <string name="profile_photo_size_error">Choose an image smaller than 5 MB.</string>
     <string name="profile_photo_read_error">Could not open this image. Try another one.</string>
-    <string name="profile_photo_upload_error">Could not upload the photo. Check Firebase Storage and your connection.</string>
-    <string name="profile_photo_profile_error">The image uploaded, but the profile could not be saved. Please retry.</string>
-    <string name="profile_photo_saved">Profile photo updated.</string>
+    <string name="profile_photo_save_error">Could not save this photo. Check available storage and try another image.</string>
+    <string name="profile_photo_saved_local">Profile photo saved on this device.</string>
     <string name="personal_details">Personal Details</string>
     <string name="profile_email_note">Email changes should be handled separately from profile details.</string>
     <string name="update_profile">Update Profile</string>

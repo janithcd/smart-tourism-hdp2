@@ -18,12 +18,12 @@ Source: *Smart Tourism and Travel Booking Mobile Application*, project proposal 
 | Multimedia and sensors | Tour photographs and image carousel; Map screen magnetic compass from the rotation-vector sensor | Partial; verify heading and sensor fallback on a device, and check multimedia requirement with lecturer. |
 | UI animations/transitions | Splash, page slider, Material components, working Settings and About screens with theme/language and permission controls | Partial; inspect on both themes and a device against the assessment criteria. |
 | Administrator panel | Role-checked tour and category editors, dropdown category selection, latest 50 demo submissions, Reviewed flag under Firestore rules | Partial; publish updated rules and test with the actual admin and tourist accounts. The older separate admin app is not in this repo. |
-| Testing and security | Debug build, tour record tests, Firestore/Storage rules with emulator tests, Firebase authentication | Partial; run device checks, publish the reviewed rules, and protect the Maps key. |
+| Testing and security | Debug build, tour record tests, Firestore rules with emulator tests, Firebase authentication | Partial; run device checks, publish the reviewed rules, and protect the Maps key. |
 
 ## Development order
 
 1. Enable Places API (New) and check Nearby Places on a device with precise, approximate, denied and disabled location; verify the [existing checklist](manual-test-checklist.md). Fix the Map tab's separate Routes/Places web calls.
-2. Test Settings, About and Help, including navigation, contacts, theme/language persistence and Android permission links. Test the photo picker and owner-only Firebase Storage upload after [Storage setup](profile-photo-setup.md). Prepare a public app privacy policy and terms before release.
+2. Test Settings, About and Help, including navigation, contacts, theme/language persistence and Android permission links. Test the [on-device profile photo picker](profile-photo-setup.md) on two accounts and after app restart. Explain its no-sync limitation in the viva. Prepare a public app privacy policy and terms before release.
 3. Replace Explore's bundled vehicles and guides with Firestore collections, admin creation/edit/hide controls, validated records, and rules. Decide whether providers manage their own listings and introduce provider roles if needed.
 4. Move bookings from illustrative submissions to a defined reservation lifecycle with cross-device history, admin/provider actions, status updates, and notifications. Payment remains simulated unless a payment provider is explicitly added and verified.
 5. Add optional biometric unlock using Android's BiometricPrompt with device credential fallback, preserving Firebase sign-in and account switching. Test on devices with and without enrolled biometrics.
