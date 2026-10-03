@@ -175,7 +175,14 @@ service cloud.firestore {
       allow update: if isAdmin()
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reviewStatus'])
         && request.resource.data.reviewStatus in ['New', 'Reviewed'];
-      allow delete: if signedIn() && resource.data.uid == request.auth.uid;
+      // Stripe test records are written only by the trusted server and stay in the admin audit list.
+      allow delete: if signedIn() && resource.data.uid == request.auth.uid
+        && resource.data.source == 'demo';
+    }
+
+    match /stripe_sandbox_orders/{orderId} {
+      // The local test backend uses Firebase Admin SDK, which bypasses client rules.
+      allow read, write: if false;
     }
   }
 }

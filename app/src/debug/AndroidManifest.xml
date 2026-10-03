@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <application android:networkSecurityConfig="@xml/stripe_sandbox_network_security">
+        <activity
+            android:name=".activity.PaymentActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            tools:replace="android:exported">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="smarttourism"
+                    android:host="checkout"
+                    android:path="/return" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

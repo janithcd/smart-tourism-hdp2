@@ -383,6 +383,9 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
 
         preferences.edit()
                 .putString("package_title", title)
+                .putString("package_catalog_id",
+                        getIntent().getStringExtra(EXTRA_PACKAGE_ID) == null ? ""
+                                : getIntent().getStringExtra(EXTRA_PACKAGE_ID))
                 .putString("package_service_type", serviceType)
                 .putString("package_duration", duration)
                 .putString("package_price", price)

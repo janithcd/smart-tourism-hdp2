@@ -9,6 +9,11 @@ if (localPropertiesFile.exists()) {
     localPropertiesFile.withInputStream { stream -> localProperties.load(stream) }
 }
 def mapsApiKey = localProperties.getProperty('MAPS_API_KEY', System.getenv('MAPS_API_KEY') ?: '')
+def stripeSandboxUrl = localProperties.getProperty('STRIPE_SANDBOX_URL', '').trim()
+if (stripeSandboxUrl && !stripeSandboxUrl.matches('https://[A-Za-z0-9.-]+(:[0-9]{1,5})?(/[-A-Za-z0-9_/]*)?')
+        && stripeSandboxUrl != 'http://localhost:4242') {
+    throw new GradleException('STRIPE_SANDBOX_URL must be HTTPS or http://localhost:4242 for adb reverse.')
+}
 
 android {
     namespace 'lk.janith.smart_tourism'
@@ -26,7 +31,11 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField 'String', 'STRIPE_SANDBOX_URL', groovy.json.JsonOutput.toJson(stripeSandboxUrl)
+        }
         release {
+            buildConfigField 'String', 'STRIPE_SANDBOX_URL', '""'
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -39,6 +48,7 @@ android {
 
     buildFeatures {
         viewBinding true
+        buildConfig true
     }
 
 }

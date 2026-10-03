@@ -75,15 +75,19 @@ public class BookingsFragment extends Fragment {
             ((TextView) card.findViewById(R.id.bookingPayment)).setText(
                     getString(R.string.booking_payment_value, booking.paymentMethod, booking.paymentStatus));
             ((TextView) card.findViewById(R.id.bookingCloudStatus)).setText(
-                    booking.cloudSaved ? R.string.booking_shared_demo : R.string.booking_local_only);
+                    "stripe_test".equals(booking.source) ? R.string.booking_shared_stripe_test
+                            : booking.cloudSaved ? R.string.booking_shared_demo : R.string.booking_local_only);
             MaterialButton remove = card.findViewById(R.id.btnRemoveBooking);
+            boolean stripeTest = "stripe_test".equals(booking.source);
+            if (stripeTest) remove.setText(R.string.booking_remove_action);
             remove.setOnClickListener(v -> new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.booking_remove_title)
-                    .setMessage(booking.cloudSaved ? R.string.booking_remove_cloud_message
+                    .setMessage(stripeTest ? R.string.booking_remove_stripe_message
+                            : booking.cloudSaved ? R.string.booking_remove_cloud_message
                             : R.string.booking_remove_message)
                     .setNegativeButton(R.string.cancel, null)
                     .setPositiveButton(R.string.booking_remove_action, (dialog, which) -> {
-                        if (!booking.cloudSaved) {
+                        if (stripeTest || !booking.cloudSaved) {
                             removeLocal(booking.id);
                             return;
                         }

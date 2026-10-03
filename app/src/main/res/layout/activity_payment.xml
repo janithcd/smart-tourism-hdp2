@@ -122,6 +122,14 @@
                         android:layout_height="wrap_content"
                         android:minHeight="48dp"
                         android:text="@string/payment_cash_arrival" />
+
+                    <RadioButton
+                        android:id="@+id/paymentStripeTest"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:visibility="gone"
+                        android:text="@string/payment_stripe_test" />
                 </RadioGroup>
             </com.google.android.material.card.MaterialCardView>
 
@@ -132,6 +140,24 @@
                 android:text="@string/payment_demo_notice"
                 android:textColor="@color/md_theme_onSurfaceVariant"
                 android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/stripeStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:textColor="@color/md_theme_onSurfaceVariant"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCheckStripe"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/payment_stripe_check"
+                android:visibility="gone" />
         </LinearLayout>
     </ScrollView>
 
