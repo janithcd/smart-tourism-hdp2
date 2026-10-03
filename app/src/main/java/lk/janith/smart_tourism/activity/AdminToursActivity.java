@@ -166,7 +166,7 @@ public class AdminToursActivity extends AppCompatActivity {
                                 Boolean.FALSE.equals(doc.getBoolean("active"))
                                         ? getString(R.string.admin_hidden)
                                         : getString(R.string.admin_active)));
-                        item.setTextAllCaps(false);
+                        item.setAllCaps(false);
                         item.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
                         item.setOnClickListener(v -> editTour(doc));
                         tourList.addView(item);
