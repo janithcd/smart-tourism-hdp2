@@ -63,6 +63,7 @@ public class ProfileFragment extends Fragment {
 
     private String currentUid = "";
     private boolean uploadingPhoto;
+    private int profileLoadGeneration;
     private final ActivityResultLauncher<PickVisualMediaRequest> photoPicker =
             registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
                 if (uri != null) uploadProfilePicture(uri);
@@ -116,6 +117,12 @@ public class ProfileFragment extends Fragment {
         loadUserProfile();
     }
 
+    @Override
+    public void onDestroyView() {
+        profileLoadGeneration++;
+        super.onDestroyView();
+    }
+
     private void loadUserProfile() {
         if (firebaseAuth.getCurrentUser() == null) {
             Toast.makeText(requireContext(), "No signed-in user", Toast.LENGTH_LONG).show();
@@ -123,6 +130,7 @@ public class ProfileFragment extends Fragment {
         }
 
         currentUid = firebaseAuth.getCurrentUser().getUid();
+        int generation = ++profileLoadGeneration;
 
         showLoading(true);
         setTemporaryValues();
@@ -131,6 +139,7 @@ public class ProfileFragment extends Fragment {
 
         userRef.get(Source.CACHE)
                 .addOnSuccessListener(documentSnapshot -> {
+                    if (!canBind(generation)) return;
                     if (documentSnapshot.exists()) {
                         User cachedUser = documentSnapshot.toObject(User.class);
                         if (cachedUser != null) {
@@ -141,6 +150,7 @@ public class ProfileFragment extends Fragment {
 
         userRef.get(Source.SERVER)
                 .addOnSuccessListener(documentSnapshot -> {
+                    if (!canBind(generation)) return;
                     showLoading(false);
 
                     if (documentSnapshot.exists()) {
@@ -154,9 +164,14 @@ public class ProfileFragment extends Fragment {
                     }
                 })
                 .addOnFailureListener(e -> {
+                    if (!canBind(generation)) return;
                     showLoading(false);
                     Toast.makeText(requireContext(), "Firestore read failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
+    }
+
+    private boolean canBind(int generation) {
+        return isAdded() && getView() != null && generation == profileLoadGeneration;
     }
 
     private void bindUser(User user) {
@@ -286,6 +301,7 @@ public class ProfileFragment extends Fragment {
                 .addOnSuccessListener(task -> firebaseFirestore.collection("users").document(uid)
                         .update("profilePic", ProfilePhoto.pathFor(uid))
                         .addOnSuccessListener(unused -> {
+                            profileLoadGeneration++;
                             finishPhotoUpload();
                             if (isAdded() && getView() != null && uid.equals(currentUid)) {
                                 ProfilePhoto.load(profileAvatar, ProfilePhoto.pathFor(uid), uid);
@@ -310,7 +326,7 @@ public class ProfileFragment extends Fragment {
         if (isAdded() && getView() != null) {
             btnChangeProfilePic.setEnabled(true);
             btnChangeProfilePic.setText(R.string.change_profile_pic);
-            profileProgressBar.setVisibility(View.GONE);
+            showLoading(false);
         }
     }
 

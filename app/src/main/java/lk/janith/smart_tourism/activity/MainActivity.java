@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TextView headerName;
     private TextView headerEmail;
     private TextView headerCountry;
+    private int headerLoadGeneration;
 
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore firebaseFirestore;
@@ -226,6 +227,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void loadDrawerHeaderUser() {
+        int generation = ++headerLoadGeneration;
         if (firebaseAuth.getCurrentUser() == null) {
             headerName.setText(getString(R.string.guest_user));
             headerEmail.setText(getString(R.string.no_email));
@@ -241,6 +243,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .document(uid)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
+                    if (generation != headerLoadGeneration || firebaseAuth.getCurrentUser() == null
+                            || !uid.equals(firebaseAuth.getCurrentUser().getUid())) return;
                     if (documentSnapshot.exists()) {
                         User user = documentSnapshot.toObject(User.class);
 
@@ -259,13 +263,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         Toast.makeText(MainActivity.this, getString(R.string.user_document_not_found), Toast.LENGTH_LONG).show();
                     }
                 })
-                .addOnFailureListener(e ->
-                        Toast.makeText(
+                .addOnFailureListener(e -> {
+                    if (generation != headerLoadGeneration || isFinishing()) return;
+                    Toast.makeText(
                                 MainActivity.this,
                                 getString(R.string.firestore_read_failed, e.getMessage()),
                                 Toast.LENGTH_LONG
-                        ).show()
-                );
+                        ).show();
+                });
     }
 
     private void loadFragment(Fragment fragment, int titleResId, boolean addToBackStack) {
