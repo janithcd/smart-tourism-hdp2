@@ -30,6 +30,7 @@
         <item name="colorOutline">@color/md_theme_outline</item>
 
         <item name="android:windowBackground">@color/md_theme_background</item>
+        <item name="materialButtonStyle">@style/Widget.SmartTourism.Button</item>
 
         <!-- System bars -->
         <item name="android:statusBarColor">@color/md_theme_primaryContainer</item>
@@ -47,6 +48,10 @@
         <item name="android:background">@color/md_theme_primaryContainer</item>
         <item name="titleTextColor">@color/md_theme_onPrimaryContainer</item>
         <item name="navigationIconTint">@color/md_theme_onPrimaryContainer</item>
+    </style>
+
+    <style name="Widget.SmartTourism.Button" parent="Widget.Material3.Button">
+        <item name="cornerRadius">16dp</item>
     </style>
 
     <style name="Widget.SmartTourism.BottomNavigation" parent="Widget.Material3.BottomNavigationView">

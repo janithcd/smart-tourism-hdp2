@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Locale;
 
 import lk.janith.smart_tourism.R;
+import lk.janith.smart_tourism.data.BookingSelection;
 import lk.janith.smart_tourism.data.BookingStore;
 import lk.janith.smart_tourism.data.ReviewStore;
 import lk.janith.smart_tourism.data.ServiceCatalog;
@@ -59,17 +60,21 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
     private TextView txtHighlights;
     private MaterialButton btnBookNow;
 
-    private TextInputLayout paxLayout;
     private TextInputLayout pickupLayout;
     private TextInputLayout mobileLayout;
     private TextInputLayout dateLayout;
     private TextInputLayout timeLayout;
 
-    private AutoCompleteTextView autoPax;
     private AutoCompleteTextView autoPickupLocation;
     private TextInputEditText editMobileNumber;
     private TextInputEditText editTravelDate;
     private TextInputEditText editTravelTime;
+    private TextView passengerValue;
+    private MaterialButton passengerMinus;
+    private MaterialButton passengerPlus;
+    private MaterialButton dateMinus;
+    private int passengerCount = 1;
+    private int maxPeople;
 
     private String title;
     private String duration;
@@ -109,17 +114,19 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
         txtHighlights = findViewById(R.id.txtHighlights);
         btnBookNow = findViewById(R.id.btnBookNow);
 
-        paxLayout = findViewById(R.id.paxLayout);
         pickupLayout = findViewById(R.id.pickupLayout);
         mobileLayout = findViewById(R.id.mobileLayout);
         dateLayout = findViewById(R.id.dateLayout);
         timeLayout = findViewById(R.id.timeLayout);
 
-        autoPax = findViewById(R.id.autoPax);
         autoPickupLocation = findViewById(R.id.autoPickupLocation);
         editMobileNumber = findViewById(R.id.editMobileNumber);
         editTravelDate = findViewById(R.id.editTravelDate);
         editTravelTime = findViewById(R.id.editTravelTime);
+        passengerValue = findViewById(R.id.passengerValue);
+        passengerMinus = findViewById(R.id.passengerMinus);
+        passengerPlus = findViewById(R.id.passengerPlus);
+        dateMinus = findViewById(R.id.dateMinus);
 
         title = getIntent().getStringExtra(EXTRA_TITLE);
         duration = getIntent().getStringExtra(EXTRA_DURATION);
@@ -166,33 +173,35 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
                         title, serviceType.toLowerCase(Locale.ROOT)));
         txtHighlights.setText(buildHighlights(description));
 
-        setupPaxDropdown();
+        setupPassengerStepper(savedInstanceState);
         setupPickupDropdown(duration);
         setupReview();
+        if (savedInstanceState != null) {
+            editTravelDate.setText(savedInstanceState.getString("selected_travel_date", ""));
+        }
         editTravelDate.setOnClickListener(v -> showDatePicker());
+        dateLayout.setEndIconOnClickListener(v -> showDatePicker());
+        dateMinus.setOnClickListener(v -> moveDate(-1));
+        findViewById(R.id.datePlus).setOnClickListener(v -> moveDate(1));
+        updateDateControls();
         editTravelTime.setOnClickListener(v -> showTimePicker());
 
         btnBack.setOnClickListener(v -> finish());
 
         btnBookNow.setOnClickListener(v -> {
-            paxLayout.setError(null);
             pickupLayout.setError(null);
             mobileLayout.setError(null);
             dateLayout.setError(null);
             timeLayout.setError(null);
 
-            String paxValue = autoPax.getText() != null ? autoPax.getText().toString().trim() : "";
+            String paxValue = passengerCount == 1 ? getString(R.string.booking_one_person)
+                    : getString(R.string.booking_people_count, passengerCount);
             String pickupValue = autoPickupLocation.getText() != null ? autoPickupLocation.getText().toString().trim() : "";
             String mobileValue = editMobileNumber.getText() != null ? editMobileNumber.getText().toString().trim() : "";
             String dateValue = editTravelDate.getText() != null ? editTravelDate.getText().toString().trim() : "";
             String timeValue = editTravelTime.getText() != null ? editTravelTime.getText().toString().trim() : "";
 
             boolean hasError = false;
-
-            if (paxValue.isEmpty()) {
-                paxLayout.setError(getString(R.string.package_select_pax_error));
-                hasError = true;
-            }
 
             if (pickupValue.isEmpty()) {
                 pickupLayout.setError(getString(R.string.package_select_pickup_error));
@@ -240,22 +249,51 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
         });
     }
 
-    private void setupPaxDropdown() {
-        List<String> paxOptions = new ArrayList<>();
-        paxOptions.add("1 Person");
-        int maxPeople = TYPE_TOUR.equals(serviceType) ? 8 : Math.max(1, Math.min(capacity, 30));
-        for (int i = 2; i <= maxPeople; i++) {
-            paxOptions.add(i + " People");
-        }
+    @Override
+    protected void onSaveInstanceState(Bundle state) {
+        state.putInt("selected_passengers", passengerCount);
+        state.putString("selected_travel_date", editTravelDate.getText() == null
+                ? "" : editTravelDate.getText().toString());
+        super.onSaveInstanceState(state);
+    }
 
-        ArrayAdapter<String> paxAdapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_list_item_1,
-                paxOptions
-        );
+    private void setupPassengerStepper(Bundle state) {
+        maxPeople = BookingSelection.maxTravelers(TYPE_TOUR.equals(serviceType) ? 8 : capacity);
+        passengerCount = BookingSelection.travelers(
+                state == null ? 1 : state.getInt("selected_passengers", 1), maxPeople);
+        ((TextView) findViewById(R.id.passengerCapacity)).setText(
+                getString(R.string.booking_capacity_hint, maxPeople));
+        passengerMinus.setOnClickListener(v -> {
+            passengerCount = BookingSelection.travelers(passengerCount - 1, maxPeople);
+            updatePassengerControls();
+        });
+        passengerPlus.setOnClickListener(v -> {
+            passengerCount = BookingSelection.travelers(passengerCount + 1, maxPeople);
+            updatePassengerControls();
+        });
+        updatePassengerControls();
+    }
 
-        autoPax.setAdapter(paxAdapter);
-        autoPax.setOnClickListener(v -> autoPax.showDropDown());
+    private void updatePassengerControls() {
+        passengerValue.setText(String.valueOf(passengerCount));
+        passengerValue.setContentDescription(getString(
+                R.string.booking_traveler_count_accessibility, passengerCount, maxPeople));
+        passengerMinus.setEnabled(passengerCount > 1);
+        passengerPlus.setEnabled(passengerCount < maxPeople);
+    }
+
+    private void moveDate(int offset) {
+        String current = editTravelDate.getText() == null
+                ? "" : editTravelDate.getText().toString();
+        editTravelDate.setText(BookingSelection.shiftDay(current, offset, Calendar.getInstance()));
+        dateLayout.setError(null);
+        updateDateControls();
+    }
+
+    private void updateDateControls() {
+        String current = editTravelDate.getText() == null
+                ? "" : editTravelDate.getText().toString();
+        dateMinus.setEnabled(BookingSelection.canPreviousDay(current, Calendar.getInstance()));
     }
 
     private void setupPickupDropdown(String durationValue) {
@@ -304,10 +342,15 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
 
     private void showDatePicker() {
         Calendar today = Calendar.getInstance();
-        DatePickerDialog picker = new DatePickerDialog(this, (view, year, month, day) ->
-                editTravelDate.setText(String.format(Locale.US, "%04d-%02d-%02d", year, month + 1, day)),
-                today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH));
-        picker.getDatePicker().setMinDate(today.getTimeInMillis());
+        Calendar selected = BookingSelection.parseDate(editTravelDate.getText() == null
+                ? "" : editTravelDate.getText().toString());
+        if (selected == null || selected.before(BookingSelection.startOfDay(today))) selected = today;
+        DatePickerDialog picker = new DatePickerDialog(this, (view, year, month, day) -> {
+            editTravelDate.setText(String.format(Locale.US, "%04d-%02d-%02d", year, month + 1, day));
+            dateLayout.setError(null);
+            updateDateControls();
+        }, selected.get(Calendar.YEAR), selected.get(Calendar.MONTH), selected.get(Calendar.DAY_OF_MONTH));
+        picker.getDatePicker().setMinDate(BookingSelection.startOfDay(today).getTimeInMillis());
         picker.show();
     }
 
@@ -320,16 +363,16 @@ public class TourPackageDetailsActivity extends AppCompatActivity {
 
     private boolean isFutureBooking(String dateValue, String timeValue) {
         try {
-            String[] dateParts = dateValue.split("-");
             String[] timeParts = timeValue.split(":");
-            Calendar selected = Calendar.getInstance();
-            selected.set(Integer.parseInt(dateParts[0]), Integer.parseInt(dateParts[1]) - 1,
-                    Integer.parseInt(dateParts[2]), Integer.parseInt(timeParts[0]),
-                    Integer.parseInt(timeParts[1]));
+            Calendar selected = BookingSelection.parseDate(dateValue);
+            if (selected == null || timeParts.length != 2) return false;
+            selected.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeParts[0]));
+            selected.set(Calendar.MINUTE, Integer.parseInt(timeParts[1]));
             selected.set(Calendar.SECOND, 0);
             selected.set(Calendar.MILLISECOND, 0);
+            selected.getTimeInMillis();
             return selected.after(Calendar.getInstance());
-        } catch (NumberFormatException | ArrayIndexOutOfBoundsException error) {
+        } catch (IllegalArgumentException error) {
             return false;
         }
     }

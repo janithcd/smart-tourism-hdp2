@@ -15,7 +15,7 @@ See [the proposal gap analysis](docs/proposal-gap-analysis.md) for feature cover
 
 ## Viva demo path
 
-Sign up or sign in → Explore → switch between Tours, Vehicles, and Guides → search and open a listing → choose people, pickup, mobile number, travel date and pickup time → Book Now → My Activities → Continue to demo payment → choose Card (simulation), Mobile wallet (simulation), or Cash on arrival → Confirm demo booking → Bookings. Open the listing again to save or edit a private 1–5 star review. Use the tour wishlist, profile, map compass, and language menu as other examples. After the [admin setup](docs/admin-tour-setup.md), an admin can create a category, assign it to a tour with the dropdown, publish a vehicle or guide, and review a demo submission. Follow the [manual test checklist](docs/manual-test-checklist.md) when checking the build on a device.
+Sign up or sign in → Explore → switch between Tours, Vehicles, and Guides → search and open a listing → adjust travelers with −/+ within the listing's capacity, choose pickup and mobile number, select a travel date with the calendar or day controls and set pickup time → Book Now → My Activities → Continue to demo payment → choose Card (simulation), Mobile wallet (simulation), or Cash on arrival → Confirm demo booking → Bookings. Open the listing again to save or edit a private 1–5 star review. Use the tour wishlist, profile, map compass, and language menu as other examples. After the [admin setup](docs/admin-tour-setup.md), an admin can create a category, assign it to a tour with the dropdown, publish a vehicle or guide, and review a demo submission. Follow the [manual test checklist](docs/manual-test-checklist.md) when checking the build on a device.
 
 ## Original Firestore catalogue
 

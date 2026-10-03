@@ -53,7 +53,7 @@
     <string name="package_overview_text">%1$s is a carefully planned %2$s tour package designed to help travelers enjoy the best highlights of Sri Lanka in a smooth and comfortable way.</string>
 
 
-    <string name="booking_setup_subtitle">Choose the number of travelers, pickup point, and your mobile number.</string>
+    <string name="booking_setup_subtitle">Choose travelers, pickup, contact number, and a travel date and time.</string>
     <string name="package_mobile_label">Mobile Number</string>
     <string name="package_mobile_error_empty">Please enter your mobile number</string>
     <string name="package_mobile_error_invalid">Please enter a valid mobile number</string>
@@ -372,6 +372,17 @@
     <string name="review_save_failed">Could not save your review. Try again.</string>
 
     <string name="booking_date_label">Travel date</string>
+    <string name="booking_capacity_hint">Up to %1$d travelers for this listing</string>
+    <string name="booking_traveler_count_accessibility">%1$d of %2$d travelers</string>
+    <string name="booking_decrease_travelers">Remove one traveler</string>
+    <string name="booking_increase_travelers">Add one traveler</string>
+    <string name="booking_open_calendar">Choose travel date from calendar</string>
+    <string name="booking_date_hint">Choose in the calendar, or tap + 1 day to start with tomorrow.</string>
+    <string name="booking_back">Back to Explore</string>
+    <string name="booking_previous_day">− 1 day</string>
+    <string name="booking_next_day">+ 1 day</string>
+    <string name="booking_one_person">1 Person</string>
+    <string name="booking_people_count">%1$d People</string>
     <string name="booking_date_required">Select a travel date</string>
     <string name="booking_time_label">Pickup time</string>
     <string name="booking_time_required">Select a pickup time</string>
