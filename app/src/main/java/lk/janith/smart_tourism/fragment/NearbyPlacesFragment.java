@@ -65,7 +65,8 @@ public class NearbyPlacesFragment extends Fragment {
             Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
     };
     private static final List<Place.Field> PLACE_FIELDS = Arrays.asList(
-            Place.Field.ID, Place.Field.DISPLAY_NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS
+            Place.Field.ID, Place.Field.DISPLAY_NAME, Place.Field.LOCATION,
+            Place.Field.FORMATTED_ADDRESS
     );
 
     private final ActivityResultLauncher<String[]> permissionLauncher = registerForActivityResult(
