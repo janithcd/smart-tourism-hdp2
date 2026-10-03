@@ -197,9 +197,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void refreshAdminMenu() {
         MenuItem manageTours = navigationView.getMenu().findItem(R.id.nav_manage_tours);
         MenuItem manageCategories = navigationView.getMenu().findItem(R.id.nav_manage_categories);
+        MenuItem manageServices = navigationView.getMenu().findItem(R.id.nav_manage_services);
         MenuItem adminBookings = navigationView.getMenu().findItem(R.id.nav_admin_bookings);
         manageTours.setVisible(false);
         manageCategories.setVisible(false);
+        manageServices.setVisible(false);
         adminBookings.setVisible(false);
         if (firebaseAuth.getCurrentUser() == null) return;
 
@@ -213,6 +215,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 && "admin".equals(document.getString("role"));
                         manageTours.setVisible(isAdmin);
                         manageCategories.setVisible(isAdmin);
+                        manageServices.setVisible(isAdmin);
                         adminBookings.setVisible(isAdmin);
                     }
                 });
@@ -383,6 +386,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         } else if (id == R.id.nav_manage_categories) {
             startActivity(new Intent(this, AdminCategoriesActivity.class));
+
+        } else if (id == R.id.nav_manage_services) {
+            startActivity(new Intent(this, AdminServicesActivity.class));
 
         } else if (id == R.id.nav_admin_bookings) {
             startActivity(new Intent(this, AdminBookingsActivity.class));

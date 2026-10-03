@@ -49,6 +49,25 @@ service cloud.firestore {
             && (data.imageUrl == '' || data.imageUrl.matches('https://.*'))));
     }
 
+    function validService() {
+      let data = request.resource.data;
+      return data.keys().hasAll([
+          'type', 'title', 'duration', 'price', 'capacity',
+          'pickup', 'description', 'imageUrl', 'active'
+        ])
+        && data.type in ['Vehicle', 'Guide']
+        && data.title is string && data.title.size() > 0 && data.title.size() <= 100
+        && data.duration is string && data.duration.size() > 0 && data.duration.size() <= 40
+        && data.price is number && data.price > 0 && data.price <= 1000000
+        && data.capacity is int && data.capacity >= 1 && data.capacity <= 30
+        && data.pickup is string && data.pickup.size() > 0 && data.pickup.size() <= 200
+        && data.description is string && data.description.size() > 0
+        && data.description.size() <= 2000
+        && data.imageUrl is string && data.imageUrl.size() <= 500
+        && (data.imageUrl == '' || data.imageUrl.matches('https://.*'))
+        && data.active is bool;
+    }
+
     // Demo submissions are user supplied; payment details never prove a real charge.
     function validDemoBooking(bookingId) {
       let data = request.resource.data;
@@ -131,6 +150,22 @@ service cloud.firestore {
           'title', 'active', 'description', 'imageUrl'
         ]);
       allow delete: if false;
+    }
+
+    match /services/{serviceId} {
+      // Tourist queries must include whereEqualTo('active', true).
+      allow get, list: if isAdmin() || resource.data.active == true;
+      allow create: if isAdmin() && validService()
+        && request.resource.data.keys().hasOnly([
+          'type', 'title', 'duration', 'price', 'capacity',
+          'pickup', 'description', 'imageUrl', 'active'
+        ]);
+      allow update: if isAdmin() && validService()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'type', 'title', 'duration', 'price', 'capacity',
+          'pickup', 'description', 'imageUrl', 'active'
+        ]);
+      allow delete: if false; // Hide a listing with active: false instead.
     }
 
     match /demo_bookings/{bookingId} {

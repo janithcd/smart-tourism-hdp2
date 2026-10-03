@@ -249,6 +249,27 @@
     <string name="admin_category_save_failed">Could not save category: %1$s</string>
     <string name="admin_category_description_error">Description must be at most 2,000 characters</string>
 
+    <string name="admin_manage_services">Manage vehicles and guides</string>
+    <string name="admin_new_service">New vehicle or guide</string>
+    <string name="admin_edit_service">Edit vehicle or guide</string>
+    <string name="admin_field_service_type">Service type</string>
+    <string name="admin_field_service_title">Listing title</string>
+    <string name="admin_field_capacity">Maximum travelers (1–30)</string>
+    <string name="admin_field_pickup">Meeting or pickup location</string>
+    <string name="admin_publish_service">Show listing to tourists</string>
+    <string name="admin_save_service">Save listing</string>
+    <string name="admin_existing_services">Existing vehicles and guides</string>
+    <string name="admin_loading_services">Loading listings…</string>
+    <string name="admin_no_services">No vehicles or guides yet. Add one above.</string>
+    <string name="admin_service_row">%1$s · %2$s · %3$s</string>
+    <string name="admin_service_draft_notice">New listings start hidden. Publish when their details are ready. Bookings and payments remain simulations; rates and availability are not confirmed by providers.</string>
+    <string name="admin_service_saved">Listing saved. Reopen Explore to see published changes.</string>
+    <string name="admin_services_load_failed">Could not load listings: %1$s</string>
+    <string name="admin_service_save_failed">Could not save listing: %1$s</string>
+    <string name="admin_capacity_error">Enter a maximum of 1–30 travelers</string>
+    <string name="admin_pickup_error">Enter a meeting or pickup location (up to 200 characters)</string>
+    <string name="admin_description_error">Enter a description (up to 2,000 characters)</string>
+
     <string name="admin_demo_bookings">Demo bookings</string>
     <string name="admin_bookings_notice">Latest 50 Firestore demo submissions. These are not real reservations or payments. Earlier bookings saved only on a device cannot appear here.</string>
     <string name="admin_refresh_bookings">Refresh</string>
@@ -307,7 +328,7 @@
     <string name="home_popular_packages">Popular Packages</string>
     <string name="catalog_all_categories">All</string>
     <string name="catalog_demo_tours_notice">Sample tours for the demo. Availability is not live.</string>
-    <string name="catalog_live_tours_notice">Tours from Firebase. Booking and payment remain a local demo; vehicles and guides are samples.</string>
+    <string name="catalog_live_tours_notice">Tours from Firebase. Booking and payment remain a demo.</string>
 
 
     <string name="my_activity_title">My Activities</string>
@@ -330,6 +351,10 @@
     <string name="explore_empty">No services match your search in this category.</string>
     <string name="service_image_description">Service icon</string>
     <string name="service_detail_type">%1$s · Sample listing</string>
+    <string name="service_detail_live">%1$s · Admin listing</string>
+    <string name="service_live_notice">Admin listings from Firebase. Rates and availability need provider confirmation; bookings and payments are simulations.</string>
+    <string name="service_sample_notice">Showing sample listings. Published services are unavailable here or could not be loaded.</string>
+    <string name="service_live_overview">%1$s is an administrator-entered %2$s listing. The rate and availability need provider confirmation; the booking and payment steps are simulations.</string>
     <string name="service_description_label">Service details</string>
     <string name="service_highlights_label">Included highlights</string>
     <string name="service_overview_text">%1$s is an illustrative %2$s service for trying the booking flow. The listed rate and availability are not confirmed by a provider.</string>

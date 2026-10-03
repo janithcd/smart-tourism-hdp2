@@ -32,6 +32,9 @@
             android:name=".activity.AdminCategoriesActivity"
             android:exported="false" />
         <activity
+            android:name=".activity.AdminServicesActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.AdminBookingsActivity"
             android:exported="false" />
         <activity

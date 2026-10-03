@@ -34,6 +34,11 @@ const validTour = {
   active: false,
   featured: false
 };
+const validService = {
+  type: 'Vehicle', title: 'Colombo Van', duration: 'Full day', price: 95,
+  capacity: 7, pickup: 'Colombo Hotel', description: 'Vehicle listing',
+  imageUrl: '', active: false
+};
 
 test.before(async () => {
   env = await initializeTestEnvironment({
@@ -137,6 +142,34 @@ test('only published categories are visible to tourists', async () => {
   await assertSucceeds(updateDoc(doc(admin, 'categories/draft'), { active: true }));
   await assertSucceeds(getDoc(doc(tourist, 'categories/draft')));
   await assertFails(deleteDoc(doc(admin, 'categories/draft')));
+});
+
+test('admin manages vehicles and guides; tourists read only published services', async () => {
+  await seed('admins/admin', { active: true, role: 'admin' });
+  const admin = client('admin', 'admin@example.com');
+  const tourist = client('alice', 'alice@example.com');
+  const anonymous = env.unauthenticatedContext().firestore();
+  await assertFails(setDoc(doc(tourist, 'services/fake'), validService));
+  await assertSucceeds(setDoc(doc(admin, 'services/van'), validService));
+  await assertFails(getDoc(doc(tourist, 'services/van')));
+  await assertFails(getDocs(collection(tourist, 'services')));
+  await assertSucceeds(getDocs(query(collection(tourist, 'services'), where('active', '==', true))));
+  await assertSucceeds(getDocs(collection(admin, 'services')));
+  await assertFails(updateDoc(doc(admin, 'services/van'), { type: 'Tour' }));
+  await assertFails(updateDoc(doc(admin, 'services/van'), { capacity: 0 }));
+  await assertFails(updateDoc(doc(admin, 'services/van'), { price: -1 }));
+  await assertFails(updateDoc(doc(admin, 'services/van'), { imageUrl: 'http://example.com' }));
+  await assertFails(updateDoc(doc(admin, 'services/van'), { adminOnly: true }));
+  await assertFails(updateDoc(doc(tourist, 'services/van'), { active: true }));
+  await assertSucceeds(updateDoc(doc(admin, 'services/van'), { active: true }));
+  await assertSucceeds(getDoc(doc(tourist, 'services/van')));
+  await assertSucceeds(getDoc(doc(anonymous, 'services/van')));
+  await assertFails(deleteDoc(doc(admin, 'services/van')));
+  await assertSucceeds(setDoc(doc(admin, 'services/guide'), {
+    ...validService, type: 'Guide', title: 'Local Guide', capacity: 8, active: true
+  }));
+  await seed('admins/admin', { active: false, role: 'admin' });
+  await assertFails(updateDoc(doc(admin, 'services/guide'), { active: false }));
 });
 
 test('demo submissions are private, owned, and reviewable only by active admins', async () => {
