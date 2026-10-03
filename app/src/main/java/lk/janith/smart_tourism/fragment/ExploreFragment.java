@@ -78,6 +78,7 @@ public class ExploreFragment extends Fragment {
             intent.putExtra(TourPackageDetailsActivity.EXTRA_CAPACITY, service.capacity);
             intent.putExtra(TourPackageDetailsActivity.EXTRA_PICKUP, service.pickup);
             intent.putExtra(TourPackageDetailsActivity.EXTRA_SERVICE_LIVE, !service.sample);
+            intent.putExtra(TourPackageDetailsActivity.EXTRA_PACKAGE_ID, service.id);
             startActivity(intent);
         });
 

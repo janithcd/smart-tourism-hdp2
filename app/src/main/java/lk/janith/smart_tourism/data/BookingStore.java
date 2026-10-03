@@ -51,7 +51,7 @@ public final class BookingStore {
     public static final class Booking {
         public final String id, type, title, duration, price, route, pax, pickup, mobile, date, time;
         public final String imageUrl;
-        public final String paymentMethod, paymentStatus;
+        public final String paymentMethod, paymentStatus, source;
         public final boolean cloudSaved;
         public final int imageResId;
         public final long createdAt;
@@ -59,7 +59,7 @@ public final class BookingStore {
         private Booking(String id, String type, String title, String duration, String price, String route,
                         String pax, String pickup, String mobile, String date, String time,
                         String paymentMethod, String paymentStatus, int imageResId,
-                        String imageUrl, long createdAt, boolean cloudSaved) {
+                        String imageUrl, long createdAt, boolean cloudSaved, String source) {
             this.id = id;
             this.type = type;
             this.title = title;
@@ -77,6 +77,7 @@ public final class BookingStore {
             this.imageUrl = imageUrl;
             this.createdAt = createdAt;
             this.cloudSaved = cloudSaved;
+            this.source = source;
         }
 
         private JSONObject toJson() throws JSONException {
@@ -98,6 +99,7 @@ public final class BookingStore {
             json.put("imageUrl", imageUrl);
             json.put("createdAt", createdAt);
             json.put("cloudSaved", cloudSaved);
+            json.put("source", source);
             return json;
         }
 
@@ -112,7 +114,8 @@ public final class BookingStore {
                     json.optString("paymentStatus", "No payment recorded"),
                     json.optInt("imageResId", R.drawable.location_on_24px),
                     json.optString("imageUrl"),
-                    json.optLong("createdAt"), json.optBoolean("cloudSaved", false));
+                    json.optLong("createdAt"), json.optBoolean("cloudSaved", false),
+                    json.optString("source", "demo"));
         }
     }
 
@@ -156,9 +159,29 @@ public final class BookingStore {
                 paymentMethod, paymentStatus,
                 draft.getInt("package_image_res_id", R.drawable.location_on_24px),
                 draft.getString("package_image_url", ""),
-                System.currentTimeMillis(), true);
+                System.currentTimeMillis(), true, "demo");
 
         return booking;
+    }
+
+    /** Build the device copy only from a server-verified paid Stripe test order. */
+    public static Booking prepareStripeTest(JSONObject status) {
+        String id = status.optString("orderId");
+        String title = status.optString("title");
+        int cents = status.optInt("amountCents", -1);
+        if (!"paid".equals(status.optString("status")) || !id.matches("[A-Za-z0-9]{8,60}")
+                || title.isEmpty() || cents < 50 || !"usd".equals(status.optString("currency"))) {
+            return null;
+        }
+        int travelers = status.optInt("travelers", 1);
+        return new Booking(id, status.optString("type", "Tour"), title,
+                status.optString("duration"),
+                String.format(java.util.Locale.US, "$%.2f USD (test)", cents / 100.0),
+                status.optString("route"), travelers == 1 ? "1 Person" : travelers + " People",
+                status.optString("pickup"), status.optString("mobile"), status.optString("date"),
+                status.optString("time"), "Stripe Checkout (test mode)",
+                "Paid in test mode (no real money)", R.drawable.location_on_24px, "",
+                System.currentTimeMillis(), true, "stripe_test");
     }
 
     /** Keep a device copy after Firestore has acknowledged the demo submission. */
@@ -167,14 +190,26 @@ public final class BookingStore {
             SharedPreferences history = historyFor(context, ownerUid);
             JSONArray existing = new JSONArray(history.getString(HISTORY_KEY, "[]"));
             JSONArray updated = new JSONArray();
+            for (int i = 0; i < existing.length(); i++) {
+                JSONObject item = existing.optJSONObject(i);
+                if (item != null && booking.id.equals(item.optString("id"))) return true;
+            }
             updated.put(booking.toJson());
             for (int i = 0; i < existing.length(); i++) updated.put(existing.get(i));
             if (!history.edit().putString(HISTORY_KEY, updated.toString()).commit()) return false;
-            draftFor(context, ownerUid).edit().clear().apply();
+            if (!"stripe_test".equals(booking.source))
+                draftFor(context, ownerUid).edit().clear().apply();
             return true;
         } catch (JSONException ignored) {
             return false;
         }
+    }
+
+    public static void clearDraftIfListing(Context context, String ownerUid, String listingId) {
+        if (listingId == null || listingId.isEmpty()) return;
+        SharedPreferences draft = draftFor(context, ownerUid);
+        if (listingId.equals(draft.getString("package_catalog_id", "")))
+            draft.edit().clear().apply();
     }
 
     public static boolean remove(Context context, String bookingId) {

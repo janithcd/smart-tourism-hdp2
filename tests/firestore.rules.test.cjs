@@ -206,3 +206,25 @@ test('demo submissions are private, owned, and reviewable only by active admins'
   await assertFails(getDocs(query(collection(admin, 'demo_bookings'), limit(50))));
   await assertSucceeds(deleteDoc(doc(alice, path)));
 });
+
+test('clients cannot forge or erase Stripe test payments and orders', async () => {
+  await seed('admins/admin', { active: true, role: 'admin' });
+  const alice = client('alice', 'alice@example.com');
+  const bob = client('bob', 'bob@example.com');
+  const admin = client('admin', 'admin@example.com');
+  const path = 'demo_bookings/stripe-order';
+  await seed(path, {
+    id: 'stripe-order', uid: 'alice', email: 'alice@example.com', source: 'stripe_test',
+    title: 'Kandy Heritage', type: 'Tour', price: '$120.00 USD (test)',
+    paymentMethod: 'Stripe Checkout (test mode)', paymentStatus: 'Paid in test mode (no real money)',
+    reviewStatus: 'New', createdAt: serverTimestamp()
+  });
+  await seed('stripe_sandbox_orders/stripe-order', { uid: 'alice', status: 'paid' });
+  await assertSucceeds(getDoc(doc(alice, path)));
+  await assertFails(getDoc(doc(bob, path)));
+  await assertFails(deleteDoc(doc(alice, path)));
+  await assertFails(updateDoc(doc(alice, path), { paymentStatus: 'Refunded' }));
+  await assertSucceeds(updateDoc(doc(admin, path), { reviewStatus: 'Reviewed' }));
+  await assertFails(getDoc(doc(alice, 'stripe_sandbox_orders/stripe-order')));
+  await assertFails(setDoc(doc(alice, 'stripe_sandbox_orders/forged'), { status: 'paid' }));
+});
