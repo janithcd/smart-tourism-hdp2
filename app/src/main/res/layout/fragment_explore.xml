@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/md_theme_background"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:paddingStart="20dp"
+    android:paddingTop="20dp"
+    android:paddingEnd="20dp">
 
     <TextView
         android:layout_width="match_parent"
@@ -17,7 +20,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="6dp"
         android:text="@string/explore_subtitle"
         android:textColor="@color/md_theme_onSurfaceVariant"
         android:textSize="14sp" />
@@ -26,22 +29,29 @@
         android:id="@+id/exploreTabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp" />
+        android:layout_marginTop="16dp"
+        app:tabIndicatorColor="@color/md_theme_primary"
+        app:tabMode="fixed"
+        app:tabSelectedTextColor="@color/md_theme_primary"
+        app:tabTextColor="@color/md_theme_onSurfaceVariant" />
 
     <TextView
         android:id="@+id/exploreCatalogSource"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/catalog_notice_bg"
+        android:padding="12dp"
         android:text="@string/explore_demo_notice"
-        android:textColor="@color/md_theme_onSurfaceVariant"
-        android:textSize="12sp" />
+        android:textColor="@color/md_theme_onPrimaryContainer"
+        android:textSize="12sp"
+        android:lineSpacingExtra="2dp" />
 
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="14dp"
         android:hint="@string/explore_search_hint">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -56,7 +66,7 @@
         android:id="@+id/recyclerExplorePackages"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="16dp"
         android:layout_weight="1" />
 
     <TextView

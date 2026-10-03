@@ -33,6 +33,7 @@
         <item name="colorOutlineVariant">@color/md_theme_outlineVariant</item>
 
         <item name="android:windowBackground">@color/md_theme_background</item>
+        <item name="materialButtonStyle">@style/Widget.SmartTourism.Button</item>
 
         <!-- System bars for dark mode -->
         <item name="android:statusBarColor">@color/md_theme_surface</item>

@@ -37,9 +37,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                app:cardBackgroundColor="@color/md_theme_surface"
+                app:cardBackgroundColor="@color/md_theme_surfaceContainerLow"
                 app:cardCornerRadius="20dp"
-                app:strokeColor="@color/md_theme_outline"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/md_theme_outlineVariant"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -84,34 +85,45 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <RadioGroup
-                android:id="@+id/paymentMethods"
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:orientation="vertical">
+                app:cardBackgroundColor="@color/md_theme_surfaceContainerLow"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/md_theme_outlineVariant"
+                app:strokeWidth="1dp">
 
-                <RadioButton
-                    android:id="@+id/paymentCard"
+                <RadioGroup
+                    android:id="@+id/paymentMethods"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="48dp"
-                    android:text="@string/payment_card_demo" />
+                    android:orientation="vertical"
+                    android:padding="12dp">
 
-                <RadioButton
-                    android:id="@+id/paymentWallet"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minHeight="48dp"
-                    android:text="@string/payment_wallet_demo" />
+                    <RadioButton
+                        android:id="@+id/paymentCard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:text="@string/payment_card_demo" />
 
-                <RadioButton
-                    android:id="@+id/paymentCash"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minHeight="48dp"
-                    android:text="@string/payment_cash_arrival" />
-            </RadioGroup>
+                    <RadioButton
+                        android:id="@+id/paymentWallet"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:text="@string/payment_wallet_demo" />
+
+                    <RadioButton
+                        android:id="@+id/paymentCash"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:text="@string/payment_cash_arrival" />
+                </RadioGroup>
+            </com.google.android.material.card.MaterialCardView>
 
             <TextView
                 android:layout_width="match_parent"

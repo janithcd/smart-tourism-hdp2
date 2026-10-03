@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?android:attr/colorBackground"
+    android:background="@color/md_theme_background"
     android:orientation="vertical">
 
     <ScrollView
@@ -29,22 +29,23 @@
                     android:src="@drawable/location_on_24px" />
 
                 <com.google.android.material.card.MaterialCardView
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_gravity="top|start"
                     android:layout_margin="16dp"
-                    app:cardBackgroundColor="@android:color/white"
-                    app:cardCornerRadius="14dp"
-                    app:cardElevation="4dp">
+                    app:cardBackgroundColor="@color/md_theme_surfaceContainerHigh"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp">
 
                     <ImageView
                         android:id="@+id/btnBack"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/booking_back"
                         android:padding="9dp"
                         android:src="@drawable/arrow_back_24px"
-                        app:tint="?attr/colorOnBackground" />
+                        app:tint="@color/md_theme_onSurface" />
                 </com.google.android.material.card.MaterialCardView>
 
             </FrameLayout>
@@ -84,10 +85,10 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginEnd="8dp"
-                        app:cardBackgroundColor="@color/md_theme_surface"
+                        app:cardBackgroundColor="@color/md_theme_surfaceContainerLow"
                         app:cardCornerRadius="18dp"
                         app:cardElevation="0dp"
-                        app:strokeColor="@color/md_theme_outline"
+                        app:strokeColor="@color/md_theme_outlineVariant"
                         app:strokeWidth="1dp">
 
                         <LinearLayout
@@ -213,10 +214,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="22dp"
-                    app:cardBackgroundColor="@color/md_theme_surface"
+                    app:cardBackgroundColor="@color/md_theme_surfaceContainerLow"
                     app:cardCornerRadius="20dp"
                     app:cardElevation="0dp"
-                    app:strokeColor="@color/md_theme_outline"
+                    app:strokeColor="@color/md_theme_outlineVariant"
                     app:strokeWidth="1dp">
 
                     <LinearLayout
@@ -241,22 +242,65 @@
                             android:textColor="@color/md_theme_onSurfaceVariant"
                             android:textSize="13sp" />
 
-                        <com.google.android.material.textfield.TextInputLayout
-                            android:id="@+id/paxLayout"
-                            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
-                            android:hint="@string/package_pax_label">
+                            android:layout_marginTop="18dp"
+                            android:labelFor="@id/passengerValue"
+                            android:text="@string/package_pax_label"
+                            android:textColor="@color/md_theme_onSurface"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
 
-                            <AutoCompleteTextView
-                                android:id="@+id/autoPax"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:inputType="none"
-                                android:textColor="?attr/colorOnSurface"
-                                android:textColorHint="?attr/colorOnSurfaceVariant" />
-                        </com.google.android.material.textfield.TextInputLayout>
+                        <TextView
+                            android:id="@+id/passengerCapacity"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:textColor="@color/md_theme_onSurfaceVariant"
+                            android:textSize="12sp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="9dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/passengerMinus"
+                                style="@style/Widget.Material3.Button.OutlinedButton"
+                                android:layout_width="52dp"
+                                android:layout_height="52dp"
+                                android:contentDescription="@string/booking_decrease_travelers"
+                                android:text="−"
+                                android:textSize="22sp"
+                                app:cornerRadius="16dp" />
+
+                            <TextView
+                                android:id="@+id/passengerValue"
+                                android:layout_width="0dp"
+                                android:layout_height="52dp"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginEnd="8dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/booking_stepper_value_bg"
+                                android:gravity="center"
+                                android:text="1"
+                                android:textColor="@color/md_theme_onSurface"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/passengerPlus"
+                                style="@style/Widget.Material3.Button.OutlinedButton"
+                                android:layout_width="52dp"
+                                android:layout_height="52dp"
+                                android:contentDescription="@string/booking_increase_travelers"
+                                android:text="+"
+                                android:textSize="22sp"
+                                app:cornerRadius="16dp" />
+                        </LinearLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/pickupLayout"
@@ -299,7 +343,11 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="14dp"
-                            android:hint="@string/booking_date_label">
+                            android:hint="@string/booking_date_label"
+                            app:helperText="@string/booking_date_hint"
+                            app:endIconContentDescription="@string/booking_open_calendar"
+                            app:endIconDrawable="@drawable/calendar_today_24px"
+                            app:endIconMode="custom">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/editTravelDate"
@@ -310,6 +358,35 @@
                                 android:inputType="none"
                                 android:textColor="?attr/colorOnSurface" />
                         </com.google.android.material.textfield.TextInputLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/dateMinus"
+                                style="@style/Widget.Material3.Button.OutlinedButton"
+                                android:layout_width="0dp"
+                                android:layout_height="48dp"
+                                android:layout_marginEnd="6dp"
+                                android:layout_weight="1"
+                                android:text="@string/booking_previous_day"
+                                android:textAllCaps="false"
+                                app:cornerRadius="14dp" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/datePlus"
+                                style="@style/Widget.Material3.Button.OutlinedButton"
+                                android:layout_width="0dp"
+                                android:layout_height="48dp"
+                                android:layout_marginStart="6dp"
+                                android:layout_weight="1"
+                                android:text="@string/booking_next_day"
+                                android:textAllCaps="false"
+                                app:cornerRadius="14dp" />
+                        </LinearLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/timeLayout"
@@ -336,10 +413,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="22dp"
-                    app:cardBackgroundColor="@color/md_theme_surface"
+                    app:cardBackgroundColor="@color/md_theme_surfaceContainerLow"
                     app:cardCornerRadius="20dp"
                     app:cardElevation="0dp"
-                    app:strokeColor="@color/md_theme_outline"
+                    app:strokeColor="@color/md_theme_outlineVariant"
                     app:strokeWidth="1dp">
 
                     <LinearLayout
@@ -424,7 +501,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?android:attr/colorBackground"
+        android:background="@color/md_theme_surfaceContainerLow"
         android:elevation="8dp"
         android:orientation="vertical"
         android:paddingStart="20dp"
