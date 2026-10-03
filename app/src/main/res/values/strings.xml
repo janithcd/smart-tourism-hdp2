@@ -17,6 +17,21 @@
     <string name="map_places_attribution">Place data from Google</string>
     <string name="map_loading_attractions">Loading nearby attractions...</string>
     <string name="map_no_attractions">No attractions found inside 25 km</string>
+    <string name="map_compass_label">Magnetic heading</string>
+    <string name="map_compass_arrow" translatable="false">▲</string>
+    <string name="map_compass_waiting">Reading compass…</string>
+    <string name="map_compass_unavailable">Compass unavailable on this device</string>
+    <string name="map_compass_heading">%1$s · %2$d°</string>
+    <string-array name="map_compass_directions">
+        <item>N</item>
+        <item>NE</item>
+        <item>E</item>
+        <item>SE</item>
+        <item>S</item>
+        <item>SW</item>
+        <item>W</item>
+        <item>NW</item>
+    </string-array>
 
     <string name="package_select_pax_error">Please select the number of people</string>
     <string name="package_select_pickup_error">Please select a pickup location</string>
