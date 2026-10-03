@@ -24,6 +24,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Source;
 
 import lk.janith.smart_tourism.R;
 import lk.janith.smart_tourism.fragment.BookingsFragment;
@@ -161,6 +162,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onResume() {
         super.onResume();
         loadDrawerHeaderUser();
+        refreshAdminMenu();
+    }
+
+    private void refreshAdminMenu() {
+        MenuItem manageTours = navigationView.getMenu().findItem(R.id.nav_manage_tours);
+        manageTours.setVisible(false);
+        if (firebaseAuth.getCurrentUser() == null) return;
+
+        String uid = firebaseAuth.getCurrentUser().getUid();
+        firebaseFirestore.collection("admins").document(uid).get(Source.SERVER)
+                .addOnSuccessListener(this, document -> {
+                    if (firebaseAuth.getCurrentUser() != null
+                            && uid.equals(firebaseAuth.getCurrentUser().getUid())) {
+                        manageTours.setVisible(document.exists()
+                                && Boolean.TRUE.equals(document.getBoolean("active"))
+                                && "admin".equals(document.getString("role")));
+                    }
+                });
     }
 
     private void setupHeaderViews() {
@@ -301,6 +320,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (id == R.id.nav_my_activities) {
             openMyActivitiesScreen();
+
+        } else if (id == R.id.nav_manage_tours) {
+            startActivity(new Intent(this, AdminToursActivity.class));
 
         } else if (id == R.id.nav_airport_shuttle) {
             Toast.makeText(this, getString(R.string.airport_shuttle_clicked), Toast.LENGTH_SHORT).show();
