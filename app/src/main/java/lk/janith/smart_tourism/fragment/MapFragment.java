@@ -1,10 +1,16 @@
 package lk.janith.smart_tourism.fragment;
 
+import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Surface;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,7 +56,7 @@ import lk.janith.smart_tourism.adapter.StopChipAdapter;
 import lk.janith.smart_tourism.model.AttractionPlace;
 import lk.janith.smart_tourism.model.RouteStop;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback {
+public class MapFragment extends Fragment implements OnMapReadyCallback, SensorEventListener {
 
     private static final String ARG_PACKAGE_NAME = "package_name";
     private static final String ROUTES_ENDPOINT = "https://routes.googleapis.com/directions/v2:computeRoutes";
@@ -61,6 +67,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private GoogleMap googleMap;
     private TextView txtPackageTitle;
     private TextView txtPackageInfo;
+    private TextView txtCompassHeading;
+    private TextView compassPointer;
     private MaterialButtonToggleGroup tourToggleGroup;
     private RecyclerView recyclerStops;
     private RecyclerView recyclerAttractions;
@@ -76,6 +84,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private String selectedPackageName = DEFAULT_PACKAGE;
     private String currentRouteSummary = "";
+    private SensorManager sensorManager;
+    private Sensor rotationSensor;
+    private int lastHeading = -1;
+    private final float[] rotationMatrix = new float[9];
+    private final float[] screenRotationMatrix = new float[9];
+    private final float[] orientation = new float[3];
 
     public MapFragment() {
         super(R.layout.fragment_map);
@@ -95,6 +109,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         txtPackageTitle = view.findViewById(R.id.txtPackageTitle);
         txtPackageInfo = view.findViewById(R.id.txtPackageInfo);
+        txtCompassHeading = view.findViewById(R.id.txtCompassHeading);
+        compassPointer = view.findViewById(R.id.compassPointer);
         tourToggleGroup = view.findViewById(R.id.tourToggleGroup);
         recyclerStops = view.findViewById(R.id.recyclerStops);
         recyclerAttractions = view.findViewById(R.id.recyclerAttractions);
@@ -107,6 +123,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         recyclerStops.setAdapter(stopChipAdapter);
         recyclerAttractions.setAdapter(attractionAdapter);
+
+        sensorManager = (SensorManager) requireContext().getSystemService(Context.SENSOR_SERVICE);
+        rotationSensor = sensorManager != null
+                ? sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR) : null;
+        if (rotationSensor == null) {
+            txtCompassHeading.setText(R.string.map_compass_unavailable);
+            compassPointer.setVisibility(View.GONE);
+        }
 
         if (getArguments() != null) {
             String packageName = getArguments().getString(ARG_PACKAGE_NAME);
@@ -137,6 +161,79 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (sensorManager == null || rotationSensor == null || txtCompassHeading == null) return;
+
+        lastHeading = -1;
+        txtCompassHeading.setText(R.string.map_compass_waiting);
+        compassPointer.setVisibility(View.VISIBLE);
+        if (!sensorManager.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_UI)) {
+            txtCompassHeading.setText(R.string.map_compass_unavailable);
+            compassPointer.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        if (sensorManager != null) sensorManager.unregisterListener(this);
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroyView() {
+        txtCompassHeading = null;
+        compassPointer = null;
+        sensorManager = null;
+        rotationSensor = null;
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (rotationSensor == null || event.sensor.getType() != Sensor.TYPE_ROTATION_VECTOR
+                || txtCompassHeading == null) return;
+
+        SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values);
+        int xAxis = SensorManager.AXIS_X;
+        int yAxis = SensorManager.AXIS_Y;
+        switch (requireActivity().getWindowManager().getDefaultDisplay().getRotation()) {
+            case Surface.ROTATION_90:
+                xAxis = SensorManager.AXIS_Y;
+                yAxis = SensorManager.AXIS_MINUS_X;
+                break;
+            case Surface.ROTATION_180:
+                xAxis = SensorManager.AXIS_MINUS_X;
+                yAxis = SensorManager.AXIS_MINUS_Y;
+                break;
+            case Surface.ROTATION_270:
+                xAxis = SensorManager.AXIS_MINUS_Y;
+                yAxis = SensorManager.AXIS_X;
+                break;
+            default:
+                break;
+        }
+        if (!SensorManager.remapCoordinateSystem(rotationMatrix, xAxis, yAxis, screenRotationMatrix)) {
+            return;
+        }
+        SensorManager.getOrientation(screenRotationMatrix, orientation);
+        float heading = ((float) Math.toDegrees(orientation[0]) + 360f) % 360f;
+        int degrees = Math.round(heading) % 360;
+        if (degrees == lastHeading) return;
+
+        lastHeading = degrees;
+        String[] directions = getResources().getStringArray(R.array.map_compass_directions);
+        String direction = directions[((int) ((heading + 22.5f) / 45f)) % directions.length];
+        txtCompassHeading.setText(getString(R.string.map_compass_heading, direction, degrees));
+        compassPointer.setRotation(-heading);
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // The heading is updated by rotation-vector events.
     }
 
     @Override
