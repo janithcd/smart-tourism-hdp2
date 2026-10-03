@@ -2,13 +2,14 @@ package lk.janith.smart_tourism.fragment;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Patterns;
+import android.provider.OpenableColumns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -16,9 +17,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 
-import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
@@ -26,6 +29,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Source;
+import com.google.firebase.storage.StorageMetadata;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -35,11 +39,10 @@ import java.util.Map;
 import lk.janith.smart_tourism.R;
 import lk.janith.smart_tourism.activity.MainActivity;
 import lk.janith.smart_tourism.activity.SigninActivity;
+import lk.janith.smart_tourism.data.ProfilePhoto;
 import lk.janith.smart_tourism.model.User;
 
 public class ProfileFragment extends Fragment {
-
-    private static final String DEFAULT_PROFILE_PIC_URL = "https://openclipart.org/image/800px/346569";
 
     private ImageView profileAvatar;
     private TextView txtFullName;
@@ -59,7 +62,11 @@ public class ProfileFragment extends Fragment {
     private FirebaseFirestore firebaseFirestore;
 
     private String currentUid = "";
-    private String currentProfileUrl = DEFAULT_PROFILE_PIC_URL;
+    private boolean uploadingPhoto;
+    private final ActivityResultLauncher<PickVisualMediaRequest> photoPicker =
+            registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+                if (uri != null) uploadProfilePicture(uri);
+            });
 
     public ProfileFragment() {
     }
@@ -95,10 +102,12 @@ public class ProfileFragment extends Fragment {
         editBirthday.setOnClickListener(v -> showDatePicker());
 
         btnUpdateProfile.setOnClickListener(v -> updateProfile());
-        btnChangeProfilePic.setOnClickListener(v -> showChangePhotoDialog());
+        btnChangeProfilePic.setOnClickListener(v -> photoPicker.launch(
+                new PickVisualMediaRequest.Builder()
+                        .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                        .build()));
         btnDeleteProfile.setOnClickListener(v -> showDeleteProfileDialog());
 
-        loadUserProfile();
     }
 
     @Override
@@ -164,19 +173,7 @@ public class ProfileFragment extends Fragment {
         editCountry.setText(user.getCountry() != null ? user.getCountry() : "");
         editBirthday.setText(user.getBirthday() != null ? user.getBirthday() : "");
 
-        String profileUrl = user.getProfilePic();
-        if (profileUrl == null || profileUrl.trim().isEmpty()) {
-            profileUrl = DEFAULT_PROFILE_PIC_URL;
-        }
-
-        currentProfileUrl = profileUrl;
-
-        Glide.with(requireContext())
-                .load(profileUrl)
-                .placeholder(R.drawable.account_circle_24px)
-                .error(R.drawable.account_circle_24px)
-                .circleCrop()
-                .into(profileAvatar);
+        if (!uploadingPhoto) ProfilePhoto.load(profileAvatar, user.getProfilePic(), currentUid);
     }
 
     private void updateProfile() {
@@ -254,55 +251,67 @@ public class ProfileFragment extends Fragment {
                 });
     }
 
-    private void showChangePhotoDialog() {
-        EditText editText = new EditText(requireContext());
-        editText.setHint("Enter image URL");
-        editText.setText(currentProfileUrl);
+    private void uploadProfilePicture(Uri uri) {
+        if (uploadingPhoto || firebaseAuth.getCurrentUser() == null) return;
+        String uid = firebaseAuth.getCurrentUser().getUid();
+        String type = requireContext().getContentResolver().getType(uri);
+        if (!"image/jpeg".equals(type) && !"image/png".equals(type)
+                && !"image/webp".equals(type)) {
+            Toast.makeText(requireContext(), R.string.profile_photo_type_error, Toast.LENGTH_LONG).show();
+            return;
+        }
 
-        int padding = (int) (20 * requireContext().getResources().getDisplayMetrics().density);
-        editText.setPadding(padding, padding, padding, padding);
+        try (Cursor cursor = requireContext().getContentResolver().query(
+                uri, new String[]{OpenableColumns.SIZE}, null, null, null)) {
+            if (cursor != null && cursor.moveToFirst()) {
+                int column = cursor.getColumnIndex(OpenableColumns.SIZE);
+                if (column >= 0 && !cursor.isNull(column)
+                        && cursor.getLong(column) > ProfilePhoto.MAX_BYTES) {
+                    Toast.makeText(requireContext(), R.string.profile_photo_size_error, Toast.LENGTH_LONG).show();
+                    return;
+                }
+            }
+        } catch (RuntimeException error) {
+            Toast.makeText(requireContext(), R.string.profile_photo_read_error, Toast.LENGTH_LONG).show();
+            return;
+        }
 
-        new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Change Profile Picture")
-                .setView(editText)
-                .setPositiveButton("Save", (dialog, which) -> {
-                    String newUrl = editText.getText() != null ? editText.getText().toString().trim() : "";
+        uploadingPhoto = true;
+        btnChangeProfilePic.setEnabled(false);
+        btnChangeProfilePic.setText(R.string.profile_photo_uploading);
+        profileProgressBar.setVisibility(View.VISIBLE);
 
-                    if (newUrl.isEmpty()) {
-                        newUrl = DEFAULT_PROFILE_PIC_URL;
-                    }
-
-                    if (!Patterns.WEB_URL.matcher(newUrl).matches()) {
-                        Toast.makeText(requireContext(), "Enter a valid image URL", Toast.LENGTH_LONG).show();
-                        return;
-                    }
-
-                    updateProfilePicture(newUrl);
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
+        StorageMetadata metadata = new StorageMetadata.Builder().setContentType(type).build();
+        ProfilePhoto.referenceFor(uid).putFile(uri, metadata)
+                .addOnSuccessListener(task -> firebaseFirestore.collection("users").document(uid)
+                        .update("profilePic", ProfilePhoto.pathFor(uid))
+                        .addOnSuccessListener(unused -> {
+                            finishPhotoUpload();
+                            if (isAdded() && getView() != null && uid.equals(currentUid)) {
+                                ProfilePhoto.load(profileAvatar, ProfilePhoto.pathFor(uid), uid);
+                                refreshMainHeader();
+                                Toast.makeText(requireContext(), R.string.profile_photo_saved, Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .addOnFailureListener(error -> {
+                            finishPhotoUpload();
+                            if (isAdded()) Toast.makeText(requireContext(),
+                                    R.string.profile_photo_profile_error, Toast.LENGTH_LONG).show();
+                        }))
+                .addOnFailureListener(error -> {
+                    finishPhotoUpload();
+                    if (isAdded()) Toast.makeText(requireContext(),
+                            R.string.profile_photo_upload_error, Toast.LENGTH_LONG).show();
+                });
     }
 
-    private void updateProfilePicture(String url) {
-        firebaseFirestore.collection("users")
-                .document(currentUid)
-                .update("profilePic", url)
-                .addOnSuccessListener(unused -> {
-                    currentProfileUrl = url;
-
-                    Glide.with(requireContext())
-                            .load(url)
-                            .placeholder(R.drawable.account_circle_24px)
-                            .error(R.drawable.account_circle_24px)
-                            .circleCrop()
-                            .into(profileAvatar);
-
-                    Toast.makeText(requireContext(), "Profile picture updated", Toast.LENGTH_SHORT).show();
-                    refreshMainHeader();
-                })
-                .addOnFailureListener(e ->
-                        Toast.makeText(requireContext(), "Photo update failed: " + e.getMessage(), Toast.LENGTH_LONG).show()
-                );
+    private void finishPhotoUpload() {
+        uploadingPhoto = false;
+        if (isAdded() && getView() != null) {
+            btnChangeProfilePic.setEnabled(true);
+            btnChangeProfilePic.setText(R.string.change_profile_pic);
+            profileProgressBar.setVisibility(View.GONE);
+        }
     }
 
     private void showDeleteProfileDialog() {

@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "test:rules": "node --test tests/firestore.rules.test.cjs",
-    "test:rules:emulator": "firebase emulators:exec --only firestore --project demo-smart-tourism \"npm run test:rules\""
+    "test:storage": "node --test tests/storage.rules.test.cjs",
+    "test:rules:emulator": "firebase emulators:exec --only firestore,storage --project demo-smart-tourism \"npm run test:rules && npm run test:storage\""
   },
   "devDependencies": {
     "@firebase/rules-unit-testing": "5.0.2",

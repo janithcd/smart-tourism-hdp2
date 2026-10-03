@@ -32,5 +32,5 @@ jobs:
           java-version: '21'
       - name: Install Firebase emulator test dependencies
         run: npm install --no-audit --no-fund
-      - name: Verify Firestore access rules
+      - name: Verify Firestore and Storage access rules
         run: npm run test:rules:emulator

@@ -23,8 +23,6 @@ import lk.janith.smart_tourism.model.User;
 
 public class SignUpActivity extends AppCompatActivity {
 
-    private static final String DEFAULT_PROFILE_PIC_URL = "https://openclipart.org/image/800px/346569";
-
     private TextInputEditText editFirstName;
     private TextInputEditText editLastName;
     private TextInputEditText editEmail;
@@ -170,7 +168,7 @@ public class SignUpActivity extends AppCompatActivity {
                                 email,
                                 country,
                                 birthday,
-                                DEFAULT_PROFILE_PIC_URL
+                                ""
                         );
 
                         firebaseFirestore.collection("users")
