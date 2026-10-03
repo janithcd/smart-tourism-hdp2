@@ -9,6 +9,11 @@
 .DS_Store
 __pycache__/
 *.py[cod]
+node_modules/
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
 
 # Local configuration and credentials (never commit actual keys)
 **/local.properties
